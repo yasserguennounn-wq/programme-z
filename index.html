@@ -1,0 +1,555 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>ZEDAM GYM - برنامجي</title>
+<meta name="theme-color" content="#0b0b0b">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="icon" type="image/png" href="icon-192.png">
+<link rel="apple-touch-icon" href="apple-touch-icon.png">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="ZEDAM GYM">
+<meta name="apple-mobile-web-app-status-bar-style" content="black">
+<link href="https://fonts.googleapis.com/css2?family=Cairo:wght@600;800&family=Tajawal:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#eef1f3;--sf:#fff;--ink:#14202b;--mut:#5f6f7c;--ln:#d9e0e5;--am:#e11d1d;--amd:#e11d1d;--ok:#1e8e5a;--hd:#0b0b0b;--hdt:#fff;
+--d:"Cairo","Segoe UI",Tahoma,sans-serif;--b:"Tajawal","Segoe UI",Tahoma,sans-serif;
+box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#0c0c0c;--sf:#161616;--ink:#f1f1f1;--mut:#9a9a9a;--ln:#2a2a2a;--hd:#0b0b0b;--amd:#ff3b3b}}
+:root[data-theme="dark"]{--bg:#0c0c0c;--sf:#161616;--ink:#f1f1f1;--mut:#9a9a9a;--ln:#2a2a2a;--hd:#0b0b0b;--amd:#ff3b3b}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html{height:100%}
+body{margin:0;min-height:100%;background:var(--bg);color:var(--ink);font:400 1rem/1.7 var(--b)}
+button{font-family:inherit;color:inherit;cursor:pointer}
+button:focus-visible{outline:3px solid var(--am);outline-offset:2px}
+.w{max-width:520px;margin:0 auto;min-height:100vh;background:var(--bg)}
+.hid{display:none!important}
+.hd{background:var(--hd);color:var(--hdt);padding:20px 20px 22px;border-radius:0 0 22px 22px}
+.brand{font:800 .95rem var(--d);letter-spacing:.02em;color:var(--am)}
+.hd h1{font:800 1.9rem/1.25 var(--d);margin:6px 0 2px}
+.meta{color:#b6c3ce;font-size:.95rem}
+.seg{display:flex;gap:4px;margin-top:16px}
+.seg i{flex:1;height:6px;border-radius:3px;background:rgba(255,255,255,.18);overflow:hidden}
+.seg i b{display:block;height:100%;width:0;background:var(--am);transition:width .3s}
+.rows{padding:8px 20px 40px}
+.r{display:flex;align-items:center;gap:14px;width:100%;background:none;border:0;border-bottom:1px solid var(--ln);padding:16px 0;text-align:start}
+.ix{font:800 1.5rem var(--d);width:34px;color:var(--amd);text-align:center;flex:none}
+.r .t{flex:1}
+.r .t b{display:block;font:700 1.08rem var(--b)}
+.r .t small{color:var(--mut);font-size:.9rem}
+.r.dn .t b{color:var(--mut)}
+.r.dn .ix{color:var(--ok)}
+.dots{display:flex;gap:5px}
+.dots i{width:10px;height:10px;border-radius:50%;border:2px solid var(--ln)}
+.dots i.on{background:var(--ok);border-color:var(--ok)}
+.top{display:flex;align-items:center;padding:14px 16px 0}
+.bk{display:flex;align-items:center;gap:4px;background:none;border:0;color:var(--mut);font-size:1rem;padding:8px 4px}
+.dp{padding:6px 20px 120px}
+.dp h2{font:800 1.7rem/1.3 var(--d);margin:4px 0 8px}
+.tg{display:inline-block;border:1.5px solid var(--ln);border-radius:20px;padding:1px 12px;font-size:.88rem;color:var(--mut);margin-inline-end:6px}
+.sec{margin-top:24px}
+.sec h3{font:700 .95rem var(--b);color:var(--mut);margin:0 0 10px}
+.plates{display:flex;gap:10px;flex-wrap:wrap}
+.pl{width:60px;height:60px;border-radius:50%;border:3px solid var(--ln);background:var(--sf);font:800 1.2rem var(--d);display:grid;place-items:center;position:relative;transition:transform .15s,background .15s}
+.pl::after{content:"";position:absolute;inset:9px;border-radius:50%;border:2px solid var(--ln)}
+.pl:active{transform:scale(.92)}
+.pl.on{background:var(--am);border-color:var(--amd);color:#fff}
+.pl.on::after{border-color:rgba(255,255,255,.45)}
+.tm{background:var(--hd);color:var(--hdt);border-radius:22px;padding:22px;text-align:center}
+.ring{position:relative;width:190px;height:190px;margin:0 auto}
+.ring svg{transform:rotate(-90deg);display:block}
+.ring .c{position:absolute;inset:0;display:grid;place-content:center}
+.ring .n{font:800 3.1rem/1 var(--d);font-variant-numeric:tabular-nums}
+.ring .l{font-size:.9rem;color:#b6c3ce;margin-top:4px}
+.tb{display:flex;gap:10px;margin-top:18px;justify-content:center}
+.bt{border:0;border-radius:14px;padding:12px 20px;font:700 1rem var(--b);background:rgba(255,255,255,.12);color:#fff}
+.bt.p{background:var(--am);color:#fff}
+.tabs{display:flex;background:var(--sf);border:1px solid var(--ln);border-radius:14px;padding:4px}
+.tabs button{flex:1;border:0;background:none;border-radius:10px;padding:9px;font:700 .95rem var(--b);color:var(--mut)}
+.tabs button.on{background:var(--hd);color:#fff}
+.tx{background:var(--sf);border:1px solid var(--ln);border-radius:14px;padding:6px 16px;margin-top:10px}
+.tx ol,.tx ul{margin:8px 0;padding-inline-start:22px}
+.tx li{padding:4px 0}
+.ft{position:fixed;inset-inline:0;bottom:0;padding:12px 20px calc(12px + env(safe-area-inset-bottom,0px));background:linear-gradient(transparent,var(--bg) 35%)}
+.ft .in{max-width:520px;margin:0 auto}
+.nx{width:100%;border:0;border-radius:16px;padding:16px;font:800 1.1rem var(--d);background:var(--am);color:#fff}
+.fin{position:relative;text-align:center;padding:90px 28px}
+.fin h2{font:800 2rem var(--d);margin:0 0 8px}
+.fin p{color:var(--mut);margin:0 0 26px}
+
+.brand{display:flex;align-items:center;gap:8px}
+.brand img{border-radius:6px}
+.mb{display:flex;justify-content:space-between;align-items:center;margin:14px 0 4px}
+.mb b{display:block;font:700 1.05rem var(--b)}
+.mb small{color:#b6c3ce}
+.ed{background:rgba(255,255,255,.12);border:0;border-radius:10px;padding:5px 14px;color:#fff;font-size:.9rem}
+.st{min-height:100vh;background:#000;color:#fff;padding:32px 24px 40px;display:flex;flex-direction:column;align-items:center}
+.st img{width:176px;height:176px;display:block}
+.st h1{font:800 1.9rem var(--d);margin:2px 0 4px;letter-spacing:.04em}
+.tg2{display:flex;align-items:center;justify-content:center;gap:10px;color:#ff4d4d;font:700 1.05rem var(--b);margin:2px 0 20px}
+.tg2::before,.tg2::after{content:"";width:26px;height:2px;border-radius:2px;background:#e11d1d}
+.st p{color:#a8a8a8;margin:0 0 26px;text-align:center}
+.fm{width:100%;max-width:400px}
+.fd{margin-bottom:14px}
+.fd label{display:block;font:700 .95rem var(--b);margin-bottom:6px;color:#e6e6e6}
+.fd input{width:100%;background:#141414;border:1.5px solid #2c2c2c;border-radius:14px;padding:14px 16px;font:500 1.05rem var(--b);color:#fff}
+.fd input:focus{outline:none;border-color:#e11d1d;box-shadow:0 0 0 3px rgba(225,29,29,.28)}
+.fd.er input{border-color:#ff5a5a}
+.fd .m{color:#ff6b6b;font-size:.88rem;min-height:1.3em;margin-top:4px}
+.st .nx{margin-top:6px}
+.bk2{align-self:flex-start;display:flex;align-items:center;gap:4px;background:none;border:0;color:#fff;font:700 1rem var(--b);padding:6px 0;margin-bottom:4px}
+.qs{padding:16px 20px calc(28px + env(safe-area-inset-bottom,0px))}
+.b3{color:var(--ink)}
+.qh{display:flex;align-items:center;gap:14px;margin:8px 0 18px}
+.qh img{width:56px;height:56px;border-radius:14px;flex:none}
+.qz{flex:1;max-width:240px;border:2px solid var(--ink);border-radius:14px;padding:12px;text-align:center;font:800 1.15rem var(--d);letter-spacing:.06em}
+.qt{background:var(--hd);color:#fff;border:1.5px solid var(--ln);border-radius:16px;padding:14px;text-align:center;font:800 1.2rem var(--d)}
+.qg{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:20px}
+.qc{display:flex;align-items:center;min-height:96px;background:var(--sf);border:1.5px solid var(--ln);border-radius:16px;padding:12px 10px;cursor:pointer}
+button.qc{width:100%;justify-content:center;text-align:center;color:var(--ink);font:700 1.05rem/1.55 var(--b);white-space:pre-line}
+.tr{display:flex;justify-content:space-between;align-items:center}
+.eb{border:1.5px solid var(--ln);background:var(--sf);color:var(--ink);border-radius:10px;padding:5px 14px;font:700 .9rem var(--b)}
+.eb.on{background:var(--am);border-color:var(--am);color:#fff}
+.ov{position:fixed;inset:0;background:rgba(0,0,0,.7);display:flex;align-items:center;justify-content:center;padding:24px;z-index:50}
+.mdl{background:var(--sf);color:var(--ink);border:1.5px solid var(--ln);border-radius:20px;padding:22px;width:100%;max-width:340px;text-align:center}
+.mdl h3{font:800 1.2rem var(--d);margin:0 0 12px}
+.mdl input{width:100%;text-align:center;letter-spacing:.3em;background:var(--bg);color:var(--ink);border:1.5px solid var(--ln);border-radius:14px;padding:12px;font:800 1.3rem var(--d);margin-bottom:6px}
+.mdl input:focus{outline:none;border-color:var(--am)}
+.vp{display:block;width:100%;border-radius:16px;background:#000;max-height:60vh}
+.vr{display:flex;justify-content:space-between;align-items:center;gap:8px;margin-top:8px}
+.vr small{color:var(--mut);overflow:hidden;text-overflow:ellipsis;white-space:nowrap;direction:ltr}
+.vx{background:none;border:0;color:var(--amd);font:700 .9rem var(--b);flex:none}
+.vu{display:block;margin-top:10px;text-align:center;border:1.5px dashed var(--ln);border-radius:14px;padding:14px;color:var(--ink);font:700 .95rem var(--b);cursor:pointer}
+.vb{display:block;text-align:center;text-decoration:none;background:var(--am);color:#fff;border-radius:16px;padding:16px;font:800 1.1rem var(--d)}
+.vi{display:block;width:100%;margin-top:10px;background:none;color:var(--ink);border:1.5px dashed var(--ln);border-radius:14px;padding:12px 14px;font:500 .9rem var(--b);text-align:left}
+.vi:focus{outline:none;border-color:var(--am)}
+.vn{color:var(--amd);font-size:.85rem;margin-top:6px}
+.ec{display:flex;gap:10px}
+.es,.er{flex:1;background:var(--sf);border:1.5px solid var(--ln);border-radius:14px;padding:10px;display:flex;align-items:center;justify-content:center;gap:10px;flex-wrap:wrap}
+.es button{width:38px;height:38px;border-radius:50%;border:1.5px solid var(--ln);background:var(--bg);color:var(--ink);font:800 1.3rem/1 var(--d)}
+.es b{font:800 1.4rem var(--d);min-width:24px;text-align:center}
+.es small,.er small{width:100%;text-align:center;color:var(--mut);font-size:.85rem}
+.er input{width:100%;text-align:center;background:none;border:0;color:var(--ink);font:800 1.3rem var(--d);outline:none}
+.vc{display:flex;gap:8px;overflow-x:auto;margin:14px 0 0;padding-bottom:4px}
+.vchip{flex:none;border:1.5px solid var(--ln);background:var(--sf);color:var(--ink);border-radius:20px;padding:8px 16px;font:700 .95rem var(--b)}
+.vchip.on{background:var(--am);border-color:var(--am);color:#fff}
+.vchip.vadd{border-style:dashed;color:var(--mut)}
+.vn2{display:block;width:100%;margin-top:10px;background:var(--sf);color:var(--ink);border:1.5px solid var(--ln);border-radius:14px;padding:10px 14px;font:500 .95rem/1.7 var(--b);resize:none;overflow:hidden}
+.vn2:focus{outline:none;border-color:var(--am)}
+.vr2{display:flex;justify-content:space-between;margin-top:6px}
+.vt{display:block;width:100%;margin-top:8px;background:var(--bg);color:var(--ink);border:1.5px solid var(--ln);border-radius:12px;padding:10px;font:500 .8rem/1.5 monospace;direction:ltr;text-align:left;height:110px}
+.tk{display:block;width:100%;margin:0 0 14px;padding:12px 16px;border:1.5px solid var(--am);background:none;color:var(--amd);border-radius:16px;font:800 1.05rem var(--d)}
+.tk:active{background:rgba(225,29,29,.12)}
+.tcd{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:16px}
+.tcc{background:var(--sf);border:1.5px solid var(--ln);border-radius:14px;padding:10px 14px;display:flex;flex-direction:column;gap:2px}
+.tcc small{color:var(--mut)}
+.tcc .b{font:800 1.25rem var(--d)}
+.tdf{font-size:.85rem;color:var(--mut)}
+.tch{background:var(--sf);border:1.5px solid var(--ln);border-radius:14px;padding:10px;margin-top:10px;text-align:center;color:var(--mut)}
+.tfd{margin-bottom:10px}
+.tfd label{display:block;font:700 .9rem var(--b);margin-bottom:4px}
+.tin{width:100%;background:var(--sf);color:var(--ink);border:1.5px solid var(--ln);border-radius:12px;padding:11px 14px;font:700 1.05rem var(--b)}
+.tin:focus{outline:none;border-color:var(--am)}
+.thr{display:flex;justify-content:space-between;align-items:center;gap:8px;border-bottom:1px solid var(--ln);padding:10px 0}
+.thr span{font-size:.9rem;line-height:1.6}
+.lgr{display:flex;gap:8px}
+.lgr .tin{flex:1;min-width:0}
+.zg{margin-top:22px}
+.zm{display:block;width:64%;background:var(--sf);color:var(--ink);border:1.5px solid var(--ln);border-radius:14px;padding:10px 14px;margin-bottom:10px;font:800 1.05rem var(--b)}
+.zm:focus,.zi:focus{outline:none;border-color:var(--am)}
+.zr{display:flex;gap:8px;margin-bottom:8px}
+.zb{flex:1;display:flex;justify-content:space-between;align-items:center;gap:10px;text-align:start;background:var(--sf);border:1.5px solid var(--ln);border-radius:14px;padding:14px 16px;color:var(--ink);font:700 1rem var(--b)}
+.zb small{color:var(--mut);font-weight:400;white-space:nowrap}
+.zr.dn .zb{color:var(--mut)}
+.zd{width:44px;border:1.5px solid var(--ln);background:var(--sf);color:var(--mut);border-radius:14px;font-size:1rem}
+.za{display:flex;gap:8px;margin-bottom:4px}
+.zi{flex:1;min-width:0;background:none;color:var(--ink);border:1.5px dashed var(--ln);border-radius:14px;padding:13px 14px;font:500 .95rem var(--b)}
+.zt{background:var(--am);color:#fff;border:0;border-radius:14px;padding:0 18px;font:700 .95rem var(--b)}
+.zn{display:block;width:100%;margin-top:24px;background:none;border:1.5px dashed var(--ln);color:var(--mut);border-radius:14px;padding:13px;font:700 .95rem var(--b)}
+.qc{position:relative}
+.qx2{position:absolute;top:4px;inset-inline-end:6px;background:none;border:0;color:var(--mut);font:700 .85rem var(--b);padding:4px 6px}
+.qx2.on{color:#fff;background:var(--am);border-radius:8px}
+.qadd{grid-column:1/-1;background:none;border:1.5px dashed var(--ln);color:var(--mut);border-radius:14px;padding:13px;font:700 .95rem var(--b)}
+.qc.em{opacity:.5;cursor:default}
+.qt{white-space:pre-line}
+.pm{color:var(--mut);text-align:center;margin:12px 0 6px}
+.qc:focus-within{border-color:var(--am);box-shadow:0 0 0 3px rgba(225,29,29,.22)}
+.qi{display:block;width:100%;height:auto;background:none;border:0;padding:0;margin:0;color:var(--ink);text-align:center;font:700 1.05rem/1.55 var(--b);resize:none;overflow:hidden;outline:none}
+.st.sp{justify-content:center}
+.hm{padding:16px 20px calc(28px + env(safe-area-inset-bottom,0px))}
+.bn{background:var(--hd);color:#fff;border-radius:20px;padding:18px;display:flex;align-items:center;gap:14px}
+.bn img{width:58px;height:58px;border-radius:12px;flex:none}
+.bn b{display:block;font:800 1.2rem/1.3 var(--d);letter-spacing:.02em}
+.bn small{color:#b6c3ce;font-size:.9rem}
+.gr{margin:22px 0 0}
+.gr h2{font:800 1.6rem/1.35 var(--d);margin:0}
+.gr .pn{color:var(--mut)}
+.lk{background:none;border:0;color:var(--amd);font:700 .9rem var(--b);padding:6px 0}
+.an{background:var(--sf);border:1px solid var(--ln);border-inline-start:5px solid var(--am);border-radius:16px;padding:14px 16px;margin:22px 0 0}
+.an h3{font:800 1rem var(--d);margin:0 0 4px}
+.ai{padding:8px 0;border-top:1px solid var(--ln)}
+.ai.mt{color:var(--mut)}
+.ct{display:flex;flex-direction:column;gap:10px;margin-top:22px}
+.go{margin-top:26px}
+.ch{color:var(--mut);font-size:1.4rem;line-height:1}
+.xi{display:block;width:100%;border-radius:16px;margin-top:14px}
+.cb{display:flex;flex-direction:row;align-items:center;justify-content:space-between;text-align:start;gap:8px;background:var(--sf);border:1.5px solid var(--ln);border-radius:14px;padding:14px 8px;font:700 .95rem var(--b);color:var(--ink);text-decoration:none;min-height:64px}
+.cb small{color:var(--mut);font-weight:400;font-size:.9rem}
+.cb.w2{grid-column:1/-1}
+.nt{color:var(--amd);font-size:.9rem;margin-top:8px;min-height:1.3em;text-align:center}
+@media (prefers-reduced-motion:reduce){*{transition:none!important}}
+</style>
+</head>
+<body>
+<div class="w">
+<div id="st" class="hid st">
+  <button class="bk2 hid" id="sb" onclick="showHm()"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M9 6l6 6-6 6"/></svg>الرئيسية</button>
+  <img id="lg" alt="شعار ZEDAM GYM" src="data:image/webp;base64,UklGRlINAABXRUJQVlA4IEYNAAAwRACdASoAAQABPj0ejESiIaERHS0AIAPEsrd8L4p+R1rAwCn6fwGhw4vrXruT+33+o6rk9/pT7Dfg/6T+039Z+fX6AexvzAP4H/D/79/Q/2h/wv//733mA/oH9u/UD3//Q96AH8i/v3/y7AD0APK5/73+u+CT9h//D/hP+z8gf8q/q3+0/OzuAPQA7G7/Tfh33AOjb8yew37lc5R6P7T/l/yp/KX76dg/AC/Ff49/ivyn/IDkSQAdUFqKZAHlL3tFAD9LfQB8e/0v+MHtB/P/8b/zv8d8An8s/o3/E/tHtp+t/9vfYn/U7/rjXDIT8kDIQLfHuGQn5IGQgW+PcMhPyQMhAUjpVvfLM6wcgOSxOUvgxtpspOFODsatAvpXibVFp1bHgzgN2ujyGmkesVRQJ36w2txLEEJDO4ZCFmXU4ahvq/FBO5JKcHFiAk9x7QPplN5qJrlaIoTrL+SA4qX+/66UXC183+LeLiUotL6LObzVIwsVoQgW+Qkjdw90cNHGwJsn5wuDfa0VQw4n5IGFIUpRc5j1mLmh65TnIA+36m65T049mxJw5+7QfdDt5HDVSBkpoLKlK6idrblje09S/49vxO1bfbKLLBA9qHvY7bKFob/Y16BmugyiOAMGUIjCBbtUBMFt9CLoQCtUm1si2owXrKP5sb70z+xnq10XZBJYW+DhbhpbswoW7LZeLsatXE/JAyEC3x7hkJ+SBkIFvj3DIT8kDIQLCAD+/58lAAAAMMsqgeJ3MlVXbhIVk+jzmB65ndeb82SZkncthAXb0jUATkEEKjgkK3Nk+v67cNZoIUazpdPr1gmUDsOPrI/+GZ2Wy7i9Cd9o2BJU+o7A3M9alvcG7B1RRfdtCvwM1Rw1Pos8ODD0ZbUaiwmkJV4WMqM3uA2cifsRjKwJsOFnsQSqnfmwLZwV9pingGrVX2q4GAgiNrgWkqj73ZDLJ5NWpd1l2CCm3ax3HoLz8UD2jMrJBP8TAr+4hacH4dnXHqCOE/SlAe8SCM7+aHb9+NyCH/zj9kYiBkBFvbdP6Hm5U1VMsciFGsdvrS4xmyBAPMTKVIJ+ZAkkg8VCWMgp+/l5axfYtg540KoNhNOEmFvfOxmDtV/opi0bqRUNm24LTV2PZPtI65CCceRMiRY5GEIz/HPeEt/mgAKSbs0iWw7XluuAWFO/zhKhbzqcZLVmSyqwn6tqv/APcg5wrX/GISUzqyOxhuq5jnGLU//2rNJ6sglNJ4jWtjPPw+XfxJ+7zYFwC2ZCkssEjOL2n+t3WPajmtYvj21Rz/gPOc2L7IT+UilzMyrbGjL4Vy3Gh8JKGOAqjz840QYjTVuiVkWZ9AQVAj9wQVbBf54GTO/qIk1nhUNwB9lzqbtsweBDUrNldGWx7Tp808WWoM0ABQkAfdgHfgE2vlRH9CiOofx+jZ4r9s8hJUpob1rAjnpbx+qV4D1wzwkzXX+8AV3ASRvsj1iD2d+/qv/GThjDMZjI9nfFXSd16eCENupdS3AA6mI2U1+Xl5pTJaXMQUTNzF7ltL1j9YN9AinpRRa4+PJ304vzOMMnwz0rK7VbStFMxMNmewcMDocAoZd/sED+JHH15SmR/DJP2QI8Ddo1azvjoHsQlHRP8i1AIK0n2FdpABh7EBirb1X2rYp7PeEuAQx9X+MxLkwEO0AQ6zeIUtf0a5rnSSeIrB0RXn2OSHtFRHYbWGa9ZwN+383vhV7WLIoMTVsR8Lu8m1z3bFHEzrLcT5Sc6QIsp7GkNhCwxmCYhbxdVnaw5nrkyBv19qjEpQ9QaT6uE1cLng+IQtOCB48v9u8b4lCJ1GWUMUFXsebi3CqTd06UA/w43buAj4F1sCDacDKEOX2Mi8d04rRjZwCCPzBgnfNuv8PM1y+9k6i3OwI09i6RnoD4gy1dtpnuHdU2UTmWPOuWG+VzG6IhQSqQavQJuuXzCBuAtTqfHitk1sFl8CXpGQLgQH/swmaphEFK+MCwUW2RgeWhrJmgE1GTsW4P1BsDhuvkUmkXdk6XsuBouffrjUgu797sJwJuO0oLc2sXmN2fEsl/DTtj0D3w2nR0Vc7b6uXhTX8PULNK8gS5yMcf8E6GbNTtjv/Yh7yorJTfqdscuvdeKURpIilfJl18n6r339TU529YK9HPxG5cwbDUTC0xNgfGUByKL/E/nCUoqXomTt2hMnom9f6R7uEXevkItjqDSfXuqjhc8HxCFpwQOw6+tN8jNsiNObMGqLPszWdmlpHaRadHCxtBg5zACqsgpDZ6rJfgtYOqYxHshO0zlDoxv2y/8miwq5BgdwQGai2GLJ53lGYi2bK9saWonuDyn8N5GyQTcXwWaHyZ1rifOt7UzWVcifCGN+5Im3XUI9kIgLTDBxT4XoF///kQLdONoR2OitCaE16JBUXLkBI2Pfc8g5HyN/9JCGvZgl5XuxdjdfVVP6WKpqdcgMKhx+yGPb7kNR/FU1plxacw3Bcypbedy8lvmETCHbWTY7qUO7wNZ1eDx8b+89NilinfaXRgu5nVN6y5QgGL84UU65jfeWCtmeWhLIXbSyal/gd4dZ9tkmA4Pl4nJ6UqgmcJvBZ8zPdkUo41WfU2hGaTGjP34H3+tohUpGlc3+9U2Hhe3p0OAK5F9NUMp3i/pvGXsjb+vb4jrmdSjrsBPqM7OJDN0GiOFZljdaOtrJc3rkYfj63L0SM9BaKBuOieIoPaCuc6zhqWfbjwQmkAbet2GofG3eaYy1M876Om1wBC/aODDaial++si/RNwlwQ6xyKf3DQp1bypow4cFcNN0bP60Y0v83QTaNn+12QZT+5oqozMKJLOGnDWxjsr/WEHq+sl6sJimSNvYfql75PnQnd0pATsJ0gHOHdtmugc0IWI8SrtkkJjbxsi6fdHP1xYiyf1gMGasXLOxFVABn1LPUK/j49+C0cL9tqNf//HS7HyYGhqknSeLA6FYFUAJKhGwOHKh/Ku7hyX16K5kdYBbHKC6aACSqk62MIJsGEUIPFW4XSuV4kEjZqcYp+MX/X4+gGC/Ei4z4H93/J/OSknYwLIeztaOnIsumOog0Z23q236paOLpQLCXNmPL12iRJp39DXdk0sRb6p3E6H/YGGpdOVS4debRj9vU2Y/baRyv5XXNK+5O9jRie6iw0hAAmPPlPC8YsrJSzmLtX/rw+y+ax5B0yfHgvv8nWjy0vzrpFnVaTFrIi7y7MH1W2+KUwPaEYnVsIcmMyTMdycMtidBjNCxYAR3g4seBnnfXSKnqI69K2Lod/+VNEHSemjjPcpSK5Dx4/+QmgqUkuUNj8j/lWVipqhb7YRvZeyvzQhLUGWx4S6RcmOh7/hqqFZiG6S8LIAecLn+8hsUAosZ87C6TLkXYdTmMxahUuCnO72aBIkDc7bNmFMfxQE+EyeZ2Most9K5rsE6LHIO5JkMfLPFTgGhSO2QsF5fY7AyCYXij7vj8r/x2/+/KodnSaKBBIpc47juEbWxeWYT9yZJRo+9s84QzvBr/sxvy4KzcsDkHpVOrwVI7fMysx5eXPJoKore7gG0MPK4+6DmRWCxGBZtSkSkYnLEbMB/rqzBygXe0EFjiJNhWaLHYeCmwJKwJQrD305dtL5XB86jjz6J/3Ti05JY8zCuJv68iQzv+CnPQAyuOUO72eGaqBGf/+DYTdTfT3GmhCSkn2RQUiy64udr+i1YzDyrQHFwGmKX7JS6gQzlqVPP5iIAKtobj5uhVUh5Kb5Ctwwiw8oRDIfQfovT4+28hAs4xMOh9BQWDfBBPd0XTCYY0cVTiW3/K7zaMV6pUs0UL85wiAB7wekN2Xy2ebjVWR/+9Jf23nA7x0XsnXYvUwddQHHolTI5DzDwmxnWi1f2/71ndFDSuxiqMsQ9bZKiDeybpEV4tQyenMLMf0M/2gjTJDZDy4EWthDiNXAdOJb7u/i6JTh0EI64sxxDi/o35w1ww0ObtWhIUymk1Qj14j99NvvFjlTaon7lHn1Mp6WDnfxEFdL3TWhR1CrTT4qj0UCFmXd6WGmI1DW2k063XPIP8PQ/ioUU9HFRfpdGfiYlaibGypHdye/seLOzuv+VJnj7azxKz47MaP7IfwbVWLTZ/lpfhInHxBrNylcS6ki3EltwQzBhHnnvs6t6NhLov6eD0f+/+9nb9x9DDuCA0j43R9W1tsJQFr4GW4ReOyrBodwUYYGIZ9wNx9qvL527Tah5idk5APwqRJVQVSMKqAh3/xIrfTNMxniwhor+5gly7GW5evbp10XRfQ/9i4q+uz/Eb8NoAqvNhoRrqWywEjNkFmcWgOmbszuJ3LuKZBDaCfaHzqf5Npsfe08ik2YOmn7Qu73zyGTMxQ24AYSgFbVaj8UWUTAWb7382WkL/AeYy4At21Nc5Tc9bXezabdmDFTh+tur3u1PX7SMznDh8WGM5KCLoBqRZr5tIoT76bH2J3jT/CBzfvpVx/pm76UVpdZ7lKf5r+0Iy+XPfQ1O6U9j//HjFu67FFCGp5XPyFAXNVaEbxKx6wo0wPY7/sQAAAAAAAAA==">
+  <h1>ZEDAM GYM</h1>
+  <div class="tg2">دليلك الشامل للتمرين</div>
+  <p id="stp">أدخل معلوماتك لبدء تمرين اليوم</p>
+  <div class="fm" id="fm">
+    <div class="fd" id="fln"><label for="ln">اللقب</label><input id="ln" autocomplete="family-name" maxlength="30"><div class="m" id="eln"></div></div>
+    <div class="fd" id="ffn"><label for="fn">الاسم</label><input id="fn" autocomplete="given-name" maxlength="30"><div class="m" id="efn"></div></div>
+    <div class="fd" id="fph"><label for="ph">رقم الهاتف</label><input id="ph" type="tel" inputmode="tel" dir="ltr" style="text-align:right" placeholder="0555 12 34 56" autocomplete="tel" maxlength="16" onkeydown="if(event.key=='Enter')saveM()"><div class="m" id="eph"></div></div>
+    <button class="nx" onclick="saveM()">ابدأ التمرين</button>
+  </div>
+</div>
+<div id="hm" class="hid hm">
+  <div class="bn"><img id="lg3" alt="" width="58" height="58" onclick="tapLogo()"><div><b>Welcome to ZEDAM GYM</b><small>أهلاً بك في قاعتك</small></div></div>
+  <div class="gr"><h2 id="hn"></h2><div class="pn" id="hp"></div><button class="lk" onclick="stForm()">تعديل معلوماتي</button><button class="lk hid" id="adm" style="display:block" onclick="adminOff()">وضع المدير مفعّل · اضغط للخروج</button></div>
+  <button class="nx go" onclick="EDIT=false;home()">بداية البرنامج</button>
+  <div class="ct">
+    <a class="cb" id="cc" target="_blank" rel="noopener" onclick="return cl()"><span>تقديم شكوى</span><span class="ch">‹</span></a>
+    <a class="cb" id="ci" target="_blank" rel="noopener" onclick="return cl()"><span>تقديم استفسار</span><span class="ch">‹</span></a>
+    <a class="cb" id="cp" onclick="return cl()"><span>رقم هاتف القاعة</span><small id="cpn" dir="ltr"></small></a>
+  </div>
+  <div class="nt" id="nt"></div>
+  <div class="an"><h3>📢 إعلانات القاعة</h3><div id="an"></div></div>
+</div>
+<div id="home" class="hid"><div class="qs">
+  <div class="tr"><button class="bk2 b3" onclick="showHm()"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M9 6l6 6-6 6"/></svg>الرئيسية</button><button class="eb" id="eb" onclick="tgE()"></button></div>
+  <div class="qh"><img id="lg2" alt="" width="56" height="56"><div class="qz">ZEDAM GYM</div></div>
+  <button class="tk" onclick="trk()">📈 متابعة تقدمي</button>
+  <div class="qt">مقترحات برامج تدريبية</div>
+  <div class="qg" id="qg"></div>
+</div></div>
+<div id="prg" class="hid"><div class="qs">
+  <button class="bk2 b3" onclick="home()"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M9 6l6 6-6 6"/></svg>البرامج</button>
+  <div class="qt" id="pt"></div>
+  <div class="vc" id="vch"></div><div id="vm"></div>
+    <div id="rows"></div>
+</div></div>
+<div id="pm2" class="hid ov"><div class="mdl"><h3>وضع المدير</h3><input id="pin" type="password" inputmode="text" autocapitalize="characters" autocomplete="off" maxlength="20" placeholder="الرمز السري" onkeydown="if(event.key=='Enter')chkPin()"><div class="vn" id="pe"></div><button class="nx" style="margin-top:8px" onclick="chkPin()">دخول</button><button class="lk" onclick="closePin()">إلغاء</button></div></div>
+<div id="trk" class="hid"><div class="qs">
+  <button class="bk2 b3" onclick="home()"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M9 6l6 6-6 6"/></svg>البرامج</button>
+  <div class="qt">متابعة تقدمي</div>
+  <div class="vc" id="tmc"></div>
+  <div id="tsl"></div>
+  <div class="tcd" id="tcd"></div>
+  <div class="tch" id="tch"></div>
+  <div class="zg"><h3 id="tft" style="margin:0 0 10px"></h3><div id="tfm"></div></div>
+  <div class="zg"><h3 style="margin:0 0 4px">السجل</h3><div id="thl"></div></div>
+</div></div>
+<div id="det" class="hid"></div>
+<div id="fin" class="hid fin">
+  <button class="bk2" style="position:absolute;top:calc(16px + env(safe-area-inset-top,0px));inset-inline-start:20px;color:var(--ink)" onclick="showProg()"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M9 6l6 6-6 6"/></svg>البرنامج</button>
+  <h2>أنهيت تمرين اليوم 💪</h2>
+  <p>أحسنت. اشرب الماء وخذ وقتك في الاستشفاء.</p>
+  <button class="nx" onclick="reset()">ابدأ من جديد</button>
+</div>
+</div>
+<script>
+/* ===== 1) إعدادات القاعة: عدّلها هنا ===== */
+var GYM_PHONE="0665200291",ANN=["مرحباً بكم في تطبيق ZEDAM GYM الجديد 💪"];
+/* ===== 2) التمارين: لكل تمرين حقل img لإضافة صورة لاحقاً ===== */
+var P=[
+{n:"ضغط البنش بالبار",s:4,r:"8-10",rest:90,m:"الصدر (الأوسط)",st:["استلقِ على البنش وثبّت قدميك على الأرض.","أمسك البار بعرض أوسع قليلاً من الكتفين.","أنزل البار ببطء إلى منتصف الصدر.","ادفع للأعلى دون قفل المرفقين تماماً."],er:["رفع الأرداف عن البنش","ترك البار يرتد على الصدر","وزن ثقيل بدون مساعد"]},
+{n:"ضغط الدمبل المائل",s:3,r:"10-12",rest:75,m:"أعلى الصدر",st:["اضبط البنش على زاوية 30 درجة تقريباً.","ابدأ والدمبلين بجانب الصدر.","ادفع للأعلى مع تقريبهما قليلاً.","انزل ببطء مع الإحساس بتمدد الصدر."],er:["زاوية البنش مرتفعة (تتحول إلى أكتاف)","حركة سريعة"]},
+{n:"تفتيح الدمبل",s:3,r:"12-15",rest:60,m:"الصدر (عزل)",st:["استلقِ والدمبلين فوق الصدر والكوع مثني قليلاً.","افتح الذراعين على شكل قوس.","اشعر بالتمدد ثم ارجع للأعلى كأنك تحتضن شجرة."],er:["مدّ الذراعين بالكامل","وزن زائد يحوّل الحركة إلى ضغط"]},
+{n:"ترايسيبس كابل بالحبل",s:3,r:"12-15",rest:60,m:"الترايسيبس",st:["قف أمام الكابل وثبّت مرفقيك بجانب جسمك.","ادفع الحبل للأسفل حتى يستقيم الذراع.","افتح الحبل قليلاً في الأسفل ثم ارجع ببطء."],er:["تحريك المرفقين للأمام والخلف","ميلان الجسم لاستعمال الوزن"]},
+{n:"ترايسيبس خلف الرأس",s:3,r:"10-12",rest:60,m:"الترايسيبس (الرأس الطويل)",st:["أمسك دمبل بيدين فوق الرأس.","أنزله خلف الرأس مع تثبيت المرفقين.","ادفع للأعلى حتى استقامة الذراعين."],er:["فتح المرفقين للخارج","تقوّس مبالغ في أسفل الظهر"]}
+];
+/* ===== 3) البرامج التدريبية: أضف برنامجاً جديداً هنا ===== */
+var SH=[{n:"ضغط الأكتاف بالدمبل",s:3,r:"8-10",rest:90,m:"الأكتاف",st:["اجلس على بنش بظهر مسنود وأمسك الدمبلين بجانب الأذنين.","ادفع الدمبلين للأعلى حتى يقتربا من بعضهما فوق الرأس.","انزل ببطء حتى مستوى الأذنين."],er:["تقوّس أسفل الظهر","نزول قصير بدون تحكم"]},
+{n:"رفرفة جانبية",s:3,r:"12-15",rest:60,m:"الأكتاف (الجانبية)",st:["قف ممسكاً دمبلين بجانب الجسم والمرفق مثني قليلاً.","ارفع الذراعين للجانبين حتى مستوى الكتفين.","انزل ببطء دون تأرجح."],er:["تحريك الجسم لرفع الوزن","رفع الكتفين نحو الأذنين"]}];
+function E(n,s,r,rest,m,st,er){return{n:n,s:s,r:r,rest:rest,m:m,st:st.split("|"),er:er.split("|")}}
+var X={bench:P[0],incline:P[1],fly:P[2],rope:P[3],over:P[4],shp:SH[0],lat:SH[1],
+pulldown:E("سحب أمامي بالكابل",3,"10-12",75,"الظهر (العرض)","اجلس وثبّت فخذيك تحت الوسادة.|اسحب البار إلى أعلى الصدر مع إبعاد المرفقين للخلف.|ارجع ببطء حتى تمتد الذراعان.","الاستعانة بميلان الجسم|سحب البار خلف الرأس"),
+brow:E("تجديف بالبار",4,"8-10",90,"الظهر (السماكة)","انحنِ للأمام بظهر مستقيم والبار عند الركبتين.|اسحب البار نحو أسفل البطن.|انزل ببطء مع التحكم.","تقوّس الظهر|رفع الجذع مع كل تكرار"),
+crow:E("تجديف جلوس بالكابل",3,"10-12",75,"الظهر (الوسط)","اجلس بظهر مستقيم وقدماك على المسند.|اسحب المقبض نحو البطن مع ضم لوحي الكتف.|ارجع ببطء دون ميلان للأمام.","الميلان الكبير للخلف|رفع الكتفين"),
+dbrow:E("تجديف بالدمبل (ذراع واحدة)",3,"10-12",60,"الظهر","ضع ركبة ويداً على البنش وظهرك مستقيم.|اسحب الدمبل نحو الخصر مع إبقاء المرفق قريباً من الجسم.|انزل ببطء.","لف الجذع|سحب الدمبل بالكتف"),
+rear:E("رفرفة خلفية بالدمبل",3,"12-15",60,"الأكتاف (الخلفية)","انحنِ للأمام وظهرك مستقيم والدمبلان تحت الصدر.|ارفع الذراعين للجانبين مع مرفق مثني قليلاً.|انزل ببطء.","وزن زائد|استعمال الظهر في الرفع"),
+bbc:E("بايسبس بالبار",3,"10-12",60,"البايسبس","قف وأمسك البار بعرض الكتفين.|اثنِ المرفقين وارفع البار دون تحريك الجذع.|انزل ببطء.","التأرجح بالجسم|تحريك المرفقين للأمام"),
+hammer:E("بايسبس مطرقة بالدمبل",3,"10-12",60,"البايسبس (العضدية)","أمسك الدمبلين والكفان متقابلان.|ارفعهما بالتناوب مع تثبيت المرفقين.|انزل ببطء.","التأرجح|رفع الكتفين"),
+dips:E("متوازي (Dips)",3,"8-12",75,"الترايسبس","ثبّت جسمك على المتوازي والذراعان مستقيمتان.|انزل حتى زاوية 90 درجة بالمرفقين.|ادفع للأعلى.","فتح المرفقين للخارج|نزول عميق يضغط على الكتف"),
+squat:E("سكوات بالبار",4,"8-10",120,"الأرجل (الأمامية)","ضع البار على أعلى الظهر وقدماك بعرض الكتفين.|انزل بالوركين للخلف والأسفل مع ظهر مستقيم.|ادفع بالكعبين للصعود.","انحناء الركبتين للداخل|رفع الكعبين"),
+lpress:E("ضغط الأرجل (Leg press)",3,"10-12",90,"الأرجل (الأمامية)","اجلس وظهرك ملتصق بالمسند وقدماك بعرض الكتفين.|أنزل المنصة حتى زاوية 90 درجة بالركبتين.|ادفع دون قفل الركبتين.","رفع الأرداف عن المقعد|قفل الركبتين"),
+lext:E("تمديد الأرجل بالجهاز",3,"12-15",60,"الفخذ الأمامي","اضبط الجهاز وثبّت ظهرك.|مدّ الساقين حتى استقامتهما.|انزل ببطء.","رفع الأرداف|حركة سريعة"),
+rdl:E("رومانيان ديدليفت",3,"8-10",90,"الفخذ الخلفي","أمسك البار وقدماك بعرض الوركين.|مرّر البار بمحاذاة الساقين للأسفل مع ظهر مستقيم.|ارجع بدفع الوركين للأمام.","تقوّس الظهر|ثني الركبتين كثيراً"),
+lcurl:E("ثني الأرجل بالجهاز",3,"10-12",60,"الفخذ الخلفي","استلقِ على الجهاز واضبط الوسادة فوق الكعبين.|اثنِ الساقين نحو الأرداف.|ارجع ببطء.","رفع الوركين|وزن زائد"),
+calf:E("سمانة واقف",4,"15-20",45,"السمانة","قف على الحافة وكعباك للأسفل.|ارتفع على أطراف الأصابع بأقصى ما تستطيع.|انزل ببطء حتى التمدد.","حركة قصيرة|الارتداد السريع"),
+crunch:E("كرنش بطن",3,"15-20",45,"البطن (العلوي)","استلقِ وركبتاك مثنيتان ويداك بجانب الرأس.|ارفع الكتفين عن الأرض بتقلص البطن.|انزل ببطء.","سحب الرقبة|رفع الظهر كله"),
+lraise:E("رفع الأرجل",3,"10-15",45,"البطن (السفلي)","استلقِ أو علّق جسمك على العقلة.|ارفع الساقين مستقيمتين حتى 90 درجة.|انزل ببطء دون ارتداد.","تقوّس الظهر|التأرجح"),
+plank:E("بلانك (ثبات)",3,"45 ثانية",45,"البطن (الثبات)","اسند الجسم على الساعدين وأصابع القدمين.|ثبّت الجسم في خط مستقيم.|تنفس بانتظام.","هبوط الوركين|رفع الأرداف"),
+run:E("جري على السير",1,"20 دقيقة",0,"كارديو","ابدأ بمشي سريع 3 دقائق للإحماء.|ارفع السرعة تدريجياً إلى وتيرة مريحة.|اختم بمشي بطيء للتهدئة.","الانطلاق بسرعة عالية|الإمساك بالمقبض طوال الوقت"),
+bike:E("دراجة ثابتة",1,"20 دقيقة",0,"كارديو","اضبط ارتفاع المقعد.|حافظ على مقاومة متوسطة وإيقاع ثابت.|اختم بتهدئة دقيقتين.","مقعد منخفض|ظهر محني"),
+jump:E("حبل القفز",3,"1 دقيقة",30,"كارديو","أمسك الحبل واقفز بارتفاع بسيط.|ابقَ على أطراف القدمين.|حافظ على إيقاع ثابت.","قفز عالٍ|ثني الركبتين كثيراً"),
+burpee:E("بيربي",3,"10",45,"جسم كامل","انزل للأرض بوضع الضغط.|اضغط ثم ارجع بالقدمين نحو اليدين.|اقفز للأعلى مع تصفيق.","هبوط الوركين|هبوط قاسٍ"),
+kb:E("أرجحة الكيتل بيل",3,"15",45,"جسم كامل (الوركان)","قف وقدماك أوسع من الكتفين وأمسك الكيتل بيل بيدين.|مرجح للخلف بين الساقين ثم ادفع الوركين للأمام.|دع الكيتل بيل يرتفع لمستوى الصدر.","الرفع بالذراعين|ظهر مقوّس"),
+boxj:E("قفز على الصندوق",3,"10",45,"الأرجل","قف أمام الصندوق وقدماك بعرض الكتفين.|اقفز بقوة وهبّط بخفة بركبتين مثنيتين.|انزل بالخطوة وليس بالقفز.","هبوط بقدمين متصلبتين|صندوق مرتفع جداً")};
+function G(m,i){return{m:m,ids:i.split(" ")}}
+var LEGS=[G("الأرجل الأمامية","squat lpress lext"),G("الأرجل الخلفية","rdl lcurl"),G("السمانة","calf")];
+var PROGRAMS=[
+{id:"push",g:[G("الصدر","bench incline"),G("الأكتاف","shp lat"),G("الترايسبس","rope over")]},
+{id:"pull",g:[G("الظهر","pulldown brow crow"),G("الأكتاف الخلفية","rear"),G("البايسبس","bbc hammer")]},
+{id:"cta",g:[G("الصدر","bench incline fly"),G("الترايسبس","rope over"),G("البطن","crunch lraise")]},
+{id:"bt",g:[G("الظهر","pulldown brow crow dbrow"),G("الترايسبس","rope over dips")]},
+{id:"sa",g:[G("الأكتاف","shp lat rear"),G("البطن","crunch lraise plank")]},
+{id:"leg",g:LEGS},{id:"legfull",g:LEGS},
+{id:"bit",g:[G("البايسبس","bbc hammer"),G("الترايسبس","rope over dips")]},
+{id:"upper",g:[G("الصدر","bench incline"),G("الظهر","pulldown crow"),G("الأكتاف","shp lat"),G("الذراعان","bbc rope")]},
+{id:"lower",g:[G("الأرجل الأمامية","squat lpress"),G("الأرجل الخلفية","rdl lcurl"),G("السمانة","calf"),G("البطن","crunch lraise")]},
+{id:"quad",g:[G("الفخذ الأمامي","squat lpress lext")]},
+{id:"hams",g:[G("الفخذ الخلفي","rdl lcurl"),G("السمانة","calf")]},
+{id:"abs",g:[G("البطن العلوي","crunch"),G("البطن السفلي","lraise"),G("الثبات","plank")]},
+{id:"cardio",g:[G("كارديو","run bike jump")]},
+{id:"cf",g:[G("جسم كامل","burpee kb boxj")]}];
+var LIB=X;Object.keys(X).forEach(function(k){X[k].id=k});
+/* ===== 4) التخزين: كل ميزة جديدة تأخذ مفتاحها (weights، measures...) ===== */
+var store={g:function(k,d){try{if(!ADMIN&&/^(ox|nm|plans3|pg2:|ld|cells)/.test(k))return d;var v=localStorage.getItem("zg:"+k);return v?JSON.parse(v):d}catch(e){return d}},s:function(k,v){try{localStorage.setItem("zg:"+k,JSON.stringify(v))}catch(e){}},r:function(k){try{localStorage.removeItem("zg:"+k)}catch(e){}}};
+var BP="",VID="",CP="",CT="",C=2*Math.PI*88,D={},cur=0,tab=0,ti=null,end=0,tot=0,K="zg-"+new Date().toISOString().slice(0,10);
+function $(i){return document.getElementById(i)}
+function ld(){D=store.g("progress:"+K,{})}
+function sv(){store.s("progress:"+K,D)}
+function dk(i){return CP+":"+(P[i]?P[i].id:i)}
+function cnt(i){return(D[dk(i)]||[]).filter(Boolean).length}
+function fmt(t){t=Math.max(0,Math.ceil(t));var m=Math.floor(t/60),s=t%60;return m+":"+(s<10?"0":"")+s}
+function show(id){hsync(id);["st","hm","home","prg","trk","det","fin"].forEach(function(x){var b=x=="fin"?"fin":x=="st"?"st":x=="hm"?"hm":"";$(x).className=((x==id?"":"hid ")+b).trim()});[].forEach.call(document.querySelectorAll("video"),function(v){v.pause()});window.scrollTo(0,0)}
+var M={};
+function gpn(){var p=(GYM_PHONE||"").replace(/\D/g,"");if(p.charAt(0)=="0")p="213"+p.slice(1);return p}
+function cl(){if(!gpn()){$("nt").textContent="لم يتم إضافة رقم القاعة بعد.";return false}$("nt").textContent="";return true}
+function wa(t){return"https://wa.me/"+gpn()+"?text="+encodeURIComponent("السلام عليكم، أنا "+M.fn+" "+M.ln+" ("+M.ph+").\n"+t)}
+function splash(){SPL=true;show("st");$("sb").className="hid bk2";$("fm").className="hid";$("stp").className="hid";$("st").className+=" sp";setTimeout(showHm,1400)}
+function showHm(){SPL=false;
+  $("hn").textContent="مرحباً، "+M.fn+" "+M.ln;$("hp").textContent=M.ph;
+  $("an").innerHTML=ANN.length?ANN.map(function(x){return'<div class="ai">'+x+'</div>'}).join(""):'<div class="ai mt">لا توجد إعلانات حالياً</div>';
+  var p=gpn();$("cc").href=p?wa("شكوى: "):"#";$("ci").href=p?wa("استفسار: "):"#";$("cp").href=p?"tel:+"+p:"#";
+  $("cpn").textContent=GYM_PHONE||"غير مضاف بعد";$("adm").className=ADMIN?"lk":"lk hid";$("nt").textContent="";show("hm")}
+function ldM(){M=store.g("member",{})}
+function svM(){store.s("member",M)}
+function stForm(){SPL=false;$("sb").className=M.ph?"bk2":"hid bk2";$("fm").className="fm";$("stp").className="";$("ln").value=M.ln||"";$("fn").value=M.fn||"";$("ph").value=M.ph||"";["ln","fn","ph"].forEach(function(k){setE(k,"")});show("st")}
+function setE(k,m){$("f"+k).className="fd"+(m?" er":"");$("e"+k).textContent=m}
+function saveM(){
+  var ln=$("ln").value.trim(),fn=$("fn").value.trim(),ok=true,
+  ph=$("ph").value.replace(/[\u0660-\u0669]/g,function(c){return c.charCodeAt(0)-1632}).replace(/[\s.\-()]/g,"");
+  if(ln.length<2){setE("ln","أدخل اللقب");ok=false}else setE("ln","");
+  if(fn.length<2){setE("fn","أدخل الاسم");ok=false}else setE("fn","");
+  if(!/^(0|\+?213)[567]\d{8}$/.test(ph)){setE("ph","أدخل رقماً صحيحاً من 10 أرقام يبدأ بـ 05 أو 06 أو 07");ok=false}else setE("ph","");
+  if(!ok)return;
+  M={ln:ln,fn:fn,ph:ph.replace(/^\+?213/,"0")};svM();showHm()}
+/* نصوص افتراضية للمربعات الـ 18 (تظهر لكل المتدربين). مثال: PLANS=["دفع","سحب",...] */
+var PLANS=[{t:"صدر + ترايسبس + بطن",p:"cta"},{t:"Pull day\nظهر + كتف + بايسبس",p:"pull"},{t:"ظهر + ترايسبس",p:"bt"},{t:"Push day\nصدر + كتف + ترايسبس",p:"push"},{t:"أكتاف + بطن",p:"sa"},{t:"Leg day\nأرجل",p:"leg"},{t:"بايسبس + ترايسبس",p:"bit"},{t:"Upper day\nالجزء العلوي",p:"upper"},{t:"برنامج\nأرجل كاملة",p:"legfull"},{t:"Lower day\nالجزء السفلي",p:"lower"},{t:"أرجل أمامي",p:"quad"},{t:"أرجل خلفي",p:"hams"},{t:"برنامج\nتمارين بطن",p:"abs"},{t:"كارديو",p:"cardio"},{t:"Cross fit",p:"cf"},{t:""},{t:""},{t:""}];
+var EDIT=false;
+function fit(t){if(!t.offsetParent)return;t.style.height="auto";t.style.height=t.scrollHeight+"px"}
+function ov(){return store.g("plans3",{})}
+function tgE(){if(!ADMIN)return;EDIT=!EDIT;home()}
+function cells(){var c=store.g("cells",null);if(c)return c;var o=ov();return PLANS.map(function(q,i){return{k:q.p||"x"+i,p:q.p||"",t:o[i]!=null?o[i]:q.t}})}
+function home(){var g=$("qg"),L=cells();g.innerHTML="";
+  if(!ADMIN)EDIT=false;$("eb").textContent=EDIT?"تم ✓":"✏️ تعديل";$("eb").className=(ADMIN?"":"hid ")+"eb"+(EDIT?" on":"");
+  L.forEach(function(q,i){var c;
+    if(EDIT){c=el("div","qc");var a=el("textarea","qi");a.rows=1;a.maxLength=80;a.value=q.t;a.setAttribute("aria-label","خانة "+(i+1));
+      a.oninput=function(){q.t=a.value;store.s("cells",L);fit(a)};c.onclick=function(){a.focus()};c.appendChild(a);
+      var x=el("button","qx2","✕");x.setAttribute("aria-label","حذف الخانة");
+      x.onclick=function(ev){ev.stopPropagation();if(x.dataset.c){L.splice(i,1);store.s("cells",L);home()}else{x.dataset.c="1";x.textContent="حذف؟";x.className="qx2 on";setTimeout(function(){x.dataset.c="";x.textContent="✕";x.className="qx2"},3000)}};c.appendChild(x)}
+    else{c=el(q.t?"button":"div","qc"+(q.t?"":" em"));if(q.t){c.textContent=q.t;c.onclick=function(){openP(i)}}}
+    g.appendChild(c)});
+  if(EDIT){var ad=el("button","qadd","+ إضافة خانة");ad.onclick=function(){L.push({k:"n"+Date.now(),p:"",t:""});store.s("cells",L);home();var t=g.querySelectorAll(".qi");if(t.length)t[t.length-1].focus()};g.appendChild(ad);
+    var ex=el("button","qadd","📋 تصدير الخانات");ex.onclick=function(){var t=JSON.stringify(L.map(function(q){return{k:q.k,p:q.p,t:q.t}})),ta=g.querySelector(".vt")||g.appendChild(el("textarea","vt"));ta.style.gridColumn="1/-1";ta.readOnly=true;ta.value=t;ta.select();try{navigator.clipboard.writeText(t)}catch(e){}};g.appendChild(ex)}
+  show("home");if(EDIT)[].forEach.call(g.querySelectorAll(".qi"),fit)}
+function ck(){return BP+(VID?"#"+VID:"")}
+var LV=[{id:"b",n:"مبتدئ"},{id:"",n:"متقدم"},{id:"p",n:"متقدم جداً"}];
+var LDESC={b:"مبتدئ: تمرينان لكل عضلة، من 2 إلى 3 مجموعات، تكرار أعلى (من 12 إلى 15) وراحة أطول.","":"متقدم: البرنامج الأساسي بتمارينه ومجموعاته المعتادة.",p:"متقدم جداً: تمرين إضافي لكل عضلة، مجموعة أكثر (حتى 5 مجموعات)، وتكرار أقل بوزن أثقل."};
+var XT=[["الأكتاف الخلفية",["lat"]],["الأكتاف",["rear","lat"]],["الصدر",["fly","dips"]],["الظهر",["dbrow","crow","pulldown","brow"]],["الترايسبس",["dips","over","rope"]],["البايسبس",["hammer","bbc"]],["الذراعان",["hammer","over"]],["الأرجل الأمامية",["lext","lpress","squat"]],["الفخذ الأمامي",["lext"]],["الأرجل الخلفية",["lcurl","rdl"]],["الفخذ الخلفي",["lcurl","rdl"]],["البطن",["plank","lraise","crunch"]]];
+var TR={"8-10":"6-8","10-12":"8-10","12-15":"10-12","15-20":"12-15","10-15":"8-12","8-12":"6-10"};
+function xt(m,ids){for(var i=0;i<XT.length;i++)if((m||"").indexOf(XT[i][0])>=0){return XT[i][1].filter(function(x){return ids.indexOf(x)<0})[0]||""}return ""}
+function lv(e){var r=e.r+"",num=/^\d+$/.test(r);
+  if(VID=="b"){if(e.s==1){if(/دقيقة/.test(r))e.r="10-15 دقيقة"}else{if(num)e.r=Math.max(6,Math.round(r*.7))+"";else if(/ثانية|دقيقة/.test(r))e.r="30 ثانية";else e.r="12-15";if(!/ثانية|دقيقة/.test(r))e.s=Math.max(2,e.s-1)}if(e.rest)e.rest+=15}
+  else if(VID=="p"){if(e.s==1){if(/دقيقة/.test(r))e.r="30 دقيقة"}else{e.s=Math.min(5,e.s+1);if(num)e.r=Math.round(r*1.3)+"";else if(/ثانية/.test(r))e.r="60 ثانية";else if(/دقيقة/.test(r))e.r="2 دقيقة";else e.r=TR[r]||r}}}
+function vst(){var d={v:LV.map(function(x){return{id:x.id,n:x.n}}),cur:"b"};if(ADMIN)return store.g("pv2:"+BP,d);var c=store.g("lvcur:"+BP,"b");d.cur=d.v.some(function(y){return y.id==c})?c:"b";return d}
+function svV(v){if(ADMIN)store.s("pv2:"+BP,v);else store.s("lvcur:"+BP,v.cur)}
+function openP(i){var q=cells()[i];BP=PROGRAMS.some(function(x){return x.id==q.p})?q.p:q.k;VID=vst().cur;CP=ck();P=[];CT=q.t;showProg()}
+function el(t,c,x){var n=document.createElement(t);if(c)n.className=c;if(x!=null)n.textContent=x;return n}
+function gs(){var u=store.g("pg2:"+CP,null);if(!u){var pr=PROGRAMS.filter(function(x){return x.id==BP})[0];u={g:(pr?pr.g:[{m:"",ids:[]}]).map(function(g){var ids=g.ids.slice();if(VID=="b")ids=ids.slice(0,2);else if(VID=="p"){var x=xt(g.m,ids);if(x)ids.push(x)}return{m:g.m,ids:ids,c:[]}})}}return u}
+function svG(u){store.s("pg2:"+CP,u)}
+function vch(){var v=vst(),c=$("vch"),m=$("vm");c.innerHTML="";m.innerHTML="";
+  if(v.v.length<2&&!ADMIN)return;
+  v.v.forEach(function(x){var b=el("button","vchip"+(x.id==VID?" on":""),x.n||"—");b.onclick=function(){v.cur=x.id;svV(v);VID=x.id;CP=ck();showProg()};c.appendChild(b)});
+  var ldm=store.g("ld",{}),dt=ldm[CP]!=null?ldm[CP]:(LDESC[VID]||"");
+  if(ADMIN){var ta=el("textarea","vn2");ta.rows=2;ta.maxLength=300;ta.placeholder="ملاحظات هذا المستوى (تظهر للمتدرب)";ta.value=dt;ta.oninput=function(){var l=store.g("ld",{});l[CP]=ta.value;store.s("ld",l);fit(ta)};m.appendChild(ta)}
+  else if(dt)m.appendChild(el("div","pm",dt));
+  if(!ADMIN)return;
+  var a=el("button","vchip vadd","+ مستوى");a.onclick=function(){var id="v"+Date.now();v.v.push({id:id,n:"مستوى "+(v.v.length+1)});v.cur=id;svV(v);VID=id;CP=ck();showProg()};c.appendChild(a);
+  var cur=v.v.filter(function(x){return x.id==VID})[0]||v.v[0],i=el("input","zm"),r=el("div","vr2"),nt=el("div","vn");
+  i.placeholder="اسم المستوى (مبتدئ، متقدم...)";i.maxLength=20;i.value=cur.n;i.style.width="100%";i.style.marginTop="10px";
+  i.oninput=function(){cur.n=i.value;svV(v);var ch=c.querySelector(".vchip.on");if(ch)ch.textContent=i.value||"—"};
+  m.appendChild(i);
+  if(v.v.length>1){var d=el("button","vx","حذف هذا المستوى");d.onclick=function(){var k=BP+(cur.id?"#"+cur.id:"");store.r("pg2:"+k);Object.keys(D).forEach(function(q){if(q.indexOf(k+":")==0)delete D[q]});sv();var o=ox();Object.keys(o).forEach(function(q){if(q.indexOf(k+":")==0)delete o[q]});store.s("ox",o);v.v=v.v.filter(function(x){return x!==cur});v.cur=v.v[0].id;svV(v);VID=v.cur;CP=ck();showProg()};r.appendChild(d)}
+  var ex=el("button","vx","📋 تصدير هذا المستوى");ex.onclick=function(){var u=gs(),o=ox(),nm2=store.g("nm",{}),ld2=store.g("ld",{}),t=JSON.stringify({program:CT,level:cur.n,note:ld2[CP]!=null?ld2[CP]:(LDESC[VID]||""),groups:u.g.map(function(g){var l=g.ids.map(function(id){var e=Object.assign({id:id},LIB[id]);lv(e);return Object.assign(e,o[CP+":"+id])}).concat(g.c.map(function(c){return Object.assign({},c,o[CP+":"+c.id])}));return{m:g.m,ex:l.map(function(e){return{id:e.id,n:nm2[e.id]||e.n,s:e.s,r:e.r,rest:e.rest}})}})});
+    var ta=m.querySelector(".vt")||m.appendChild(el("textarea","vt"));ta.readOnly=true;ta.value=t;ta.select();nt.textContent="انسخ هذا النص وأرسله لي في المحادثة.";
+    try{navigator.clipboard.writeText(t).then(function(){nt.textContent="نُسخ النص. الصقه في المحادثة وأرسله لي."},function(){})}catch(x){}};
+  r.appendChild(ex);m.appendChild(r);m.appendChild(nt)}
+function showProg(){var u=gs(),box=$("rows");box.innerHTML="";P=[];$("pt").textContent=CT;vch();var nm=store.g("nm",{});
+  u.g.forEach(function(g){
+    var gb=el("div","zg");if(ADMIN){var h=el("input","zm");h.placeholder="اسم العضلة";h.maxLength=30;h.value=g.m;h.oninput=function(){g.m=h.value;svG(u)};gb.appendChild(h)}else if(g.m)gb.appendChild(el("div","zm",g.m));
+    g.ids.map(function(id){return{e:LIB[id]}}).concat(g.c.map(function(e,ci){return{e:e,ci:ci}})).forEach(function(it){
+      var e=Object.assign({},it.e),idx=P.length,f;if(it.ci==null)lv(e);Object.assign(e,ox()[CP+":"+it.e.id]);if(nm[e.id])e.n=nm[e.id];P.push(e);f=cnt(idx)>=e.s;
+      var r=el("div","zr"+(f?" dn":"")),b=el("button","zb");b.appendChild(el("span","",(f?"✓ ":"")+e.n));b.appendChild(el("small","",e.s+" × "+(e.r||"—")));b.onclick=function(){op(idx)};r.appendChild(b);
+      if(it.ci!=null&&ADMIN){var d=el("button","zd","✕");d.setAttribute("aria-label","حذف التمرين");d.onclick=function(){g.c.splice(it.ci,1);svG(u);showProg()};r.appendChild(d)}
+      gb.appendChild(r)});
+    var ar=el("div","za"),ai=el("input","zi"),ab=el("button","zt","إضافة");ai.placeholder="+ اكتب اسم تمرين جديد";ai.maxLength=40;
+    function add(){var v=ai.value.trim();if(!v)return;g.c.push({id:"c"+Date.now()+Math.floor(Math.random()*99),n:v,s:3,r:"10-12",rest:60,m:g.m||"",st:[],er:[]});svG(u);showProg()}
+    if(ADMIN){ab.onclick=add;ai.onkeydown=function(ev){if(ev.key=="Enter")add()};ar.appendChild(ai);ar.appendChild(ab);gb.appendChild(ar)}box.appendChild(gb)});
+  if(ADMIN){var ag=el("button","zn","+ إضافة عضلة");ag.onclick=function(){u.g.push({m:"",ids:[],c:[]});svG(u);showProg()};box.appendChild(ag)}
+  show("prg");[].forEach.call(document.querySelectorAll(".vn2"),fit)}
+function op(i){
+  cur=i;tab=0;var e=P[i];stopT();
+  $("det").innerHTML='<div class="top"><button class="bk" onclick="showProg()"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M9 6l6 6-6 6"/></svg>البرنامج</button></div>'+
+  '<div class="dp"><h2 id="en">'+e.n+'</h2><span class="tg">'+e.m+'</span><span class="tg" id="tgs">'+e.s+' × '+e.r+'</span>'+(e.img?'<img class="xi" src="'+e.img+'" alt="">':'')+
+  '<div id="ns"></div><div class="sec" id="vs"></div>'+
+  '<div class="sec" id="eds"><h3>تعديل عدد المجموعات والتكرار</h3><div class="ec"><div class="es"><button aria-label="إنقاص" onclick="chS(-1)">−</button><b id="sn">'+e.s+'</b><button aria-label="زيادة" onclick="chS(1)">+</button><small>مجموعات</small></div><div class="er"><input id="ri" maxlength="14" oninput="chR(this.value)"><small>التكرار (أو المدة)</small></div></div><div class="ec" style="margin-top:10px"><div class="es"><button aria-label="إنقاص" onclick="chRest(-15)">−</button><b id="rn">'+(e.rest?fmt(e.rest):"بدون")+'</b><button aria-label="زيادة" onclick="chRest(15)">+</button><small>وقت الراحة بين المجموعات</small></div></div></div>'+
+  '<div class="sec"><h3>اضغط القرص بعد كل مجموعة</h3><div class="plates" id="pls"></div></div>'+'<div id="lgs"></div>'+
+  '<div class="sec"><div class="tm"><div class="ring"><svg width="190" height="190" viewBox="0 0 190 190"><circle cx="95" cy="95" r="88" fill="none" stroke="rgba(255,255,255,.15)" stroke-width="9"/><circle id="arc" cx="95" cy="95" r="88" fill="none" stroke="#e11d1d" stroke-width="9" stroke-linecap="round" stroke-dasharray="'+C+'" stroke-dashoffset="0"/></svg><div class="c"><div class="n" id="tt">'+fmt(e.rest)+'</div><div class="l" id="tl">وقت الراحة</div></div></div>'+
+  '<div class="tb"><button class="bt p" id="tp" onclick="startT(P[cur].rest)">ابدأ الراحة</button><button class="bt" onclick="addT(15)">+15 ثانية</button><button class="bt" onclick="resetT()">إيقاف</button></div></div></div>'+
+  '<div class="sec"><div class="tabs"><button id="t0" class="on" onclick="stab(0)">طريقة الأداء</button><button id="t1" onclick="stab(1)">أخطاء شائعة</button></div><div class="tx" id="txt"></div></div></div>'+
+  '<div class="ft"><div class="in"><button class="nx" id="nx" onclick="nxt()"></button></div></div>';
+  pl();stab(0);nb();if(ADMIN)$("ri").value=e.r;else $("eds").remove();vid();nameEd();lgw();show("det");
+}
+function pl(){var e=P[cur],h="";for(var k=0;k<e.s;k++)h+='<button class="pl'+((D[dk(cur)]||[])[k]?' on':'')+'" aria-label="مجموعة '+(k+1)+'" onclick="tg('+k+')">'+(k+1)+'</button>';$("pls").innerHTML=h}
+function nb(){$("nx").textContent=cur<P.length-1?"التمرين التالي":"إنهاء التمرين"}
+function stab(t){tab=t;var e=P[cur],l=t?e.er:e.st,tag=t?"ul":"ol";
+  $("t0").className=t?"":"on";$("t1").className=t?"on":"";
+  $("txt").innerHTML=l.length?"<"+tag+">"+l.map(function(x){return"<li>"+x+"</li>"}).join("")+"</"+tag+">":'<div style="padding:14px 0;color:var(--mut)">لم تتم إضافة شرح لهذا التمرين بعد.</div>'}
+/* تخزين الفيديو: كل الاستدعاءات تمر من VS، فيسهل تبديله بتخزين سحابي عند التحويل إلى تطبيق */
+/* رمز المدير (مشفّر SHA-256). لتغييره اطلب مني رمزاً جديداً. ملاحظة: هذا حماية للواجهة فقط، وفي التطبيق ستكون الحماية من السيرفر */
+var ADMIN_HASH="c391c6f1608fa86d8217367046a8d30e8a666d8221974e50894b6ae52e0b49a9",ADMIN=store.g("admin",false)===true,LT=0,LC=0;
+function tapLogo(){if(ADMIN)return;var n=Date.now();if(n-LT>3000)LC=0;LT=n;if(++LC>=5){LC=0;$("pin").value="";$("pe").textContent="";$("pm2").className="ov";setTimeout(function(){$("pin").focus()},50)}}
+function closePin(){$("pm2").className="hid ov"}
+function hex(buf){return[].map.call(new Uint8Array(buf),function(b){return("0"+b.toString(16)).slice(-2)}).join("")}
+function chkPin(){var v=$("pin").value.trim().toUpperCase();if(!v)return;
+  try{crypto.subtle.digest("SHA-256",new TextEncoder().encode(v)).then(function(b){if(hex(b)==ADMIN_HASH){ADMIN=true;store.s("admin",true);closePin();showHm()}else $("pe").textContent="الرمز غير صحيح."})}catch(x){$("pe").textContent="تعذر التحقق على هذا المتصفح."}}
+function adminOff(){ADMIN=false;store.s("admin",false);showHm()}
+/* ===== متابعة التقدم: الميزان + أوزان التمارين (محفوظة على هاتف المتدرب) ===== */
+var TT="w",TS="bench",TMSG="",MI={w:{n:"الوزن",u:"كغ",lo:20,hi:300,f:"وزنك (كغ)",cur:"الوزن الحالي",t:"تسجيل الوزن"},x:{n:"الخصر",u:"سم",lo:30,hi:250,f:"محيط خصرك (سم)",cur:"الخصر الحالي",t:"تسجيل محيط الخصر"}};
+function td(){var d=new Date();return d.getFullYear()+"-"+("0"+(d.getMonth()+1)).slice(-2)+"-"+("0"+d.getDate()).slice(-2)}
+function fd(d){var a=d.split("-");return a[2]+"/"+a[1]+"/"+a[0]}
+function nm(v,c){var x=el("span",c||"",v);x.dir="ltr";return x}
+function num(v){return parseFloat(String(v).replace(/[\u0660-\u0669]/g,function(q){return q.charCodeAt(0)-1632}).replace(",",".").trim())}
+function rd(v){return Math.round(v*10)/10}
+function dfS(v){return(v>0?"+":v<0?"−":"")+Math.abs(v)}
+function sd(a,b){return a.d<b.d?-1:a.d>b.d?1:0}
+function meas(k){k=k||"w";return store.g("meas",[]).filter(function(e){return e[k]!=null}).sort(sd)}
+function lifts(){return store.g("lifts",{})}
+function card(t,v,sub){var d=el("div","tcc");d.appendChild(el("small","",t));d.appendChild(nm(v,"b"));if(sub)d.appendChild(nm(sub,"tdf"));return d}
+function chartSvg(vs){if(vs.length<2)return"";var W=300,H=130,L=34,R=12,T=14,B=14,mn=Math.min.apply(null,vs),mx=Math.max.apply(null,vs),rg=mx-mn||1,
+  X=function(i){return L+i*(W-L-R)/(vs.length-1)},Y=function(v){return mx==mn?H/2:T+(mx-v)/rg*(H-T-B)},
+  line=vs.map(function(v,i){return X(i)+","+Y(v)}).join(" "),dots=vs.map(function(v,i){return'<circle cx="'+X(i)+'" cy="'+Y(v)+'" r="3.5" fill="#e11d1d"/>'}).join(""),tx='style="fill:var(--mut);font-size:10px"';
+  return'<svg viewBox="0 0 '+W+' '+H+'" width="100%" dir="ltr"><polyline points="'+line+'" fill="none" stroke="#e11d1d" stroke-width="2.5" stroke-linejoin="round"/>'+dots+'<text x="2" y="'+(T+3)+'" '+tx+'>'+mx+'</text><text x="2" y="'+(H-B+3)+'" '+tx+'>'+mn+'</text><text x="'+X(vs.length-1)+'" y="'+(Y(vs[vs.length-1])-8)+'" text-anchor="end" style="fill:var(--ink);font-size:11px;font-weight:700">'+vs[vs.length-1]+'</text></svg>'}
+function trk(){var tb=$("tmc"),sl=$("tsl"),c=$("tcd"),ch=$("tch"),f=$("tfm"),h=$("thl"),isL=TT=="l",E,U=MI[TT]||MI.w;
+  [tb,sl,c,f,h].forEach(function(n){n.innerHTML=""});ch.innerHTML="";
+  [["w","⚖️ الميزان"],["x","📏 الخصر"],["l","🏋️ الأوزان"]].forEach(function(t){var b=el("button","vchip"+(t[0]==TT?" on":""),t[1]);b.onclick=function(){TT=t[0];TMSG="";trk()};tb.appendChild(b)});
+  if(isL){var sel=el("select","tin"),nmm=store.g("nm",{});sel.style.marginTop="12px";Object.keys(X).forEach(function(q){var o=el("option","",nmm[q]||X[q].n);o.value=q;sel.appendChild(o)});sel.value=TS;sel.onchange=function(){TS=sel.value;TMSG="";trk()};sl.appendChild(sel);E=(lifts()[TS]||[]).slice().sort(sd)}
+  else E=meas(TT).map(function(e){return{d:e.d,w:e[TT]}});
+  var l=E[E.length-1],p=E[E.length-2],f0=E[0];
+  if(!isL){c.appendChild(card(U.cur,l?l.w+" "+U.u:"—",p?dfS(rd(l.w-p.w)):""));c.appendChild(card("منذ البداية",l&&p?dfS(rd(l.w-f0.w))+" "+U.u:"—"));c.appendChild(card("آخر تسجيل",l?fd(l.d):"—"));c.appendChild(card("عدد التسجيلات",E.length+""))}
+  else{var best=E.reduce(function(a,e){return!a||e.w>a.w?e:a},null);c.appendChild(card("آخر وزن",l?l.w+" كغ"+(l.r?" × "+l.r:""):"—",p?dfS(rd(l.w-p.w)):""));c.appendChild(card("أفضل وزن",best?best.w+" كغ":"—",best?fd(best.d):""));c.appendChild(card("التحسن منذ البداية",l&&p?dfS(rd(l.w-f0.w))+" كغ":"—"));c.appendChild(card("عدد التسجيلات",E.length+""))}
+  var sv=chartSvg(E.map(function(e){return e.w}));if(sv)ch.innerHTML=sv;else ch.textContent="سجّل قياسين على الأقل ليظهر منحنى التطور.";
+  $("tft").textContent=isL?"تسجيل وزن جديد للتمرين":U.t;
+  var di=el("input","tin"),wi=el("input","tin"),ri=el("input","tin"),w0=el("div","tfd"),w1=el("div","tfd"),w2=el("div","tfd");
+  di.type="date";di.value=td();di.max=td();di.dir="ltr";w0.appendChild(el("label","","التاريخ"));w0.appendChild(di);f.appendChild(w0);
+  wi.type="text";wi.inputMode="decimal";wi.dir="ltr";wi.placeholder=l?String(l.w):"";w1.appendChild(el("label","",isL?"الوزن المحمول (كغ)":U.f));w1.appendChild(wi);f.appendChild(w1);
+  if(isL){ri.type="text";ri.inputMode="numeric";ri.dir="ltr";ri.placeholder=l&&l.r?String(l.r):"";w2.appendChild(el("label","","عدد التكرار (اختياري)"));w2.appendChild(ri);f.appendChild(w2)}
+  var sb=el("button","nx","حفظ"),ms=el("div","vn",TMSG);TMSG="";
+  sb.onclick=function(){var d=di.value,w=num(wi.value),r=isL&&ri.value.trim()?parseInt(num(ri.value)):null,lo=isL?0.5:U.lo,hi=isL?1000:U.hi;if(!d)return;
+    if(!(w>=lo&&w<=hi)){ms.textContent="أدخل قيمة صحيحة.";return}
+    if(isL&&ri.value.trim()&&!(r>=1&&r<=200)){ms.textContent="عدد التكرار غير صحيح.";return}
+    w=rd(w);
+    if(isL){var a=lifts(),arr=(a[TS]||[]).filter(function(e){return e.d!=d}),en={d:d,w:w};if(r)en.r=r;arr.push(en);a[TS]=arr;store.s("lifts",a)}
+    else{var m=store.g("meas",[]),ix=m.findIndex(function(e){return e.d==d});if(ix>=0)m[ix][TT]=w;else{var o={d:d};o[TT]=w;m.push(o)}store.s("meas",m)}
+    TMSG="تم الحفظ ✓";trk()};
+  f.appendChild(sb);f.appendChild(ms);
+  if(!E.length)h.appendChild(el("div","pm","لا توجد تسجيلات بعد."));
+  E.slice().reverse().forEach(function(e){var r=el("div","thr"),t=el("span","");t.appendChild(nm(fd(e.d)));t.appendChild(document.createTextNode("   "+e.w+" "+(isL?"كغ":U.u)+(e.r?" × "+e.r+" تكرار":"")));
+    var x=el("button","vx","✕");x.setAttribute("aria-label","حذف");
+    x.onclick=function(){if(isL){var a=lifts();a[TS]=(a[TS]||[]).filter(function(q){return q.d!=e.d});store.s("lifts",a)}else{var mm=store.g("meas",[]);mm.forEach(function(q){if(q.d==e.d)delete q[TT]});store.s("meas",mm.filter(function(q){return Object.keys(q).length>1}))}trk()};
+    r.appendChild(t);r.appendChild(x);h.appendChild(r)});
+  show("trk")}
+/* ===== زر الرجوع في أندرويد (إيماءة السحب من الحافة أو زر الرجوع): يرجع شاشة واحدة بدل الخروج ===== */
+var HD=0,HOP=false,PGO=false,SPL=false;
+function dp(id){return{hm:0,st:(M&&M.ph&&!SPL?1:0),home:1,prg:2,trk:2,det:3,fin:3}[id]}
+function hsync(id){var d=dp(id);try{
+  if(HOP){HOP=false;HD=d;return}
+  if(d>HD){for(var i=HD+1;i<=d;i++)history.pushState({d:i},"")}
+  else if(d<HD){PGO=true;setTimeout(function(){PGO=false},500);history.go(d-HD)}
+  else history.replaceState({d:d},"");
+  HD=d}catch(x){}}
+function hGo(id){HOP=true;if(id=="hm")showHm();else if(id=="home")home();else showProg()}
+try{history.replaceState({d:0},"");window.addEventListener("popstate",function(){
+  if(PGO){PGO=false;return}
+  if($("pm2").className.indexOf("hid")<0){closePin();try{history.pushState({d:HD},"")}catch(x){}return}
+  var c=["st","hm","home","prg","trk","det","fin"].filter(function(x){return $(x).className.indexOf("hid")<0})[0];
+  if(c=="det")stopT();if(c=="home")EDIT=false;
+  var par={st:"hm",home:"hm",prg:"home",trk:"home",det:"prg",fin:"prg"}[c];
+  if(!par||(c=="st"&&!(M&&M.ph))){HOP=false;return}
+  hGo(par)})}catch(x){}
+var VS={db:null,
+open:function(cb){if(VS.db)return cb(VS.db);try{var r=indexedDB.open("zg-videos",1);r.onupgradeneeded=function(){r.result.createObjectStore("v")};r.onsuccess=function(){VS.db=r.result;cb(VS.db)};r.onerror=function(){cb(null)}}catch(e){cb(null)}},
+get:function(k,cb){VS.open(function(d){if(!d)return cb(null);try{var q=d.transaction("v").objectStore("v").get(k);q.onsuccess=function(){cb(q.result||null)};q.onerror=function(){cb(null)}}catch(e){cb(null)}})},
+put:function(k,v,cb){VS.open(function(d){if(!d)return cb(false);try{var t=d.transaction("v","readwrite");t.objectStore("v").put(v,k);t.oncomplete=function(){cb(true)};t.onerror=t.onabort=function(){cb(false)}}catch(e){cb(false)}})},
+del:function(k,cb){VS.open(function(d){if(!d)return cb();try{var t=d.transaction("v","readwrite");t.objectStore("v").delete(k);t.oncomplete=cb;t.onerror=t.onabort=cb}catch(e){cb()}})}};
+var MAXV=200*1048576,VU="";
+function mb(n){return(n/1048576).toFixed(1)+" MB"}
+function vid(){var e=P[cur],b=$("vs"),box=el("div","");b.innerHTML="";b.appendChild(el("h3","","🎥 فيديو التمرين"));b.appendChild(box);
+  if(VU){URL.revokeObjectURL(VU);VU=""}
+  VS.get(e.id,function(r){if(P[cur]!==e)return;
+    var nt=el("div","vn"),has=r&&r.blob;if(!has&&!ADMIN){b.innerHTML="";return}
+    if(has){var v=el("video","vp");v.controls=true;v.playsInline=true;v.preload="metadata";VU=URL.createObjectURL(r.blob);v.src=VU;box.appendChild(v);
+      if(ADMIN){var row=el("div","vr");row.appendChild(el("small","",r.name+" ("+mb(r.size)+")"));var d=el("button","vx","حذف الفيديو");d.onclick=function(){VS.del(e.id,vid)};row.appendChild(d);box.appendChild(row)}}
+    if(!ADMIN)return;var f=el("label","vu",has?"استبدال الفيديو":"+ أضف فيديو من هاتفك"),i=el("input");i.type="file";i.accept="video/*";i.hidden=true;
+    i.onchange=function(){var fl=i.files[0];if(!fl)return;if(fl.size>MAXV){nt.textContent="حجم الفيديو كبير، الحد الأقصى "+mb(MAXV)+".";return}
+      nt.textContent="جارٍ الحفظ...";VS.put(e.id,{blob:fl,name:fl.name,size:fl.size},function(ok){if(ok){try{navigator.storage&&navigator.storage.persist&&navigator.storage.persist()}catch(x){}vid()}else nt.textContent="تعذر الحفظ على هذا الهاتف (المساحة ممتلئة أو غير مدعوم)."})};
+    f.appendChild(i);box.appendChild(f);box.appendChild(nt)})}
+function nameEd(){var b=$("ns");b.innerHTML="";b.className="";if(!ADMIN)return;var e=P[cur],i=el("input","zm");b.className="sec";b.appendChild(el("h3","","✏️ اسم التمرين (وضع المدير)"));
+  i.style.width="100%";i.maxLength=40;i.value=e.n;
+  i.oninput=function(){var v=i.value.trim();if(!v)return;var m=store.g("nm",{});m[e.id]=v;store.s("nm",m);e.n=v;$("en").textContent=v};b.appendChild(i)}
+function lgw(){var e=P[cur],b=$("lgs");b.innerHTML="";b.className="";if(!X[e.id])return;b.className="sec";
+  var a=(lifts()[e.id]||[]).slice().sort(sd),l=a[a.length-1];b.appendChild(el("h3","","🏋️ سجّل الوزن الذي رفعته"));
+  var row=el("div","lgr"),wi=el("input","tin"),ri=el("input","tin"),sb=el("button","zt","حفظ"),hn=el("div","pm"),ms=el("div","vn");
+  wi.type="text";wi.inputMode="decimal";wi.dir="ltr";wi.placeholder="الوزن (كغ)";ri.type="text";ri.inputMode="numeric";ri.dir="ltr";ri.placeholder="التكرار";
+  if(l){hn.appendChild(document.createTextNode("آخر مرة: "));hn.appendChild(nm(l.w+" كغ"+(l.r?" × "+l.r:"")));hn.appendChild(document.createTextNode("   "));hn.appendChild(nm(fd(l.d)))}else hn.textContent="لم تسجّل وزناً لهذا التمرين بعد.";
+  sb.onclick=function(){var w=num(wi.value),r=ri.value.trim()?parseInt(num(ri.value)):null;if(!(w>=0.5&&w<=1000)){ms.textContent="أدخل وزناً صحيحاً.";return}if(ri.value.trim()&&!(r>=1&&r<=200)){ms.textContent="عدد التكرار غير صحيح.";return}
+    var d=td(),all=lifts(),arr=(all[e.id]||[]).filter(function(q){return q.d!=d}),en={d:d,w:rd(w)};if(r)en.r=r;arr.push(en);all[e.id]=arr;store.s("lifts",all);lgw();$("lgs").appendChild(el("div","vn","تم الحفظ ✓ يمكنك رؤية تطورك في متابعة تقدمي."))};
+  row.appendChild(wi);row.appendChild(ri);row.appendChild(sb);b.appendChild(row);b.appendChild(hn);b.appendChild(ms)}
+function ox(){return store.g("ox",{})}
+function sx(o){if(!ADMIN)return;var m=ox(),k=CP+":"+P[cur].id;m[k]=Object.assign(m[k]||{},o);store.s("ox",m)}
+function chS(d){var e=P[cur],n=Math.min(8,Math.max(1,e.s+d));if(n==e.s)return;e.s=n;sx({s:n});var a=D[dk(cur)];if(a)a.length=Math.min(a.length,n);sv();$("sn").textContent=n;$("tgs").textContent=n+" × "+e.r;pl()}
+function chRest(d){var e=P[cur],n=Math.min(300,Math.max(0,e.rest+d));if(n==e.rest)return;e.rest=n;sx({rest:n});$("rn").textContent=n?fmt(n):"بدون";if(!ti)resetT()}
+function chR(v){var e=P[cur];e.r=v.trim();sx({r:e.r});$("tgs").textContent=e.s+" × "+e.r}
+function tg(k){var a=D[dk(cur)]=D[dk(cur)]||[];a[k]=!a[k];sv();pl();if(a[k]&&cnt(cur)<P[cur].s&&P[cur].rest>0)startT(P[cur].rest)}
+function nxt(){stopT();if(cur<P.length-1)op(cur+1);else{var all=P.every(function(e,i){return cnt(i)>=e.s});all?show("fin"):showProg()}}
+function reset(){Object.keys(D).forEach(function(k){if(k.indexOf(CP+":")==0)delete D[k]});sv();showProg()}
+function draw(){var r=Math.max(0,end-Date.now())/1000;$("tt").textContent=fmt(r);$("arc").setAttribute("stroke-dashoffset",C*(1-r/tot));return r}
+function startT(t){stopT();if(!t)return;tot=t;end=Date.now()+t*1000;$("tl").textContent="راحة";$("tp").textContent="أعد البدء";draw();
+  ti=setInterval(function(){if(draw()<=0){stopT();try{navigator.vibrate&&navigator.vibrate([300,100,300])}catch(e){}$("tt").textContent="0:00";$("tl").textContent="جاهز للمجموعة التالية"}},250)}
+function addT(n){if(ti){end+=n*1000;tot+=n;draw()}else startT(n)}
+function resetT(){stopT();$("tt").textContent=fmt(P[cur].rest);$("tl").textContent="وقت الراحة";$("tp").textContent="ابدأ الراحة";$("arc").setAttribute("stroke-dashoffset",0)}
+function stopT(){if(ti){clearInterval(ti);ti=null}}
+$("lg2").src=$("lg").src;$("lg3").src=$("lg").src;ld();ldM();if(M.ph)splash();else stForm();
+</script>
+<script>
+if("serviceWorker" in navigator&&location.protocol.indexOf("http")==0){window.addEventListener("load",function(){navigator.serviceWorker.register("sw.js").catch(function(){})})}
+</script>
+</body>
+</html>
