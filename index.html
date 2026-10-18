@@ -221,7 +221,7 @@ button.qc{width:100%;justify-content:center;text-align:center;color:var(--ink);f
 </div>
 <div id="hm" class="hid hm">
   <div class="bn"><img id="lg3" alt="" width="58" height="58" onclick="tapLogo()"><div><b>Welcome to ZEDAM GYM</b><small>أهلاً بك في قاعتك</small></div></div>
-  <div class="gr"><h2 id="hn"></h2><div class="pn" id="hp"></div><button class="lk" id="lgo" onclick="logout()">تسجيل الخروج</button><button class="lk hid" id="adm" style="display:block" onclick="adminOff()">وضع المدير مفعّل · اضغط للخروج</button></div>
+  <div class="gr"><h2 id="hn"></h2><div class="pn" id="hp"></div><button class="lk" id="lgo" onclick="logout()">تسجيل الخروج</button><button class="lk" id="bdb" style="margin-inline-start:16px" onclick="bdScreen(true)">تعديل تاريخ ميلادي</button><button class="lk hid" id="adm" style="display:block" onclick="adminOff()">وضع المدير مفعّل · اضغط للخروج</button></div>
   <button class="nx go" onclick="EDIT=false;home()">بداية البرنامج</button>
   <div class="ct">
     <a class="cb" id="cc" target="_blank" rel="noopener" onclick="return cl()"><span>تقديم شكوى</span><span class="ch">‹</span></a>
@@ -268,6 +268,14 @@ button.qc{width:100%;justify-content:center;text-align:center;color:var(--ink);f
   <button class="bk2 b3" onclick="memList()"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M9 6l6 6-6 6"/></svg>المتدربون</button>
   <div class="qt" id="mdn"></div>
   <div id="mdb"></div>
+</div></div>
+<div id="bd" class="hid"><div class="qs" style="padding-top:40px">
+  <div class="qt">تاريخ الميلاد</div>
+  <p class="pm" id="bdp"></p>
+  <input id="bdi" class="tin" type="date" dir="ltr" min="1930-01-01" style="margin-top:8px">
+  <button class="nx" style="margin-top:14px" onclick="saveBd()">حفظ ومتابعة</button>
+  <div class="vn" id="bdm"></div>
+  <button class="lk hid" id="bdc" style="display:block;margin:10px auto 0" onclick="showHm()">إلغاء</button>
 </div></div>
 <div id="det" class="hid"></div>
 <div id="fin" class="hid fin">
@@ -343,17 +351,17 @@ function sv(){store.s("progress:"+K,D)}
 function dk(i){return CP+":"+(P[i]?P[i].id:i)}
 function cnt(i){return(D[dk(i)]||[]).filter(Boolean).length}
 function fmt(t){t=Math.max(0,Math.ceil(t));var m=Math.floor(t/60),s=t%60;return m+":"+(s<10?"0":"")+s}
-function show(id){hsync(id);["st","hm","home","prg","trk","mem","mdt","det","fin"].forEach(function(x){var b=x=="fin"?"fin":x=="st"?"st":x=="hm"?"hm":"";$(x).className=((x==id?"":"hid ")+b).trim()});[].forEach.call(document.querySelectorAll("video"),function(v){v.pause()});window.scrollTo(0,0)}
+function show(id){hsync(id);["st","hm","home","prg","trk","mem","mdt","bd","det","fin"].forEach(function(x){var b=x=="fin"?"fin":x=="st"?"st":x=="hm"?"hm":"";$(x).className=((x==id?"":"hid ")+b).trim()});[].forEach.call(document.querySelectorAll("video"),function(v){v.pause()});window.scrollTo(0,0)}
 var M={};
 function gpn(){var p=(GYM_PHONE||"").replace(/\D/g,"");if(p.charAt(0)=="0")p="213"+p.slice(1);return p}
 function cl(){if(!gpn()){$("nt").textContent="لم يتم إضافة رقم القاعة بعد.";return false}$("nt").textContent="";return true}
 function wa(t){return"https://wa.me/"+gpn()+"?text="+encodeURIComponent("السلام عليكم، أنا "+M.fn+" "+M.ln+" ("+M.ph+").\n"+t)}
-function splash(){SPL=true;show("st");$("sb").className="hid bk2";$("fm").className="hid";$("stp").className="hid";$("st").className+=" sp";setTimeout(showHm,1400)}
+function splash(){SPL=true;show("st");$("sb").className="hid bk2";$("fm").className="hid";$("stp").className="hid";$("st").className+=" sp";setTimeout(function(){var m=curM();if(m&&!m.bd)bdScreen(false);else showHm()},1400)}
 function showHm(){SPL=false;
   $("hn").textContent=M.fn?"مرحباً، "+M.fn+" "+M.ln:"مرحباً بالمدير";$("hp").textContent=M.ph||"";
   $("an").innerHTML=ANN.length?ANN.map(function(x){return'<div class="ai">'+x+'</div>'}).join(""):'<div class="ai mt">لا توجد إعلانات حالياً</div>';
   var p=gpn();$("cc").href=p?wa("شكوى: "):"#";$("ci").href=p?wa("استفسار: "):"#";$("cp").href=p?"tel:+"+p:"#";
-  $("cpn").textContent=GYM_PHONE||"غير مضاف بعد";$("adm").className=ADMIN?"lk":"lk hid";$("adb").className=ADMIN?"tk":"tk hid";$("lgo").className=M.ph?"lk":"lk hid";$("nt").textContent="";show("hm")}
+  $("cpn").textContent=GYM_PHONE||"غير مضاف بعد";$("adm").className=ADMIN?"lk":"lk hid";$("adb").className=ADMIN?"tk":"tk hid";$("lgo").className=M.ph?"lk":"lk hid";$("bdb").className=M.ph?"lk":"lk hid";$("nt").textContent="";show("hm")}
 function ldM(){M=store.g("member",{})}
 function svM(){store.s("member",M)}
 function setE(k,m){$("f"+k).className="fd"+(m?" er":"");$("e"+k).textContent=m}
@@ -471,13 +479,13 @@ function pull(){var m=curM();if(!m)return Promise.resolve();
     if(R[0].ok&&Array.isArray(R[0].data)){var ms=[];R[0].data.forEach(function(x){var e=ms.filter(function(q){return q.d==x.d})[0];if(!e){e={d:x.d};ms.push(e)}e[x.kind=="weight"?"w":"x"]=Number(x.v)});store.s("meas",ms)}
     if(R[1].ok&&Array.isArray(R[1].data)){var L={};R[1].data.forEach(function(x){var o={d:x.d,w:Number(x.w)};if(x.reps)o.r=x.reps;(L[x.exercise]=L[x.exercise]||[]).push(o)});store.s("lifts",L)}})}
 function syncNow(){var m=curM();if(!m||!navigator.onLine)return;
-  api("GET","members?select=id,first_name,last_name,sub_end,active&id=eq."+m.id).then(function(r){
+  api("GET","members?select=id,first_name,last_name,sub_end,active,birth_date&id=eq."+m.id).then(function(r){
     if(r.status==0)return;
     if(r.status==401||r.status==403)return;
     var x=r.ok&&Array.isArray(r.data)?r.data[0]:null;
     if(!x){lockOut("انتهت جلستك على هذا الهاتف. أدخل رقمك ورمزك من جديد.");return}
     if(!x.active||(x.sub_end&&x.sub_end<td())){lockOut("انتهى اشتراكك. تواصل مع القاعة لتجديده.");return}
-    store.s("sbm",{id:m.id,sub_end:x.sub_end});M.fn=x.first_name;M.ln=x.last_name;svM();
+    store.s("sbm",{id:m.id,sub_end:x.sub_end,bd:x.birth_date||null});M.fn=x.first_name;M.ln=x.last_name;svM();
     flush().then(function(){if(!store.g("sbq",[]).length)return pull()})})}
 function clearMember(){["sbs","sbm","member","meas","lifts","sbq"].forEach(function(k){store.r(k)});M={}}
 function lockOut(msg){clearMember();stForm(msg)}
@@ -497,7 +505,7 @@ function login(){var ph=normPh($("ph").value),cd=String($("cd").value).replace(/
     return claim().then(function(r){if(r.status==401){store.r("sbs");return anon().then(function(s2){return s2?claim():r})}return r}).then(function(r){
       if(!r.ok||!r.data){end("تعذر الدخول الآن. أعد المحاولة بعد قليل.");return}
       var d=r.data,t=d.status;
-      if(t=="ok"){M={fn:d.first_name,ln:d.last_name,ph:ph};svM();store.s("sbm",{id:d.member_id,sub_end:d.sub_end});pushAll().then(function(){return pull()}).then(function(){end();showHm()});return}
+      if(t=="ok"){M={fn:d.first_name,ln:d.last_name,ph:ph};svM();store.s("sbm",{id:d.member_id,sub_end:d.sub_end});pushAll().then(function(){return pull()}).then(function(){return fetchBd()}).then(function(){end();if(curM().bd)showHm();else bdScreen(false)});return}
       end(t=="expired"?"انتهى اشتراكك. تواصل مع القاعة لتجديده.":t=="locked"?"محاولات خاطئة كثيرة. حاول بعد 15 دقيقة.":"رقم الهاتف أو الرمز غير صحيح.")})})}
 /* ===== دخول المدير: بريد وكلمة مرور حقيقيان ===== */
 var ADMIN=!!sg("sba"),LT=0,LC=0;
@@ -511,6 +519,13 @@ function adminLogin(){var em=$("aem").value.trim(),pw=$("pin").value;if(!em||!pw
     api("POST","rpc/is_admin",{},null,"sba").then(function(x){if(x.ok&&x.data===true){ADMIN=true;closePin();$("pin").value="";showHm()}else{store.r("sba");$("pe").textContent="هذا الحساب ليس حساب مدير."}})})}
 function adminOff(){store.r("sba");ADMIN=false;if(!M.ph)stForm();else showHm()}
 /* ===== شاشات المدير: المتدربون ===== */
+function age(s){var b=new Date(s+"T00:00:00"),t=new Date(),a=t.getFullYear()-b.getFullYear(),m=t.getMonth()-b.getMonth();if(m<0||(m==0&&t.getDate()<b.getDate()))a--;return a}
+function fetchBd(){var m=curM();if(!m)return Promise.resolve();return api("GET","members?select=birth_date&id=eq."+m.id).then(function(r){if(r.ok&&r.data&&r.data[0]){m.bd=r.data[0].birth_date||null;store.s("sbm",m)}})}
+function bdScreen(edit){var m=curM()||{};$("bdi").value=m.bd||"";$("bdi").max=td();$("bdm").textContent="";$("bdc").className=edit?"lk":"lk hid";
+  $("bdp").textContent=edit?"يمكنك تعديل تاريخ ميلادك هنا.":"لإكمال حسابك أدخل تاريخ ميلادك. لا يراه إلا أنت ومدرب القاعة.";show("bd")}
+function saveBd(){var v=$("bdi").value;if(!v||v<"1930-01-01"||v>td()){$("bdm").textContent="أدخل تاريخ ميلاد صحيحاً.";return}
+  $("bdm").textContent="جارٍ الحفظ...";
+  api("POST","rpc/set_birth",{p_date:v}).then(function(r){if(r.ok){var m=curM();m.bd=v;store.s("sbm",m);showHm()}else $("bdm").textContent=r.status==0?"لا يوجد اتصال بالإنترنت.":"تعذر الحفظ ("+r.status+")."})}
 function waTo(p,t){return"https://wa.me/213"+p.slice(1)+"?text="+encodeURIComponent(t)}
 function code6(){var a=new Uint32Array(1);crypto.getRandomValues(a);return String(a[0]%1000000).padStart(6,"0")}
 function ymd(d){return d.getFullYear()+"-"+("0"+(d.getMonth()+1)).slice(-2)+"-"+("0"+d.getDate()).slice(-2)}
@@ -522,22 +537,22 @@ function memList(){show("mem");var h=$("mls");h.textContent="جارٍ التحم
 function mlr(){var q=$("msq").value.trim().toLowerCase(),h=$("mls");h.innerHTML="";
   var L=MEMS.filter(function(m){return!q||(m.first_name+" "+m.last_name+" "+m.phone).toLowerCase().indexOf(q)>=0});
   if(!L.length){h.appendChild(el("div","pm",MEMS.length?"لا نتائج.":"لا يوجد متدربون بعد."));return}
-  L.forEach(function(m){var b=el("button","zb"),s=mst(m),sm=el("small","",s[0]);b.style.cssText="width:100%;margin-bottom:8px";sm.style.color=s[1];b.appendChild(el("span","",m.last_name+" "+m.first_name));b.appendChild(sm);b.onclick=function(){mdet(m)};h.appendChild(b)})}
+  L.forEach(function(m){var b=el("button","zb"),s=mst(m),sm=el("small","",s[0]);b.style.cssText="width:100%;margin-bottom:8px";sm.style.color=s[1];b.appendChild(el("span","",m.last_name+" "+m.first_name+(m.birth_date?" ("+age(m.birth_date)+" سنة)":"")));b.appendChild(sm);b.onclick=function(){mdet(m)};h.appendChild(b)})}
 function madd(){var f=$("mfm");if(f.innerHTML){f.innerHTML="";return}
   var ln=el("input","tin"),fn=el("input","tin"),ph=el("input","tin"),sd=el("input","tin"),cd=el("input","tin"),ms=el("div","vn"),sb=el("button","nx","حفظ المتدرب");
   ph.dir="ltr";ph.inputMode="tel";ph.placeholder="0555123456";sd.type="date";sd.dir="ltr";sd.value=addD("",30);cd.dir="ltr";cd.value=code6();
-  f.style.marginTop="12px";f.appendChild(fld("اللقب",ln));f.appendChild(fld("الاسم",fn));f.appendChild(fld("الهاتف",ph));f.appendChild(fld("انتهاء الاشتراك",sd));f.appendChild(fld("رمز الدخول (يمكنك تغييره)",cd));
+  var bdv=el("input","tin");bdv.type="date";bdv.dir="ltr";bdv.max=td();f.style.marginTop="12px";f.appendChild(fld("اللقب",ln));f.appendChild(fld("الاسم",fn));f.appendChild(fld("الهاتف",ph));f.appendChild(fld("انتهاء الاشتراك",sd));f.appendChild(fld("رمز الدخول (يمكنك تغييره)",cd));f.appendChild(fld("تاريخ الميلاد (اختياري)",bdv));
   sb.onclick=function(){var p=normPh(ph.value),c=cd.value.trim();
     if(ln.value.trim().length<2||fn.value.trim().length<2){ms.textContent="أدخل اللقب والاسم.";return}
     if(!p){ms.textContent="رقم هاتف غير صحيح.";return}
     if(!/^\d{4,12}$/.test(c)){ms.textContent="الرمز أرقام فقط (من 4 إلى 12).";return}
-    aapi("POST","members",{last_name:ln.value.trim(),first_name:fn.value.trim(),phone:p,code:c,sub_end:sd.value||null},{Prefer:"return=representation"}).then(function(r){
+    aapi("POST","members",{last_name:ln.value.trim(),first_name:fn.value.trim(),phone:p,code:c,sub_end:sd.value||null,birth_date:bdv.value||null},{Prefer:"return=representation"}).then(function(r){
       if(r.ok&&r.data&&r.data[0]){f.innerHTML="";MEMS.unshift(r.data[0]);mlr();mdet(r.data[0])}else ms.textContent=r.status==409?"هذا الرقم مسجل مسبقاً.":"تعذر الحفظ ("+r.status+").";})};
   f.appendChild(sb);f.appendChild(ms)}
 function upd(p,ms){aapi("PATCH","members?id=eq."+CM.id,p,{Prefer:"return=representation"}).then(function(r){
   if(r.ok&&r.data&&r.data[0]){CM=r.data[0];MEMS=MEMS.map(function(q){return q.id==CM.id?CM:q});mdet(CM)}else ms.textContent=r.status==401?"انتهت جلسة المدير.":"تعذر الحفظ ("+r.status+")."})}
 function mdet(m){CM=m;show("mdt");$("mdn").textContent=m.last_name+" "+m.first_name;var b=$("mdb"),ms=el("div","vn");b.innerHTML="";
-  var g=el("div","tcd");g.appendChild(card("الهاتف",m.phone));g.appendChild(card("رمز الدخول",m.code));b.appendChild(g);
+  var g=el("div","tcd");g.appendChild(card("الهاتف",m.phone));g.appendChild(card("رمز الدخول",m.code));g.appendChild(card("العمر",m.birth_date?age(m.birth_date)+" سنة":"—",m.birth_date?fd(m.birth_date):""));b.appendChild(g);
   var s=mst(m),st=el("div","pm","الحالة: "+s[0]);st.style.color=s[1];b.appendChild(st);
   var wb=el("a","tk","📲 إرسال الدعوة والرمز على واتساب");wb.style.cssText="display:block;text-align:center;text-decoration:none";wb.target="_blank";wb.rel="noopener";
   wb.href=waTo(m.phone,"مرحباً "+m.first_name+"، أهلاً بك في تطبيق ZEDAM GYM.\nالرابط: "+location.origin+"\nرقم هاتفك: "+m.phone+"\nرمز الدخول: "+m.code);b.appendChild(wb);
@@ -546,7 +561,9 @@ function mdet(m){CM=m;show("mdt");$("mdn").textContent=m.last_name+" "+m.first_n
   function bt(r,t,fn){var x=el("button","qadd",t);x.style.flex="1";x.style.gridColumn="auto";x.onclick=fn;r.appendChild(x)}
   bt(r1,"حفظ التاريخ",function(){upd({sub_end:sd.value||null},ms)});bt(r1,"+30 يوم",function(){upd({sub_end:addD(m.sub_end,30)},ms)});bt(r1,"+90 يوم",function(){upd({sub_end:addD(m.sub_end,90)},ms)});
   bt(r2,m.active?"⏸ إيقاف":"▶ تفعيل",function(){upd({active:!m.active},ms)});bt(r2,"🔄 رمز جديد",function(){upd({code:code6(),fails:0},ms)});
-  b.appendChild(r1);b.appendChild(r2);b.appendChild(ms);
+  b.appendChild(r1);b.appendChild(r2);
+  var bi=el("input","tin");bi.type="date";bi.dir="ltr";bi.max=td();bi.value=m.birth_date||"";b.appendChild(fld("تاريخ الميلاد",bi));
+  var r3=el("div","lgr");bt(r3,"حفظ تاريخ الميلاد",function(){upd({birth_date:bi.value||null},ms)});b.appendChild(r3);b.appendChild(ms);
   var dl=el("button","qadd","🗑 حذف المتدرب");dl.style.cssText="display:block;width:100%;margin-top:14px";
   dl.onclick=function(){if(dl.dataset.c){aapi("DELETE","members?id=eq."+m.id).then(function(r){if(r.ok){MEMS=MEMS.filter(function(q){return q.id!=m.id});memList()}else ms.textContent="تعذر الحذف."})}else{dl.dataset.c="1";dl.textContent="اضغط مرة أخرى للتأكيد";setTimeout(function(){dl.dataset.c="";dl.textContent="🗑 حذف المتدرب"},3000)}};b.appendChild(dl);
   var dd=el("div","zg"),dv=el("div","");dv.id="mdd";dd.appendChild(el("h3","","بيانات المتدرب"));dd.appendChild(dv);b.appendChild(dd);dv.textContent="جارٍ التحميل...";
@@ -610,7 +627,7 @@ function trk(){var tb=$("tmc"),sl=$("tsl"),c=$("tcd"),ch=$("tch"),f=$("tfm"),h=$
   show("trk")}
 /* ===== زر الرجوع في أندرويد (إيماءة السحب من الحافة أو زر الرجوع): يرجع شاشة واحدة بدل الخروج ===== */
 var HD=0,HOP=false,PGO=false,SPL=false;
-function dp(id){return{hm:0,st:(M&&M.ph&&!SPL?1:0),home:1,prg:2,trk:2,mem:1,mdt:2,det:3,fin:3}[id]}
+function dp(id){return{hm:0,st:(M&&M.ph&&!SPL?1:0),home:1,prg:2,trk:2,mem:1,mdt:2,bd:0,det:3,fin:3}[id]}
 function hsync(id){var d=dp(id);try{
   if(HOP){HOP=false;HD=d;return}
   if(d>HD){for(var i=HD+1;i<=d;i++)history.pushState({d:i},"")}
@@ -621,7 +638,7 @@ function hGo(id){HOP=true;if(id=="hm")showHm();else if(id=="home")home();else if
 try{history.replaceState({d:0},"");window.addEventListener("popstate",function(){
   if(PGO){PGO=false;return}
   if($("pm2").className.indexOf("hid")<0){closePin();try{history.pushState({d:HD},"")}catch(x){}return}
-  var c=["st","hm","home","prg","trk","mem","mdt","det","fin"].filter(function(x){return $(x).className.indexOf("hid")<0})[0];
+  var c=["st","hm","home","prg","trk","mem","mdt","bd","det","fin"].filter(function(x){return $(x).className.indexOf("hid")<0})[0];
   if(c=="det")stopT();if(c=="home")EDIT=false;
   var par={st:"hm",home:"hm",prg:"home",trk:"home",det:"prg",fin:"prg",mem:"hm",mdt:"mem"}[c];
   if(!par||(c=="st"&&!(M&&M.ph))){HOP=false;return}
