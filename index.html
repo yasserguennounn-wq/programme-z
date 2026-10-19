@@ -411,7 +411,7 @@ function upD(key,f,st){var ty=f.type||(/\.mp4$/i.test(f.name)?"video/mp4":"");
   fresh("sba").then(function(s){if(!s){st.textContent="انتهت جلسة المدير. سجّل الدخول من جديد.";return}
     var x=new XMLHttpRequest();x.open("POST",DSU+"designs/"+key);x.setRequestHeader("apikey",SBK);x.setRequestHeader("Authorization","Bearer "+s.at);x.setRequestHeader("Content-Type",ty);x.setRequestHeader("x-upsert","true");
     x.upload.onprogress=function(e){if(e.lengthComputable)st.textContent="جارٍ الرفع "+Math.round(e.loaded*100/e.total)+" في المئة"};
-    x.onload=function(){if(x.status>=200&&x.status<300)showProg();else st.textContent=x.status==0?"لا يوجد اتصال بالإنترنت.":(x.status==400||x.status==401||x.status==403||x.status==404)?"فشل الرفع. تأكد من تنفيذ سكربت SQL الخاص بالتصاميم في Supabase.":"فشل الرفع ("+x.status+")"};
+    x.onload=function(){if(x.status>=200&&x.status<300)showProg();else{var mg="";try{var j=JSON.parse(x.responseText);mg=j.message||j.error||""}catch(e){mg=(x.responseText||"").slice(0,150)}st.textContent=x.status==0?"لا يوجد اتصال بالإنترنت.":"فشل الرفع ("+x.status+")"+(mg?": "+mg:"")}};
     x.onerror=function(){st.textContent="لا يوجد اتصال بالإنترنت."};x.send(f)})}
 function delD(key,st){st.textContent="جارٍ الحذف...";fresh("sba").then(function(s){if(!s){st.textContent="انتهت جلسة المدير. سجّل الدخول من جديد.";return}
   fetch(DSU+"designs/"+key,{method:"DELETE",headers:{apikey:SBK,Authorization:"Bearer "+s.at}}).then(function(r){if(r.ok){var m=store.g("dm",{});delete m[key];store.s("dm",m);showProg()}else st.textContent="تعذر الحذف."}).catch(function(){st.textContent="لا يوجد اتصال بالإنترنت."})})}
