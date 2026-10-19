@@ -393,42 +393,18 @@ function xt(m,ids){for(var i=0;i<XT.length;i++)if((m||"").indexOf(XT[i][0])>=0){
 function lv(e){var r=e.r+"",num=/^\d+$/.test(r);
   if(VID=="b"){if(e.s==1){if(/دقيقة/.test(r))e.r="10-15 دقيقة"}else{if(num)e.r=Math.max(6,Math.round(r*.7))+"";else if(/ثانية|دقيقة/.test(r))e.r="30 ثانية";else e.r="12-15";if(!/ثانية|دقيقة/.test(r))e.s=Math.max(2,e.s-1)}if(e.rest)e.rest+=15}
   else if(VID=="p"){if(e.s==1){if(/دقيقة/.test(r))e.r="30 دقيقة"}else{e.s=Math.min(5,e.s+1);if(num)e.r=Math.round(r*1.3)+"";else if(/ثانية/.test(r))e.r="60 ثانية";else if(/دقيقة/.test(r))e.r="2 دقيقة";else e.r=TR[r]||r}}}
-function vst(){var d={v:LV.map(function(x){return{id:x.id,n:x.n}}),cur:"b"};if(ADMIN)return store.g("pv2:"+BP,d);var c=store.g("lvcur:"+BP,"b");d.cur=d.v.some(function(y){return y.id==c})?c:"b";return d}
-function svV(v){if(ADMIN)store.s("pv2:"+BP,v);else store.s("lvcur:"+BP,v.cur)}
+function vst(){var c=store.g("lvcur:"+BP,"b");return{cur:LV.some(function(y){return y.id==c})?c:"b"}}
 function openP(i){var q=cells()[i];BP=PROGRAMS.some(function(x){return x.id==q.p})?q.p:q.k;VID=vst().cur;CP=ck();P=[];CT=q.t;showProg()}
 function el(t,c,x){var n=document.createElement(t);if(c)n.className=c;if(x!=null)n.textContent=x;return n}
 function gs(){var u=store.g("pg2:"+CP,null);if(!u){var pr=PROGRAMS.filter(function(x){return x.id==BP})[0];u={g:(pr?pr.g:[{m:"",ids:[]}]).map(function(g){var ids=g.ids.slice();if(VID=="b")ids=ids.slice(0,2);else if(VID=="p"){var x=xt(g.m,ids);if(x)ids.push(x)}return{m:g.m,ids:ids,c:[]}})}}return u}
 function svG(u){store.s("pg2:"+CP,u)}
-function vch(){var v=vst(),c=$("vch"),m=$("vm");c.innerHTML="";m.innerHTML="";
-  if(v.v.length<2&&!ADMIN)return;
-  v.v.forEach(function(x){var b=el("button","vchip"+(x.id==VID?" on":""),x.n||"—");b.onclick=function(){v.cur=x.id;svV(v);VID=x.id;CP=ck();showProg()};c.appendChild(b)});
-  var ldm=store.g("ld",{}),dt=ldm[CP]!=null?ldm[CP]:(LDESC[VID]||"");
-  if(ADMIN){var ta=el("textarea","vn2");ta.rows=2;ta.maxLength=300;ta.placeholder="ملاحظات هذا المستوى (تظهر للمتدرب)";ta.value=dt;ta.oninput=function(){var l=store.g("ld",{});l[CP]=ta.value;store.s("ld",l);fit(ta)};m.appendChild(ta)}
-  else if(dt)m.appendChild(el("div","pm",dt));
-  if(!ADMIN)return;
-  var a=el("button","vchip vadd","+ مستوى");a.onclick=function(){var id="v"+Date.now();v.v.push({id:id,n:"مستوى "+(v.v.length+1)});v.cur=id;svV(v);VID=id;CP=ck();showProg()};c.appendChild(a);
-  var cur=v.v.filter(function(x){return x.id==VID})[0]||v.v[0],i=el("input","zm"),r=el("div","vr2"),nt=el("div","vn");
-  i.placeholder="اسم المستوى (مبتدئ، متقدم...)";i.maxLength=20;i.value=cur.n;i.style.width="100%";i.style.marginTop="10px";
-  i.oninput=function(){cur.n=i.value;svV(v);var ch=c.querySelector(".vchip.on");if(ch)ch.textContent=i.value||"—"};
-  m.appendChild(i);
-  if(v.v.length>1){var d=el("button","vx","حذف هذا المستوى");d.onclick=function(){var k=BP+(cur.id?"#"+cur.id:"");store.r("pg2:"+k);Object.keys(D).forEach(function(q){if(q.indexOf(k+":")==0)delete D[q]});sv();var o=ox();Object.keys(o).forEach(function(q){if(q.indexOf(k+":")==0)delete o[q]});store.s("ox",o);v.v=v.v.filter(function(x){return x!==cur});v.cur=v.v[0].id;svV(v);VID=v.cur;CP=ck();showProg()};r.appendChild(d)}
-  var ex=el("button","vx","📋 تصدير هذا المستوى");ex.onclick=function(){var u=gs(),o=ox(),nm2=store.g("nm",{}),ld2=store.g("ld",{}),t=JSON.stringify({program:CT,level:cur.n,note:ld2[CP]!=null?ld2[CP]:(LDESC[VID]||""),groups:u.g.map(function(g){var l=g.ids.map(function(id){var e=Object.assign({id:id},LIB[id]);lv(e);return Object.assign(e,o[CP+":"+id])}).concat(g.c.map(function(c){return Object.assign({},c,o[CP+":"+c.id])}));return{m:g.m,ex:l.map(function(e){return{id:e.id,n:nm2[e.id]||e.n,s:e.s,r:e.r,rest:e.rest}})}})});
-    var ta=m.querySelector(".vt")||m.appendChild(el("textarea","vt"));ta.readOnly=true;ta.value=t;ta.select();nt.textContent="انسخ هذا النص وأرسله لي في المحادثة.";
-    try{navigator.clipboard.writeText(t).then(function(){nt.textContent="نُسخ النص. الصقه في المحادثة وأرسله لي."},function(){})}catch(x){}};
-  r.appendChild(ex);m.appendChild(r);m.appendChild(nt)}
-function showProg(){var u=gs(),box=$("rows");box.innerHTML="";P=[];$("pt").textContent=CT;vch();var nm=store.g("nm",{});
-  u.g.forEach(function(g){
-    var gb=el("div","zg");if(ADMIN){var h=el("input","zm");h.placeholder="اسم العضلة";h.maxLength=30;h.value=g.m;h.oninput=function(){g.m=h.value;svG(u)};gb.appendChild(h)}else if(g.m)gb.appendChild(el("div","zm",g.m));
-    g.ids.map(function(id){return{e:LIB[id]}}).concat(g.c.map(function(e,ci){return{e:e,ci:ci}})).forEach(function(it){
-      var e=Object.assign({},it.e),idx=P.length,f;if(it.ci==null)lv(e);Object.assign(e,ox()[CP+":"+it.e.id]);if(nm[e.id])e.n=nm[e.id];P.push(e);f=cnt(idx)>=e.s;
-      var r=el("div","zr"+(f?" dn":"")),b=el("button","zb");b.appendChild(el("span","",(f?"✓ ":"")+e.n));b.appendChild(el("small","",e.s+" × "+(e.r||"—")));b.onclick=function(){op(idx)};r.appendChild(b);
-      if(it.ci!=null&&ADMIN){var d=el("button","zd","✕");d.setAttribute("aria-label","حذف التمرين");d.onclick=function(){g.c.splice(it.ci,1);svG(u);showProg()};r.appendChild(d)}
-      gb.appendChild(r)});
-    var ar=el("div","za"),ai=el("input","zi"),ab=el("button","zt","إضافة");ai.placeholder="+ اكتب اسم تمرين جديد";ai.maxLength=40;
-    function add(){var v=ai.value.trim();if(!v)return;g.c.push({id:"c"+Date.now()+Math.floor(Math.random()*99),n:v,s:3,r:"10-12",rest:60,m:g.m||"",st:[],er:[]});svG(u);showProg()}
-    if(ADMIN){ab.onclick=add;ai.onkeydown=function(ev){if(ev.key=="Enter")add()};ar.appendChild(ai);ar.appendChild(ab);gb.appendChild(ar)}box.appendChild(gb)});
-  if(ADMIN){var ag=el("button","zn","+ إضافة عضلة");ag.onclick=function(){u.g.push({m:"",ids:[],c:[]});svG(u);showProg()};box.appendChild(ag)}
-  show("prg");[].forEach.call(document.querySelectorAll(".vn2"),fit)}
+function vch(){var c=$("vch"),m=$("vm");c.innerHTML="";m.innerHTML="";
+  LV.forEach(function(x){var b=el("button","vchip"+(x.id==VID?" on":""),x.n);b.onclick=function(){VID=x.id;store.s("lvcur:"+BP,x.id);CP=ck();showProg()};c.appendChild(b)})}
+/* صورة التصميم: اسم الملف = رمز البرنامج + "-" + رمز المستوى (b مبتدئ، m متقدم، p متقدم جداً). مثال: push-b.jpg */
+function showProg(){var box=$("rows");box.innerHTML="";P=[];$("pt").textContent=CT;vch();
+  var base=BP+"-"+(VID==""?"m":VID),ex=["jpg","png","jpeg","webp"],k=0,im=el("img","xi");im.alt=CT;
+  im.onerror=function(){k++;if(k<ex.length)im.src=base+"."+ex[k];else{var n=el("div","pm","قريباً");n.style.textAlign="center";n.style.marginTop="14px";im.replaceWith(n)}};
+  im.src=base+"."+ex[0];box.appendChild(im);show("prg")}
 function op(i){
   cur=i;tab=0;var e=P[i];stopT();
   $("det").innerHTML='<div class="top"><button class="bk" onclick="showProg()"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M9 6l6 6-6 6"/></svg>البرنامج</button></div>'+
