@@ -400,17 +400,38 @@ function gs(){var u=store.g("pg2:"+CP,null);if(!u){var pr=PROGRAMS.filter(functi
 function svG(u){store.s("pg2:"+CP,u)}
 function vch(){var c=$("vch"),m=$("vm");c.innerHTML="";m.innerHTML="";
   LV.forEach(function(x){var b=el("button","vchip"+(x.id==VID?" on":""),x.n);b.onclick=function(){VID=x.id;store.s("lvcur:"+BP,x.id);CP=ck();showProg()};c.appendChild(b)})}
-/* تصميم المستوى: اسم الملف = رمز البرنامج + "-" + رمز المستوى (b مبتدئ، m متقدم، p متقدم جداً). مثال: push-b.jpg أو push-m.gif أو push-p.mp4 */
-function showProg(){var box=$("rows"),base=BP+"-"+(VID==""?"m":VID),ex=["jpg","png","jpeg","webp","gif","mp4"],k=0,tk=(showProg.t=(showProg.t||0)+1);
+/* تصاميم المستويات: تُرفع من وضع المدير إلى Supabase Storage (حاوية designs). مفتاح الملف = رمز البرنامج + "-" + رمز المستوى (b مبتدئ، m متقدم، p متقدم جداً). احتياط: ملف بالاسم نفسه على GitHub مثل cta-b.jpg */
+var DSU=SBU+"/storage/v1/object/";
+function dlist(){return fresh(ADMIN?"sba":"sbs").then(function(s){if(!s)throw 0;return jf(DSU+"list/designs",{method:"POST",headers:{apikey:SBK,Authorization:"Bearer "+s.at,"Content-Type":"application/json"},body:JSON.stringify({prefix:"",limit:1000,offset:0})})}).then(function(r){if(!r.ok||!Array.isArray(r.data))throw 0;var m={};r.data.forEach(function(o){if(o.name)m[o.name]={t:(o.metadata&&o.metadata.mimetype)||"image/jpeg",v:o.updated_at||""}});store.s("dm",m);return m}).catch(function(){return store.g("dm",{})})}
+function mkM(t,cors){var m;if(/^video\//.test(t)){m=el("video","xi");m.muted=true;m.loop=true;m.autoplay=true;m.playsInline=true;m.setAttribute("playsinline","");m.setAttribute("muted","");m.onclick=function(){m.paused?m.play():m.pause()}}else{m=el("img","xi");if(cors)m.crossOrigin="anonymous"}return m}
+function upD(key,f,st){var ty=f.type||(/\.mp4$/i.test(f.name)?"video/mp4":"");
+  if(!/^(image\/(jpeg|png|webp|gif)|video\/mp4)$/.test(ty)){st.textContent="الصيغة غير مدعومة. استخدم صورة أو GIF أو MP4.";return}
+  if(f.size>52428800){st.textContent="الملف أكبر من 50 ميغابايت.";return}
+  st.textContent="جارٍ الرفع...";
+  fresh("sba").then(function(s){if(!s){st.textContent="انتهت جلسة المدير. سجّل الدخول من جديد.";return}
+    var x=new XMLHttpRequest();x.open("POST",DSU+"designs/"+key);x.setRequestHeader("apikey",SBK);x.setRequestHeader("Authorization","Bearer "+s.at);x.setRequestHeader("Content-Type",ty);x.setRequestHeader("x-upsert","true");
+    x.upload.onprogress=function(e){if(e.lengthComputable)st.textContent="جارٍ الرفع "+Math.round(e.loaded*100/e.total)+" في المئة"};
+    x.onload=function(){if(x.status>=200&&x.status<300)showProg();else st.textContent=x.status==0?"لا يوجد اتصال بالإنترنت.":(x.status==400||x.status==401||x.status==403||x.status==404)?"فشل الرفع. تأكد من تنفيذ سكربت SQL الخاص بالتصاميم في Supabase.":"فشل الرفع ("+x.status+")"};
+    x.onerror=function(){st.textContent="لا يوجد اتصال بالإنترنت."};x.send(f)})}
+function delD(key,st){st.textContent="جارٍ الحذف...";fresh("sba").then(function(s){if(!s){st.textContent="انتهت جلسة المدير. سجّل الدخول من جديد.";return}
+  fetch(DSU+"designs/"+key,{method:"DELETE",headers:{apikey:SBK,Authorization:"Bearer "+s.at}}).then(function(r){if(r.ok){var m=store.g("dm",{});delete m[key];store.s("dm",m);showProg()}else st.textContent="تعذر الحذف."}).catch(function(){st.textContent="لا يوجد اتصال بالإنترنت."})})}
+function dcard(key){var c=el("div","zg"),t=el("div","pm","تصميم هذا المستوى (صورة أو GIF أو MP4)"),st=el("div","vn"),inp=el("input"),b=el("button","zt"),d=el("button","vx","حذف التصميم");
+  inp.type="file";inp.accept="image/*,video/mp4";inp.style.display="none";b.style.padding="12px 18px";b.style.marginInlineEnd="12px";
+  b.onclick=function(){inp.click()};inp.onchange=function(){var f=inp.files[0];inp.value="";if(f)upD(key,f,st)};
+  d.onclick=function(){if(confirm("حذف تصميم هذا المستوى؟"))delD(key,st)};
+  t.style.marginBottom="10px";c.appendChild(t);c.appendChild(b);c.appendChild(d);c.appendChild(st);c.appendChild(inp);
+  c.upd=function(h){b.textContent=h?"استبدال التصميم":"إضافة تصميم";d.style.display=h?"":"none"};c.upd(false);return c}
+function showProg(){var box=$("rows"),key=BP+"-"+(VID==""?"m":VID),tk=(showProg.t=(showProg.t||0)+1),mb=el("div"),dc=ADMIN?dcard(key):null,url=DSU+"public/designs/"+key;
   box.innerHTML="";P=[];$("pt").textContent=CT;vch();show("prg");
-  function nx(){if(tk!==showProg.t)return;k++;try1()}
-  function try1(){if(tk!==showProg.t)return;
-    if(k>=ex.length){box.innerHTML="";var n=el("div","pm","قريباً");n.style.textAlign="center";n.style.marginTop="14px";box.appendChild(n);return}
-    var m,src=base+"."+ex[k];
-    if(ex[k]=="mp4"){m=el("video","xi");m.muted=true;m.loop=true;m.autoplay=true;m.playsInline=true;m.setAttribute("playsinline","");m.setAttribute("muted","");m.preload="auto";m.onclick=function(){m.paused?m.play():m.pause()}}
-    else{m=el("img","xi");m.alt=CT}
-    m.onerror=nx;box.innerHTML="";box.appendChild(m);m.src=src}
-  try1()}
+  if(dc)box.appendChild(dc);box.appendChild(mb);
+  function live(){return tk===showProg.t}
+  function none(){if(!live())return;mb.innerHTML="";var n=el("div","pm","قريباً");n.style.marginTop="14px";mb.appendChild(n)}
+  function git(){var ex=["jpg","png","jpeg","webp","gif","mp4"],k=0;(function t(){if(!live())return;if(k>=ex.length)return none();var m=mkM(ex[k]=="mp4"?"video/mp4":"image/x");m.onerror=function(){k++;t()};mb.innerHTML="";mb.appendChild(m);m.src=key+"."+ex[k]})()}
+  function put(meta){if(!live())return;if(dc)dc.upd(!!meta);if(!meta)return git();
+    var src=url+"?v="+encodeURIComponent(meta.v||""),m=mkM(meta.t,true);
+    m.onerror=function(){if(m.crossOrigin){m.removeAttribute("crossorigin");m.src=src+"&n=1"}else git()};
+    mb.innerHTML="";mb.appendChild(m);m.src=src}
+  dlist().then(function(map){put(map[key]||null)})}
 function op(i){
   cur=i;tab=0;var e=P[i];stopT();
   $("det").innerHTML='<div class="top"><button class="bk" onclick="showProg()"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M9 6l6 6-6 6"/></svg>البرنامج</button></div>'+
