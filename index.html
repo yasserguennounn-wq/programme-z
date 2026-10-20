@@ -401,27 +401,27 @@ function svG(u){store.s("pg2:"+CP,u)}
 function vch(){var c=$("vch"),m=$("vm");c.innerHTML="";m.innerHTML="";
   LV.forEach(function(x){var b=el("button","vchip"+(x.id==VID?" on":""),x.n);b.onclick=function(){VID=x.id;store.s("lvcur:"+BP,x.id);CP=ck();showProg()};c.appendChild(b)})}
 /* تصاميم المستويات: تُرفع من وضع المدير إلى Supabase Storage (حاوية designs). مفتاح الملف = رمز البرنامج + "-" + رمز المستوى (b مبتدئ، m متقدم، p متقدم جداً). احتياط: ملف بالاسم نفسه على GitHub مثل cta-b.jpg */
-var DSU=SBU+"/storage/v1/object/";
-function dlist(){return fresh(ADMIN?"sba":"sbs").then(function(s){if(!s)throw 0;return jf(DSU+"list/designs",{method:"POST",headers:{apikey:SBK,Authorization:"Bearer "+s.at,"Content-Type":"application/json"},body:JSON.stringify({prefix:"",limit:1000,offset:0})})}).then(function(r){if(!r.ok||!Array.isArray(r.data))throw 0;var m={};r.data.forEach(function(o){if(o.name)m[o.name]={t:(o.metadata&&o.metadata.mimetype)||"image/jpeg",v:o.updated_at||""}});store.s("dm",m);return m}).catch(function(){return store.g("dm",{})})}
+function DS(){return SBU+"/storage/v1/object/"}
+function dlist(){return fresh(ADMIN?"sba":"sbs").then(function(s){if(!s)throw 0;return jf(DS()+"list/designs",{method:"POST",headers:{apikey:SBK,Authorization:"Bearer "+s.at,"Content-Type":"application/json"},body:JSON.stringify({prefix:"",limit:1000,offset:0})})}).then(function(r){if(!r.ok||!Array.isArray(r.data))throw 0;var m={};r.data.forEach(function(o){if(o.name)m[o.name]={t:(o.metadata&&o.metadata.mimetype)||"image/jpeg",v:o.updated_at||""}});store.s("dm",m);return m}).catch(function(){return store.g("dm",{})})}
 function mkM(t,cors){var m;if(/^video\//.test(t)){m=el("video","xi");m.muted=true;m.loop=true;m.autoplay=true;m.playsInline=true;m.setAttribute("playsinline","");m.setAttribute("muted","");m.onclick=function(){m.paused?m.play():m.pause()}}else{m=el("img","xi");if(cors)m.crossOrigin="anonymous"}return m}
 function upD(key,f,st){var ty=f.type||(/\.mp4$/i.test(f.name)?"video/mp4":"");
   if(!/^(image\/(jpeg|png|webp|gif)|video\/mp4)$/.test(ty)){st.textContent="الصيغة غير مدعومة. استخدم صورة أو GIF أو MP4.";return}
   if(f.size>52428800){st.textContent="الملف أكبر من 50 ميغابايت.";return}
   st.textContent="جارٍ الرفع...";
   fresh("sba").then(function(s){if(!s){st.textContent="انتهت جلسة المدير. سجّل الدخول من جديد.";return}
-    var x=new XMLHttpRequest();x.open("POST",DSU+"designs/"+key);x.setRequestHeader("apikey",SBK);x.setRequestHeader("Authorization","Bearer "+s.at);x.setRequestHeader("Content-Type",ty);x.setRequestHeader("x-upsert","true");
+    var x=new XMLHttpRequest();x.open("POST",DS()+"designs/"+key);x.setRequestHeader("apikey",SBK);x.setRequestHeader("Authorization","Bearer "+s.at);x.setRequestHeader("Content-Type",ty);x.setRequestHeader("x-upsert","true");
     x.upload.onprogress=function(e){if(e.lengthComputable)st.textContent="جارٍ الرفع "+Math.round(e.loaded*100/e.total)+" في المئة"};
     x.onload=function(){if(x.status>=200&&x.status<300)showProg();else{var mg="";try{var j=JSON.parse(x.responseText);mg=j.message||j.error||""}catch(e){mg=(x.responseText||"").slice(0,150)}st.textContent=x.status==0?"لا يوجد اتصال بالإنترنت.":"فشل الرفع ("+x.status+")"+(mg?": "+mg:"")}};
     x.onerror=function(){st.textContent="لا يوجد اتصال بالإنترنت."};x.send(f)})}
 function delD(key,st){st.textContent="جارٍ الحذف...";fresh("sba").then(function(s){if(!s){st.textContent="انتهت جلسة المدير. سجّل الدخول من جديد.";return}
-  fetch(DSU+"designs/"+key,{method:"DELETE",headers:{apikey:SBK,Authorization:"Bearer "+s.at}}).then(function(r){if(r.ok){var m=store.g("dm",{});delete m[key];store.s("dm",m);showProg()}else st.textContent="تعذر الحذف."}).catch(function(){st.textContent="لا يوجد اتصال بالإنترنت."})})}
+  fetch(DS()+"designs/"+key,{method:"DELETE",headers:{apikey:SBK,Authorization:"Bearer "+s.at}}).then(function(r){if(r.ok){var m=store.g("dm",{});delete m[key];store.s("dm",m);showProg()}else st.textContent="تعذر الحذف."}).catch(function(){st.textContent="لا يوجد اتصال بالإنترنت."})})}
 function dcard(key){var c=el("div","zg"),t=el("div","pm","تصميم هذا المستوى (صورة أو GIF أو MP4)"),st=el("div","vn"),inp=el("input"),b=el("button","zt"),d=el("button","vx","حذف التصميم");
   inp.type="file";inp.accept="image/*,video/mp4";inp.style.display="none";b.style.padding="12px 18px";b.style.marginInlineEnd="12px";
   b.onclick=function(){inp.click()};inp.onchange=function(){var f=inp.files[0];inp.value="";if(f)upD(key,f,st)};
   d.onclick=function(){if(confirm("حذف تصميم هذا المستوى؟"))delD(key,st)};
   t.style.marginBottom="10px";c.appendChild(t);c.appendChild(b);c.appendChild(d);c.appendChild(st);c.appendChild(inp);
   c.upd=function(h){b.textContent=h?"استبدال التصميم":"إضافة تصميم";d.style.display=h?"":"none"};c.upd(false);return c}
-function showProg(){var box=$("rows"),key=BP+"-"+(VID==""?"m":VID),tk=(showProg.t=(showProg.t||0)+1),mb=el("div"),dc=ADMIN?dcard(key):null,url=DSU+"public/designs/"+key;
+function showProg(){var box=$("rows"),key=BP+"-"+(VID==""?"m":VID),tk=(showProg.t=(showProg.t||0)+1),mb=el("div"),dc=ADMIN?dcard(key):null,url=DS()+"public/designs/"+key;
   box.innerHTML="";P=[];$("pt").textContent=CT;vch();show("prg");
   if(dc)box.appendChild(dc);box.appendChild(mb);
   function live(){return tk===showProg.t}
