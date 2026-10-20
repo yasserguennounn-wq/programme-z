@@ -399,7 +399,7 @@ function el(t,c,x){var n=document.createElement(t);if(c)n.className=c;if(x!=null
 function gs(){var u=store.g("pg2:"+CP,null);if(!u){var pr=PROGRAMS.filter(function(x){return x.id==BP})[0];u={g:(pr?pr.g:[{m:"",ids:[]}]).map(function(g){var ids=g.ids.slice();if(VID=="b")ids=ids.slice(0,2);else if(VID=="p"){var x=xt(g.m,ids);if(x)ids.push(x)}return{m:g.m,ids:ids,c:[]}})}}return u}
 function svG(u){store.s("pg2:"+CP,u)}
 function vch(){var c=$("vch"),m=$("vm");c.innerHTML="";m.innerHTML="";
-  LV.forEach(function(x){var b=el("button","vchip"+(x.id==VID?" on":""),x.n+((LOCKED[x.id]&&!ADMIN&&!store.g("lvc",null))?" 🔒":""));b.onclick=function(){VID=x.id;store.s("lvcur:"+BP,x.id);CP=ck();showProg()};c.appendChild(b)})}
+  LV.forEach(function(x){var b=el("button","vchip"+(x.id==VID?" on":""),x.n+((LOCKED[x.id]&&!ADMIN&&!store.g("lvc:"+lc(x.id),null))?" 🔒":""));b.onclick=function(){VID=x.id;store.s("lvcur:"+BP,x.id);CP=ck();showProg()};c.appendChild(b)})}
 /* تصاميم المستويات: تُرفع من وضع المدير إلى Supabase Storage (حاوية designs). مفتاح الملف = رمز البرنامج + "-" + رمز المستوى (b مبتدئ، m متقدم، p متقدم جداً). احتياط: ملف بالاسم نفسه على GitHub مثل cta-b.jpg */
 function DS(){return SBU+"/storage/v1/object/"}
 function dlist(){return fresh(ADMIN?"sba":"sbs").then(function(s){if(!s)throw 0;return jf(DS()+"list/designs",{method:"POST",headers:{apikey:SBK,Authorization:"Bearer "+s.at,"Content-Type":"application/json"},body:JSON.stringify({prefix:"",limit:1000,offset:0})})}).then(function(r){if(!r.ok||!Array.isArray(r.data))throw 0;var m={};r.data.forEach(function(o){if(o.name)m[o.name]={t:(o.metadata&&o.metadata.mimetype)||"image/jpeg",v:o.updated_at||""}});store.s("dm",m);return m}).catch(function(){return store.g("dm",{})})}
@@ -421,24 +421,25 @@ function dcard(key){var c=el("div","zg"),t=el("div","pm","تصميم هذا ال
   d.onclick=function(){if(confirm("حذف تصميم هذا المستوى؟"))delD(key,st)};
   t.style.marginBottom="10px";c.appendChild(t);c.appendChild(b);c.appendChild(d);c.appendChild(st);c.appendChild(inp);
   c.upd=function(h){b.textContent=h?"استبدال التصميم":"إضافة تصميم";d.style.display=h?"":"none"};c.upd(false);return c}
-/* قفل المستويين متقدم ومتقدم جداً بكود يغيّره المدير (جدول app_settings ودالة check_level_code في Supabase) */
+/* قفل المستويين متقدم (m) ومتقدم جداً (p): لكل مستوى كود مستقل يسري على كل البرامج، ويغيّره المدير (جدول app_settings ودالة check_level_code في Supabase) */
 var LOCKED={"":1,p:1};
-function chkC(c){return api("POST","rpc/check_level_code",{p_code:c}).then(function(r){return r.ok&&r.data===true?1:(r.status==0||r.status==401||r.status>=500?-1:0)})}
-function ccard(){var c=el("div","zg"),t=el("div","pm","كود دخول المستويين متقدم ومتقدم جداً"),i=el("input","tin"),b=el("button","zt","حفظ الكود"),st=el("div","vn");
+function lc(v){return v==""?"m":v}
+function chkC(l,c){return api("POST","rpc/check_level_code",{p_level:l,p_code:c}).then(function(r){return r.ok&&r.data===true?1:(r.status==0||r.status==401||r.status>=500?-1:0)})}
+function ccard(){var L=lc(VID),nm=L=="p"?"متقدم جداً":"متقدم",c=el("div","zg"),t=el("div","pm","كود مستوى "+nm+" (يسري على كل البرامج)"),i=el("input","tin"),b=el("button","zt","حفظ الكود"),st=el("div","vn");
   i.placeholder="اكتب الكود (فارغ = بلا كود)";i.dir="ltr";i.maxLength=30;i.autocomplete="off";b.style.padding="12px 18px";b.style.marginTop="10px";t.style.marginBottom="10px";
-  aapi("GET","app_settings?key=eq.level_code&select=value").then(function(r){if(r.ok&&r.data&&r.data[0])i.value=r.data[0].value});
+  aapi("GET","app_settings?key=eq.level_code_"+L+"&select=value").then(function(r){if(r.ok&&r.data&&r.data[0])i.value=r.data[0].value});
   b.onclick=function(){var v=i.value.trim();st.textContent="جارٍ الحفظ...";
-    aapi("POST","app_settings?on_conflict=key",{key:"level_code",value:v},UP).then(function(r){st.textContent=r.ok?(v?"تم حفظ الكود. سيُطلب من المتدربين إدخاله من جديد عند تغييره.":"أُلغي الكود. المستويان مفتوحان للجميع."):r.status==0?"لا يوجد اتصال بالإنترنت.":"تعذر الحفظ ("+r.status+"). تأكد من تنفيذ سكربت SQL الخاص بالكود في Supabase."})};
+    aapi("POST","app_settings?on_conflict=key",{key:"level_code_"+L,value:v},UP).then(function(r){st.textContent=r.ok?(v?"تم حفظ الكود. سيُطلب من المتدربين إدخاله من جديد عند تغييره.":"أُلغي الكود. مستوى "+nm+" مفتوح للجميع."):r.status==0?"لا يوجد اتصال بالإنترنت.":"تعذر الحفظ ("+r.status+"). تأكد من تنفيذ سكربت SQL الخاص بالكود في Supabase."})};
   c.appendChild(t);c.appendChild(i);c.appendChild(b);c.appendChild(st);return c}
-function gateC(mb,live,go){var sc=store.g("lvc",null);
-  chkC(sc?sc.c:"").then(function(v){if(!live())return;
-    if(v==1){store.s("lvc",{c:sc?sc.c:""});go();return}
+function gateC(mb,live,go){var L=lc(VID),sk="lvc:"+L,sc=store.g(sk,null);
+  chkC(L,sc?sc.c:"").then(function(v){if(!live())return;
+    if(v==1){store.s(sk,{c:sc?sc.c:""});go();return}
     if(v==-1){if(sc)go();else{mb.innerHTML="";var n=el("div","pm","يلزم اتصال بالإنترنت لفتح هذا المستوى.");n.style.marginTop="14px";mb.appendChild(n)}return}
-    store.r("lvc");
+    store.r(sk);
     var c=el("div","zg"),t=el("div","pm","هذا المستوى يحتاج كوداً من إدارة القاعة"),i=el("input","tin"),b=el("button","nx","دخول"),e=el("div","vn");
     i.placeholder="اكتب الكود";i.dir="ltr";i.maxLength=30;i.autocomplete="off";b.style.marginTop="10px";
     function sub(){var v2=i.value.trim();if(!v2){e.textContent="اكتب الكود أولاً.";return}e.textContent="جارٍ التحقق...";
-      chkC(v2).then(function(r){if(r==1){store.s("lvc",{c:v2});showProg()}else e.textContent=r==-1?"لا يوجد اتصال بالإنترنت.":"الكود غير صحيح."})}
+      chkC(L,v2).then(function(r){if(r==1){store.s(sk,{c:v2});showProg()}else e.textContent=r==-1?"لا يوجد اتصال بالإنترنت.":"الكود غير صحيح."})}
     b.onclick=sub;i.onkeydown=function(ev){if(ev.key=="Enter")sub()};
     c.appendChild(t);c.appendChild(i);c.appendChild(b);c.appendChild(e);mb.innerHTML="";mb.appendChild(c);vch()})}
 function showProg(){var box=$("rows"),key=BP+"-"+(VID==""?"m":VID),tk=(showProg.t=(showProg.t||0)+1),mb=el("div"),dc=ADMIN?dcard(key):null,url=DS()+"public/designs/"+key;
