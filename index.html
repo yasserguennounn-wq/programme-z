@@ -217,6 +217,16 @@ button.qc{width:100%;justify-content:center;text-align:center;color:var(--ink);f
     <div class="m" id="lms" style="color:#ff6b6b;margin-top:10px;text-align:center"></div>
     <a class="lk" id="lwa" target="_blank" rel="noopener" style="display:block;text-align:center;margin-top:10px;color:#a8a8a8">ليس لديك رمز؟ تواصل مع القاعة</a>
     <p style="color:#777;font-size:.8rem;text-align:center;margin:14px 0 0">وزنك وقياساتك وأوزان تمارينك تُحفظ على خادم آمن، ولا يراها إلا أنت ومدرب القاعة.</p>
+    <a class="lk" id="lsg" onclick="sgForm()" style="display:block;text-align:center;margin-top:14px;color:#fff;font-weight:700;cursor:pointer">متدرب جديد؟ سجّل بياناتك هنا</a>
+  </div>
+  <div class="fm hid" id="sgm">
+    <div class="fd"><label for="sgl">اللقب</label><input id="sgl" type="text" autocomplete="family-name" maxlength="40"></div>
+    <div class="fd"><label for="sgn">الاسم</label><input id="sgn" type="text" autocomplete="given-name" maxlength="40"></div>
+    <div class="fd"><label for="sgp">رقم الهاتف</label><input id="sgp" type="tel" inputmode="tel" dir="ltr" style="text-align:right" placeholder="0555 12 34 56" autocomplete="tel" maxlength="16"></div>
+    <div class="fd"><label for="sgb">تاريخ الميلاد (اختياري)</label><input id="sgb" type="date" dir="ltr"></div>
+    <button class="nx" id="sgx" onclick="sgSend()">إرسال طلب التسجيل</button>
+    <div class="m" id="sgs" style="margin-top:10px;text-align:center;color:#ff6b6b"></div>
+    <a class="lk" onclick="stForm()" style="display:block;text-align:center;margin-top:10px;color:#a8a8a8;cursor:pointer">لدي رمز، العودة للدخول</a>
   </div>
 </div>
 <div id="hm" class="hid hm">
@@ -261,6 +271,7 @@ button.qc{width:100%;justify-content:center;text-align:center;color:var(--ink);f
   <div class="qt">المتدربون</div>
   <input id="msq" class="tin" style="margin-top:12px" placeholder="بحث بالاسم أو الهاتف" oninput="mlr()">
   <button class="nx" style="margin-top:12px" onclick="madd()">+ إضافة متدرب</button>
+  <div id="mrq" style="margin-top:12px"></div>
   <div id="mfm"></div>
   <div id="mls" style="margin-top:12px"></div>
 </div></div>
@@ -517,7 +528,7 @@ function lockOut(msg){clearMember();stForm(msg)}
 function logout(){flush().then(function(){clearMember();stForm()})}
 /* ===== دخول المتدرب: رقم الهاتف + رمز من القاعة ===== */
 function normPh(v){var p=String(v).replace(/[\u0660-\u0669]/g,function(c){return c.charCodeAt(0)-1632}).replace(/[\s.\-()]/g,"");return/^(0|\+?213)[567]\d{8}$/.test(p)?p.replace(/^\+?213/,"0"):""}
-function stForm(msg){SPL=false;$("sb").className="hid bk2";$("fm").className="fm";$("stp").className="";$("ph").value="";$("cd").value="";["ph","cd"].forEach(function(k){setE(k,"")});$("lms").textContent=msg||"";
+function stForm(msg){SPL=false;$("sb").className="hid bk2";$("fm").className="fm";$("sgm").className="fm hid";$("stp").textContent="أدخل رقم هاتفك والرمز الذي أعطتك إياه القاعة";$("stp").className="";$("ph").value="";$("cd").value="";["ph","cd"].forEach(function(k){setE(k,"")});$("lms").textContent=msg||"";
   var p=gpn();$("lwa").href=p?"https://wa.me/"+p+"?text="+encodeURIComponent("السلام عليكم، أريد رمز الدخول إلى تطبيق ZEDAM GYM."):"#";show("st")}
 function login(){var ph=normPh($("ph").value),cd=String($("cd").value).replace(/[\u0660-\u0669]/g,function(c){return c.charCodeAt(0)-1632}).trim(),ok=true,b=$("lgb");
   if(!ph){setE("ph","أدخل رقماً صحيحاً من 10 أرقام يبدأ بـ 05 أو 06 أو 07");ok=false}else setE("ph","");
@@ -560,11 +571,45 @@ function addD(s,n){var t=new Date();t.setHours(0,0,0,0);var d=s?new Date(s+"T00:
 function fld(l,i){var w=el("div","tfd");w.appendChild(el("label","",l));w.appendChild(i);return w}
 function mst(m){if(!m.active)return["موقوف","#9a9a9a"];if(m.sub_end&&m.sub_end<td())return["منتهي","#e11d1d"];return["ساري"+(m.sub_end?" حتى "+fd(m.sub_end):""),"#1e8e5a"]}
 function memList(){show("mem");var h=$("mls");h.textContent="جارٍ التحميل...";
-  aapi("GET","members?select=*&order=created_at.desc").then(function(r){if(!r.ok){h.textContent=r.status==401?"انتهت جلسة المدير. اخرج من وضع المدير وادخل من جديد.":"تعذر التحميل. تحقق من الإنترنت.";return}MEMS=r.data||[];mlr()})}
+  aapi("GET","members?select=*&order=created_at.desc").then(function(r){if(!r.ok){h.textContent=r.status==401?"انتهت جلسة المدير. اخرج من وضع المدير وادخل من جديد.":"تعذر التحميل. تحقق من الإنترنت.";return}MEMS=r.data||[];mlr();rqList()})}
 function mlr(){var q=$("msq").value.trim().toLowerCase(),h=$("mls");h.innerHTML="";
   var L=MEMS.filter(function(m){return!q||(m.first_name+" "+m.last_name+" "+m.phone).toLowerCase().indexOf(q)>=0});
   if(!L.length){h.appendChild(el("div","pm",MEMS.length?"لا نتائج.":"لا يوجد متدربون بعد."));return}
   L.forEach(function(m){var b=el("button","zb"),s=mst(m),sm=el("small","",s[0]);b.style.cssText="width:100%;margin-bottom:8px";sm.style.color=s[1];b.appendChild(el("span","",m.last_name+" "+m.first_name+(m.birth_date?" ("+age(m.birth_date)+" سنة)":"")));b.appendChild(sm);b.onclick=function(){mdet(m)};h.appendChild(b)})}
+
+/* ===== تسجيل المتدرب بنفسه ===== */
+function sgForm(){$("fm").className="hid";$("sgm").className="fm";$("stp").textContent="سجّل بياناتك وسنرسل لك رمز الدخول عبر واتساب";$("sgs").textContent=""}
+function sgSend(){var ln=$("sgl").value.trim(),fn=$("sgn").value.trim(),ph=normPh($("sgp").value),bd=$("sgb").value,b=$("sgx"),m=$("sgs");
+  if(ln.length<2||fn.length<2){m.style.color="#ff6b6b";m.textContent="أدخل اللقب والاسم.";return}
+  if(!ph){m.style.color="#ff6b6b";m.textContent="أدخل رقماً صحيحاً من 10 أرقام يبدأ بـ 05 أو 06 أو 07";return}
+  m.textContent="";b.disabled=true;b.textContent="جارٍ الإرسال...";
+  var end=function(t,ok){b.disabled=false;b.textContent="إرسال طلب التسجيل";m.style.color=ok?"#1e8e5a":"#ff6b6b";m.textContent=t};
+  var call=function(){return api("POST","rpc/request_signup",{p_last:ln,p_first:fn,p_phone:ph,p_birth:bd||null})};
+  (sg("sbs")?Promise.resolve(sg("sbs")):anon()).then(function(s){
+    if(!s){end("تعذر الاتصال بالخادم. أعد المحاولة.");return}
+    return call().then(function(r){if(r.status==401){store.r("sbs");return anon().then(function(s2){return s2?call():r})}return r}).then(function(r){
+      if(!r.ok){end("تعذر الإرسال الآن. أعد المحاولة بعد قليل.");return}
+      var t=r.data;
+      if(t=="ok")end("✅ وصل طلبك. سنرسل لك رمز الدخول عبر واتساب قريباً.",true);
+      else if(t=="exists")end("هذا الرقم مسجّل مسبقاً. ادخل برقمك والرمز، أو تواصل مع القاعة.");
+      else end(t=="busy"?"ضغط كبير الآن. حاول لاحقاً.":"تحقق من البيانات المدخلة.")})})}
+/* المدير: طلبات التسجيل الجديدة */
+function rqList(){var h=$("mrq");h.innerHTML="";
+  aapi("GET","signup_requests?select=*&order=created_at.asc").then(function(r){
+    if(!r.ok||!r.data||!r.data.length)return;
+    h.appendChild(el("div","qt","طلبات التسجيل ("+r.data.length+")"));
+    r.data.forEach(function(q){var b=el("div","zg"),t=el("div","pm",q.last_name+" "+q.first_name+" · "+q.phone),ms=el("div","vn"),ok=el("button","nx","قبول وتوليد الرمز"),no=el("button","lk","رفض");
+      ok.style.marginTop="10px";
+      ok.onclick=function(){var c=code6(),se=addD("",30);ok.disabled=true;ms.textContent="";
+        aapi("POST","members",{last_name:q.last_name,first_name:q.first_name,phone:q.phone,code:c,sub_end:se,birth_date:q.birth_date||null},{Prefer:"return=representation"}).then(function(r2){
+          if(r2.ok&&r2.data&&r2.data[0]){aapi("DELETE","signup_requests?id=eq."+q.id);MEMS.unshift(r2.data[0]);mlr();
+            var w="213"+q.phone.slice(1),a=el("a","nx","📲 إرسال الرمز لـ "+q.first_name+" عبر واتساب");
+            a.target="_blank";a.rel="noopener";a.style.cssText="display:block;text-align:center;margin-top:10px";
+            a.href="https://wa.me/"+w+"?text="+encodeURIComponent("السلام عليكم "+q.first_name+"، تم قبول تسجيلك في ZEDAM GYM.\nرقم الهاتف: "+q.phone+"\nرمز الدخول: "+c+"\nاشتراكك ساري حتى "+fd(se));
+            b.innerHTML="";b.appendChild(t);b.appendChild(a)}
+          else{ok.disabled=false;ms.textContent=r2.status==409?"هذا الرقم مسجّل مسبقاً كمتدرب. ارفض الطلب.":"تعذر القبول ("+r2.status+")."}})};
+      no.onclick=function(){aapi("DELETE","signup_requests?id=eq."+q.id).then(function(){rqList()})};
+      b.appendChild(t);b.appendChild(ok);b.appendChild(no);b.appendChild(ms);h.appendChild(b)})})}
 function madd(){var f=$("mfm");if(f.innerHTML){f.innerHTML="";return}
   var ln=el("input","tin"),fn=el("input","tin"),ph=el("input","tin"),sd=el("input","tin"),cd=el("input","tin"),ms=el("div","vn"),sb=el("button","nx","حفظ المتدرب");
   ph.dir="ltr";ph.inputMode="tel";ph.placeholder="0555123456";sd.type="date";sd.dir="ltr";sd.value=addD("",30);cd.dir="ltr";cd.value=code6();
