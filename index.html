@@ -533,6 +533,8 @@ function login(){var ph=normPh($("ph").value),cd=String($("cd").value).replace(/
       if(t=="ok"){M={fn:d.first_name,ln:d.last_name,ph:ph};svM();store.s("sbm",{id:d.member_id,sub_end:d.sub_end});pushAll().then(function(){return pull()}).then(function(){return fetchBd()}).then(function(){end();if(curM().bd)showHm();else bdScreen(false)});return}
       end(t=="expired"?"انتهى اشتراكك. تواصل مع القاعة لتجديده.":t=="locked"?"محاولات خاطئة كثيرة. حاول بعد 15 دقيقة.":"رقم الهاتف أو الرمز غير صحيح.")})})}
 /* ===== دخول المدير: بريد وكلمة مرور حقيقيان ===== */
+/* وضع المدير يبقى طوال جلسة التطبيق فقط؛ عند فتح التطبيق من جديد يبدأ بوضع المتدرب */
+try{if(sessionStorage.getItem("zadm")!="1")store.r("sba")}catch(e){store.r("sba")}
 var ADMIN=!!sg("sba"),LT=0,LC=0;
 function tapLogo(){if(ADMIN)return;var n=Date.now();if(n-LT>3000)LC=0;LT=n;if(++LC>=5){LC=0;$("pin").value="";$("pe").textContent="";$("pm2").className="ov";setTimeout(function(){$("aem").focus()},50)}}
 function closePin(){$("pm2").className="hid ov"}
@@ -541,8 +543,8 @@ function adminLogin(){var em=$("aem").value.trim(),pw=$("pin").value;if(!em||!pw
   auth("token?grant_type=password",{email:em,password:pw}).then(function(r){
     if(!r.ok||!r.data||!r.data.access_token){$("pe").textContent=r.status==0?"لا يوجد اتصال بالإنترنت.":"البريد أو كلمة المرور غير صحيحة.";return}
     setS("sba",r.data);
-    api("POST","rpc/is_admin",{},null,"sba").then(function(x){if(x.ok&&x.data===true){ADMIN=true;closePin();$("pin").value="";showHm()}else{store.r("sba");$("pe").textContent="هذا الحساب ليس حساب مدير."}})})}
-function adminOff(){store.r("sba");ADMIN=false;if(!M.ph)stForm();else showHm()}
+    api("POST","rpc/is_admin",{},null,"sba").then(function(x){if(x.ok&&x.data===true){ADMIN=true;try{sessionStorage.setItem("zadm","1")}catch(e){}closePin();$("pin").value="";showHm()}else{store.r("sba");$("pe").textContent="هذا الحساب ليس حساب مدير."}})})}
+function adminOff(){store.r("sba");try{sessionStorage.removeItem("zadm")}catch(e){}ADMIN=false;if(!M.ph)stForm();else showHm()}
 /* ===== شاشات المدير: المتدربون ===== */
 function age(s){var b=new Date(s+"T00:00:00"),t=new Date(),a=t.getFullYear()-b.getFullYear(),m=t.getMonth()-b.getMonth();if(m<0||(m==0&&t.getDate()<b.getDate()))a--;return a}
 function fetchBd(){var m=curM();if(!m)return Promise.resolve();return api("GET","members?select=birth_date&id=eq."+m.id).then(function(r){if(r.ok&&r.data&&r.data[0]){m.bd=r.data[0].birth_date||null;store.s("sbm",m)}})}
