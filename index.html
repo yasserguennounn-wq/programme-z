@@ -224,6 +224,9 @@ button.qc{width:100%;justify-content:center;text-align:center;color:var(--ink);f
 .cb:active::after{background-size:0 0;opacity:1;transition:0s}
 .an{margin-top:12px}
 #lgo2{margin-top:10px!important;padding:13px!important;min-height:48px}
+
+.fsb{display:block;width:100%;margin-top:10px;min-height:48px;border-radius:14px;border:1.5px solid var(--ln);background:var(--sf);color:var(--ink);font:700 1rem var(--b)}
+.xi{cursor:zoom-in}
 </style>
 </head>
 <body>
@@ -440,7 +443,7 @@ function vch(){var c=$("vch"),m=$("vm");c.innerHTML="";m.innerHTML="";
 /* تصاميم المستويات: تُرفع من وضع المدير إلى Supabase Storage (حاوية designs). مفتاح الملف = رمز البرنامج + "-" + رمز المستوى (b مبتدئ، m متقدم، p متقدم جداً). احتياط: ملف بالاسم نفسه على GitHub مثل cta-b.jpg */
 function DS(){return SBU+"/storage/v1/object/"}
 function dlist(){return fresh(ADMIN?"sba":"sbs").then(function(s){if(!s)throw 0;return jf(DS()+"list/designs",{method:"POST",headers:{apikey:SBK,Authorization:"Bearer "+s.at,"Content-Type":"application/json"},body:JSON.stringify({prefix:"",limit:1000,offset:0})})}).then(function(r){if(!r.ok||!Array.isArray(r.data))throw 0;var m={};r.data.forEach(function(o){if(o.name)m[o.name]={t:(o.metadata&&o.metadata.mimetype)||"image/jpeg",v:o.updated_at||""}});store.s("dm",m);return m}).catch(function(){return store.g("dm",{})})}
-function mkM(t,cors){var m;if(/^video\//.test(t)){m=el("video","xi");m.muted=true;m.loop=true;m.autoplay=true;m.playsInline=true;m.setAttribute("playsinline","");m.setAttribute("muted","");m.onclick=function(){m.paused?m.play():m.pause()}}else{m=el("img","xi");if(cors)m.crossOrigin="anonymous"}return m}
+function mkM(t,cors){var m;if(/^video\//.test(t)){m=el("video","xi");m.muted=true;m.loop=true;m.autoplay=true;m.playsInline=true;m.setAttribute("playsinline","");m.setAttribute("muted","")}else{m=el("img","xi");if(cors)m.crossOrigin="anonymous"}return m}
 function upD(key,f,st){var ty=f.type||(/\.mp4$/i.test(f.name)?"video/mp4":"");
   if(!/^(image\/(jpeg|png|webp|gif)|video\/mp4)$/.test(ty)){st.textContent="الصيغة غير مدعومة. استخدم صورة أو GIF أو MP4.";return}
   if(f.size>52428800){st.textContent="الملف أكبر من 50 ميغابايت.";return}
@@ -484,11 +487,11 @@ function showProg(){var box=$("rows"),key=BP+"-"+(VID==""?"m":VID),tk=(showProg.
   if(dc)box.appendChild(dc);if(ADMIN&&LOCKED[VID])box.appendChild(ccard());box.appendChild(mb);
   function live(){return tk===showProg.t}
   function none(){if(!live())return;mb.innerHTML="";var n=el("div","pm","قريباً");n.style.marginTop="14px";mb.appendChild(n)}
-  function git(){var ex=["jpg","png","jpeg","webp","gif","mp4"],k=0;(function t(){if(!live())return;if(k>=ex.length)return none();var m=mkM(ex[k]=="mp4"?"video/mp4":"image/x");m.onerror=function(){k++;t()};mb.innerHTML="";mb.appendChild(m);m.src=key+"."+ex[k]})()}
+  function git(){var ex=["jpg","png","jpeg","webp","gif","mp4"],k=0;(function t(){if(!live())return;if(k>=ex.length)return none();var m=mkM(ex[k]=="mp4"?"video/mp4":"image/x");m.onerror=function(){k++;t()};mb.innerHTML="";mb.appendChild(m);mb.appendChild(fsHint());m.src=key+"."+ex[k]})()}
   function put(meta){if(!live())return;if(dc)dc.upd(!!meta);if(!meta)return git();
     var src=url+"?v="+encodeURIComponent(meta.v||""),m=mkM(meta.t,true);
     m.onerror=function(){if(m.crossOrigin){m.removeAttribute("crossorigin");m.src=src+"&n=1"}else git()};
-    mb.innerHTML="";mb.appendChild(m);m.src=src}
+    mb.innerHTML="";mb.appendChild(m);mb.appendChild(fsHint());m.src=src}
   function go(){dlist().then(function(map){put(map[key]||null)})}
   if(ADMIN||!LOCKED[VID])go();else gateC(mb,live,go)}
 function op(i){
@@ -604,6 +607,26 @@ function mlr(){var q=$("msq").value.trim().toLowerCase(),h=$("mls");h.innerHTML=
   L.forEach(function(m){var b=el("button","zb"),s=mst(m),sm=el("small","",s[0]);b.style.cssText="width:100%;margin-bottom:8px";sm.style.color=s[1];b.appendChild(el("span","",m.last_name+" "+m.first_name+(m.birth_date?" ("+age(m.birth_date)+" سنة)":"")));b.appendChild(sm);b.onclick=function(){mdet(m)};h.appendChild(b)})}
 
 
+
+/* ===== عرض التصميم بملء الشاشة ===== */
+function fsHint(){var b=el("button","fsb","⛶ عرض بملء الشاشة");b.onclick=function(){var m=b.parentNode&&b.parentNode.querySelector(".xi");if(m)openFS(m.currentSrc||m.src,m.tagName=="VIDEO")};return b}
+function closeFS(){var o=$("fso");if(!o)return;if(document.fullscreenElement&&document.exitFullscreen)document.exitFullscreen().catch(function(){});o.remove();document.removeEventListener("keydown",fsKey)}
+function fsKey(e){if(e.key=="Escape")closeFS()}
+function openFS(src,vid){if(!src||$("fso"))return;
+  var o=el("div"),w=el("div"),m=el(vid?"video":"img"),bar=el("div"),cl=el("button","","✕ إغلاق"),zm=el("button","","🔍 تكبير"),z=false;
+  o.id="fso";o.style.cssText="position:fixed;inset:0;z-index:99999;background:#000;display:flex;flex-direction:column";
+  bar.style.cssText="display:flex;justify-content:space-between;gap:10px;padding:calc(env(safe-area-inset-top,0px) + 8px) 12px 8px;background:rgba(0,0,0,.85)";
+  [cl,zm].forEach(function(b){b.style.cssText="min-height:48px;padding:0 18px;border-radius:14px;border:1.5px solid #555;background:#161616;color:#fff;font:700 1rem var(--b)"});
+  w.style.cssText="flex:1;overflow:auto;display:flex;align-items:center;justify-content:center;touch-action:pan-x pan-y pinch-zoom;-webkit-overflow-scrolling:touch";
+  function fit(){m.style.cssText="max-width:100%;max-height:100%;object-fit:contain;display:block;margin:auto";zm.textContent="🔍 تكبير";w.style.alignItems="center"}
+  function big(){m.style.cssText="width:240%;max-width:none;height:auto;display:block;margin:0";zm.textContent="🔍 تصغير";w.style.alignItems="flex-start"}
+  if(vid){m.controls=true;m.autoplay=true;m.loop=true;m.muted=true;m.playsInline=true;m.setAttribute("playsinline","")}
+  m.src=src;fit();
+  zm.onclick=function(){z=!z;z?big():fit()};if(!vid)m.ondblclick=zm.onclick;
+  cl.onclick=closeFS;bar.appendChild(zm);bar.appendChild(cl);w.appendChild(m);o.appendChild(bar);o.appendChild(w);document.body.appendChild(o);
+  document.addEventListener("keydown",fsKey);
+  if(o.requestFullscreen)o.requestFullscreen().catch(function(){})}
+document.addEventListener("click",function(e){var t=e.target;if(t&&t.classList&&t.classList.contains("xi")&&!t.closest("#fso")&&(t.tagName=="IMG"||t.tagName=="VIDEO"))openFS(t.currentSrc||t.src,t.tagName=="VIDEO")});
 /* ===== التحفيز: حصص الأسبوع + سلسلة الالتزام + الأرقام القياسية (يُحسب من بيانات الهاتف) ===== */
 function dd(a,b){return Math.round((new Date(a+"T00:00:00")-new Date(b+"T00:00:00"))/864e5)}
 function mot(){var h=$("mot");h.innerHTML="";if(!M.ph)return;
