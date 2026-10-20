@@ -549,7 +549,7 @@ function syncNow(){var m=curM();if(!m||!navigator.onLine)return;
     if(!x.active||(x.sub_end&&x.sub_end<td())){lockOut("انتهى اشتراكك. تواصل مع القاعة لتجديده.");return}
     store.s("sbm",{id:m.id,sub_end:x.sub_end,bd:x.birth_date||null});M.fn=x.first_name;M.ln=x.last_name;svM();
     flush().then(function(){if(!store.g("sbq",[]).length)return pull()})})}
-function clearMember(){["sbs","sbm","member","meas","lifts","sbq"].forEach(function(k){store.r(k)});M={}}
+function clearMember(){["sbs","sbm","member","meas","lifts","sbq","logt"].forEach(function(k){store.r(k)});M={}}
 function lockOut(msg){clearMember();stForm(msg)}
 function logout(){flush().then(function(){clearMember();stForm()})}
 /* ===== دخول المتدرب: رقم الهاتف + رمز من القاعة ===== */
@@ -766,6 +766,10 @@ function chartSvg(vs){if(vs.length<2)return"";var W=300,H=130,L=34,R=12,T=14,B=1
   X=function(i){return L+i*(W-L-R)/(vs.length-1)},Y=function(v){return mx==mn?H/2:T+(mx-v)/rg*(H-T-B)},
   line=vs.map(function(v,i){return X(i)+","+Y(v)}).join(" "),dots=vs.map(function(v,i){return'<circle cx="'+X(i)+'" cy="'+Y(v)+'" r="3.5" fill="#e11d1d"/>'}).join(""),tx='style="fill:var(--mut);font-size:10px"';
   return'<svg viewBox="0 0 '+W+' '+H+'" width="100%" dir="ltr"><polyline points="'+line+'" fill="none" stroke="#e11d1d" stroke-width="2.5" stroke-linejoin="round"/>'+dots+'<text x="2" y="'+(T+3)+'" '+tx+'>'+mx+'</text><text x="2" y="'+(H-B+3)+'" '+tx+'>'+mn+'</text><text x="'+X(vs.length-1)+'" y="'+(Y(vs[vs.length-1])-8)+'" text-anchor="end" style="fill:var(--ink);font-size:11px;font-weight:700">'+vs[vs.length-1]+'</text></svg>'}
+/* حماية السجلات: تُقفل بعد ساعتين من أول تسجيل (الخادم يطبّق القفل نفسه) */
+function isLk(k,d){var t=store.g("logt",{})[k+":"+d];return t?Date.now()-t>72e5:d<td()}
+function lkSet(k,d){var T=store.g("logt",{});if(!T[k+":"+d]){T[k+":"+d]=Date.now();store.s("logt",T)}}
+function lkDel(k,d){var T=store.g("logt",{});delete T[k+":"+d];store.s("logt",T)}
 function trk(){var tb=$("tmc"),sl=$("tsl"),c=$("tcd"),ch=$("tch"),f=$("tfm"),h=$("thl"),isL=TT=="l",E,U=MI[TT]||MI.w;
   [tb,sl,c,f,h].forEach(function(n){n.innerHTML=""});$("tft").parentNode.classList.remove("hid");$("thl").parentNode.classList.remove("hid");ch.innerHTML="";
   [["w","⚖️ الميزان"],["x","📏 الخصر"],["l","🏋️ الأوزان"],["p","📸 الصور"]].forEach(function(t){var b=el("button","vchip"+(t[0]==TT?" on":""),t[1]);b.onclick=function(){TT=t[0];TMSG="";trk()};tb.appendChild(b)});
@@ -785,15 +789,20 @@ function trk(){var tb=$("tmc"),sl=$("tsl"),c=$("tcd"),ch=$("tch"),f=$("tfm"),h=$
   sb.onclick=function(){var d=di.value,w=num(wi.value),r=isL&&ri.value.trim()?parseInt(num(ri.value)):null,lo=isL?0.5:U.lo,hi=isL?1000:U.hi;if(!d)return;
     if(!(w>=lo&&w<=hi)){ms.textContent="أدخل قيمة صحيحة.";return}
     if(isL&&ri.value.trim()&&!(r>=1&&r<=200)){ms.textContent="عدد التكرار غير صحيح.";return}
+    var old=isL?(lifts()[TS]||[]).some(function(q){return q.d==d}):store.g("meas",[]).some(function(q){return q.d==d&&q[TT]!=null});
+    var kk=isL?"l:"+TS:"m:"+TT;if(old&&isLk(kk,d)){ms.textContent="🔒 هذا التسجيل محمي (مضى عليه أكثر من ساعتين) ولا يمكن تعديله. للتصحيح تواصل مع المدرب.";return}
     w=rd(w);
     if(isL){var a=lifts(),arr=(a[TS]||[]).filter(function(e){return e.d!=d}),en={d:d,w:w};if(r)en.r=r;arr.push(en);a[TS]=arr;store.s("lifts",a);enq({t:"lu",ex:TS,d:d,w:w,r:r})}
     else{var m=store.g("meas",[]),ix=m.findIndex(function(e){return e.d==d});if(ix>=0)m[ix][TT]=w;else{var o={d:d};o[TT]=w;m.push(o)}store.s("meas",m);enq({t:"bu",kind:TT=="w"?"weight":"waist",d:d,v:w})}
-    TMSG="تم الحفظ ✓";trk()};
+    lkSet(kk,d);TMSG="تم الحفظ ✓";trk()};
   f.appendChild(sb);f.appendChild(ms);
   if(!E.length)h.appendChild(el("div","pm","لا توجد تسجيلات بعد."));
   E.slice().reverse().forEach(function(e){var r=el("div","thr"),t=el("span","");t.appendChild(nm(fd(e.d)));t.appendChild(document.createTextNode("   "+e.w+" "+(isL?"كغ":U.u)+(e.r?" × "+e.r+" تكرار":"")));
     var x=el("button","vx","✕");x.setAttribute("aria-label","حذف");
-    x.onclick=function(){if(isL){var a=lifts();a[TS]=(a[TS]||[]).filter(function(q){return q.d!=e.d});store.s("lifts",a);enq({t:"ld",ex:TS,d:e.d})}else{var mm=store.g("meas",[]);mm.forEach(function(q){if(q.d==e.d)delete q[TT]});store.s("meas",mm.filter(function(q){return Object.keys(q).length>1}));enq({t:"bd",kind:TT=="w"?"weight":"waist",d:e.d})}trk()};
+    var kk=isL?"l:"+TS:"m:"+TT;if(isLk(kk,e.d)){x.textContent="🔒";x.style.color="#8a8a8a";x.setAttribute("aria-label","سجل محمي");
+      x.onclick=function(){var nx=r.nextSibling;if(nx&&nx.className=="vn lkm"){nx.remove();return}var n=el("div","vn","🔒 السجلات التي مضت عليها ساعتان محمية ولا تُحذف. للتصحيح تواصل مع المدرب.");n.className="vn lkm";r.after(n);setTimeout(function(){if(n.parentNode)n.remove()},5000)};
+      r.appendChild(t);r.appendChild(x);h.appendChild(r);return}
+    x.onclick=function(){lkDel(kk,e.d);if(isL){var a=lifts();a[TS]=(a[TS]||[]).filter(function(q){return q.d!=e.d});store.s("lifts",a);enq({t:"ld",ex:TS,d:e.d})}else{var mm=store.g("meas",[]);mm.forEach(function(q){if(q.d==e.d)delete q[TT]});store.s("meas",mm.filter(function(q){return Object.keys(q).length>1}));enq({t:"bd",kind:TT=="w"?"weight":"waist",d:e.d})}trk()};
     r.appendChild(t);r.appendChild(x);h.appendChild(r)});
   show("trk")}
 /* ===== زر الرجوع في أندرويد (إيماءة السحب من الحافة أو زر الرجوع): يرجع شاشة واحدة بدل الخروج ===== */
