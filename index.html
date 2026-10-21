@@ -227,6 +227,10 @@ button.qc{width:100%;justify-content:center;text-align:center;color:var(--ink);f
 
 .fsb{display:block;width:100%;margin-top:10px;min-height:48px;border-radius:14px;border:1.5px solid var(--ln);background:var(--sf);color:var(--ink);font:700 1rem var(--b)}
 .xi{cursor:zoom-in}
+
+.rtb{height:8px;border-radius:8px;background:var(--ln);overflow:hidden;margin-top:10px}
+.rtb i{display:block;height:100%;width:0;background:#e11d1d;transition:width .25s linear}
+.bt{flex:1;min-height:48px}
 </style>
 </head>
 <body>
@@ -484,7 +488,7 @@ function gateC(mb,live,go){var L=lc(VID),sk="lvc:"+L,sc=store.g(sk,null);
     c.appendChild(t);c.appendChild(i);c.appendChild(b);c.appendChild(e);mb.innerHTML="";mb.appendChild(c);vch()})}
 function showProg(){var box=$("rows"),key=BP+"-"+(VID==""?"m":VID),tk=(showProg.t=(showProg.t||0)+1),mb=el("div"),dc=ADMIN?dcard(key):null,url=DS()+"public/designs/"+key;
   box.innerHTML="";P=[];$("pt").textContent=CT;vch();show("prg");
-  if(dc)box.appendChild(dc);if(ADMIN&&LOCKED[VID])box.appendChild(ccard());box.appendChild(mb);
+  if(dc)box.appendChild(dc);if(ADMIN&&LOCKED[VID])box.appendChild(ccard());box.appendChild(mb);box.appendChild(progTools());
   function live(){return tk===showProg.t}
   function none(){if(!live())return;mb.innerHTML="";var n=el("div","pm","قريباً");n.style.marginTop="14px";mb.appendChild(n)}
   function git(){var ex=["jpg","png","jpeg","webp","gif","mp4"],k=0;(function t(){if(!live())return;if(k>=ex.length)return none();var m=mkM(ex[k]=="mp4"?"video/mp4":"image/x");m.onerror=function(){k++;t()};mb.innerHTML="";mb.appendChild(m);mb.appendChild(fsHint());m.src=key+"."+ex[k]})()}
@@ -608,9 +612,55 @@ function mlr(){var q=$("msq").value.trim().toLowerCase(),h=$("mls");h.innerHTML=
 
 
 
+
+/* ===== أدوات صفحة البرنامج: مؤقت راحة + تسجيل وزن سريع ===== */
+var RT={end:0,tot:0,ti:null,ac:null};
+function rtDraw(){var r=Math.max(0,RT.end-Date.now())/1000,t=$("rtt"),a=$("rta");if(t)t.textContent=fmt(r);if(a)a.style.width=(RT.tot?100*(1-r/RT.tot):0)+"%";return r}
+function rtStop(){if(RT.ti){clearInterval(RT.ti);RT.ti=null}}
+function rtBeep(){try{var c=RT.ac,i;for(i=0;i<3;i++){var o=c.createOscillator(),g=c.createGain();o.connect(g);g.connect(c.destination);o.frequency.value=880;g.gain.value=.15;o.start(c.currentTime+i*.35);o.stop(c.currentTime+i*.35+.2)}}catch(e){}}
+function rtStart(n){rtStop();try{var A=window.AudioContext||window.webkitAudioContext;RT.ac=RT.ac||new A();RT.ac.resume&&RT.ac.resume()}catch(e){}
+  RT.tot=n;RT.end=Date.now()+n*1000;var l=$("rtl");if(l)l.textContent="استرح... ⏱";rtDraw();
+  RT.ti=setInterval(function(){if(rtDraw()<=0){rtStop();try{navigator.vibrate&&navigator.vibrate([300,100,300])}catch(e){}rtBeep();var t=$("rtt"),l2=$("rtl");if(t)t.textContent="0:00";if(l2)l2.textContent="انتهت الراحة، ابدأ المجموعة التالية 💪"}},250)}
+function rtAdd(n){if(RT.ti){RT.end+=n*1000;RT.tot+=n;rtDraw()}else rtStart(n)}
+function rtReset(){rtStop();RT.tot=0;var t=$("rtt"),l=$("rtl"),a=$("rta");if(t)t.textContent="0:00";if(l)l.textContent="اختر مدة الراحة";if(a)a.style.width="0"}
+function lgSug(id){var a=(lifts()[id]||[]).slice().sort(sd),l=a[a.length-1];if(!l)return"أول مرة لهذا التمرين: ابدأ بوزن خفيف تتقن به كل التكرارات.";
+  var t=String((X[id]&&X[id].r)||""),n=(t.match(/\d+/g)||[]).map(Number),hi=/ثانية|دقيقة|sec|min/i.test(t)||!n.length?0:Math.max.apply(null,n);
+  if(l.r&&hi&&l.r>=hi)return"أنجزت "+l.r+" تكراراً بـ "+l.w+" كغ (الهدف "+hi+"). جرّب زيادة 2.5 كغ ← "+rd(l.w+2.5)+" كغ 💪";
+  if(l.r&&hi)return"أنجزت "+l.r+" من "+hi+" تكراراً بـ "+l.w+" كغ. ثبّت الوزن حتى تصل إلى "+hi+" ثم زده 2.5 كغ.";
+  return"آخر وزن "+l.w+" كغ. إذا أنهيت كل المجموعات بسهولة جرّب زيادة 2.5 كغ."}
+function progTools(){var w=el("div"),SB="min-height:52px;min-width:64px;border-radius:14px;border:1.5px solid var(--ln);background:var(--sf);color:var(--ink);font:800 1.05rem var(--b)";
+  /* مؤقت الراحة */
+  var tc=el("div","zg"),tt=el("div","rtt","0:00"),bar=el("div","rtb"),tl=el("div","pm","اختر مدة الراحة"),r1=el("div","tb"),r2=el("div","tb");
+  tc.style.marginTop="14px";tc.appendChild(el("h3","","⏱ مؤقت الراحة بين المجموعات"));tt.id="rtt";tt.style.cssText="font:800 2.6rem var(--d);text-align:center;margin-top:8px";bar.id="rtbb";bar.appendChild(el("i"));bar.firstChild.id="rta";tl.id="rtl";tl.style.textAlign="center";
+  [60,90,120].forEach(function(n){var b=el("button","bt p",n+" ث");b.onclick=function(){rtStart(n)};r1.appendChild(b)});
+  var a=el("button","bt","+15 ثانية"),z=el("button","bt","إيقاف");a.onclick=function(){rtAdd(15)};z.onclick=rtReset;r2.appendChild(a);r2.appendChild(z);
+  [r1,r2].forEach(function(r){r.style.cssText="display:flex;gap:8px;margin-top:10px"});
+  tc.appendChild(tt);tc.appendChild(bar);tc.appendChild(tl);tc.appendChild(r1);tc.appendChild(r2);w.appendChild(tc);
+  if(RT.ti)rtDraw();
+  /* تسجيل وزن سريع */
+  var ks=Object.keys(X);if(!ks.length)return w;
+  var L=lifts(),last=ks[0],ld="";ks.forEach(function(k){(L[k]||[]).forEach(function(e){if(e.d>=ld){ld=e.d;last=k}})});
+  var gc=el("div","zg"),sel=el("select","tin"),hn=el("div","pm"),sg2=el("div","pm"),row=el("div"),wi=el("input","tin"),mn=el("button","",""),pl2=el("button","",""),row2=el("div"),ri=el("input","tin"),sv2=el("button","zt","حفظ"),ms=el("div","vn");
+  gc.style.marginTop="14px";gc.appendChild(el("h3","","🏋️ سجّل وزنك بسرعة"));
+  ks.forEach(function(k){var o=el("option","",X[k].n||k);o.value=k;sel.appendChild(o)});sel.value=last;sel.style.width="100%";
+  wi.type="text";wi.inputMode="decimal";wi.dir="ltr";wi.placeholder="الوزن (كغ)";wi.style.cssText="flex:1;text-align:center;font-weight:800;font-size:1.2rem;min-height:52px";
+  mn.textContent="−2.5";pl2.textContent="+2.5";mn.style.cssText=pl2.style.cssText=SB;mn.setAttribute("aria-label","إنقاص 2.5 كغ");pl2.setAttribute("aria-label","زيادة 2.5 كغ");
+  row.style.cssText="display:flex;gap:8px;margin-top:10px;direction:ltr";row.appendChild(mn);row.appendChild(wi);row.appendChild(pl2);
+  ri.type="text";ri.inputMode="numeric";ri.dir="ltr";ri.placeholder="التكرار";ri.style.cssText="flex:1;min-height:52px;text-align:center";sv2.style.minHeight="52px";
+  row2.style.cssText="display:flex;gap:8px;margin-top:10px";row2.appendChild(ri);row2.appendChild(sv2);
+  function fill(){var id=sel.value,a=(lifts()[id]||[]).slice().sort(sd),l=a[a.length-1];hn.textContent=l?"آخر مرة: "+l.w+" كغ"+(l.r?" × "+l.r:"")+" · "+fd(l.d):"لم تسجّل وزناً لهذا التمرين بعد.";wi.value=l?l.w:"";ri.value=l&&l.r?l.r:"";sg2.textContent=lgSug(id);ms.textContent=""}
+  function step(d){var v=num(wi.value);v=isNaN(v)?0:v;wi.value=Math.max(0,rd(v+d))}
+  mn.onclick=function(){step(-2.5)};pl2.onclick=function(){step(2.5)};sel.onchange=fill;
+  sv2.onclick=function(){var id=sel.value,v=num(wi.value),r=ri.value.trim()?parseInt(num(ri.value)):null;
+    if(!(v>=0.5&&v<=1000)){ms.style.color="#ff6b6b";ms.textContent="أدخل وزناً صحيحاً.";return}
+    if(ri.value.trim()&&!(r>=1&&r<=200)){ms.style.color="#ff6b6b";ms.textContent="عدد التكرار غير صحيح.";return}
+    var d=td(),all=lifts(),kk="l:"+id;if((all[id]||[]).some(function(q){return q.d==d})&&isLk(kk,d)){ms.style.color="#ff6b6b";ms.textContent="🔒 تسجيل اليوم محمي (مضت عليه ساعتان) ولا يمكن تعديله. للتصحيح تواصل مع المدرب.";return}
+    var arr=(all[id]||[]).filter(function(q){return q.d!=d}),en={d:d,w:rd(v)};if(r)en.r=r;arr.push(en);all[id]=arr;store.s("lifts",all);lkSet(kk,d);enq({t:"lu",ex:id,d:d,w:en.w,r:r});
+    fill();ms.style.color="#1e8e5a";ms.textContent="تم الحفظ ✓ ويمكنك رؤية تطورك في متابعة تقدمي."};
+  gc.appendChild(sel);gc.appendChild(hn);gc.appendChild(row);gc.appendChild(row2);gc.appendChild(sg2);gc.appendChild(ms);w.appendChild(gc);fill();return w}
 /* ===== عرض التصميم بملء الشاشة ===== */
 function fsHint(){var b=el("button","fsb","⛶ عرض بملء الشاشة");b.onclick=function(){var m=b.parentNode&&b.parentNode.querySelector(".xi");if(m)openFS(m.currentSrc||m.src,m.tagName=="VIDEO")};return b}
-function closeFS(){var o=$("fso");if(!o)return;try{if(screen.orientation&&screen.orientation.unlock)screen.orientation.unlock()}catch(e){}if(document.fullscreenElement&&document.exitFullscreen)document.exitFullscreen().catch(function(){});o.remove();document.removeEventListener("keydown",fsKey)}
+function closeFS(){var o=$("fso");if(!o)return;try{if(screen.orientation&&screen.orientation.unlock)screen.orientation.unlock()}catch(e){}if(document.fullscreenElement&&document.exitFullscreen)document.exitFullscreen().catch(function(){});clearInterval(o._ti);o.remove();document.removeEventListener("keydown",fsKey)}
 function fsKey(e){if(e.key=="Escape")closeFS()}
 function openFS(src,vid){if(!src||$("fso"))return;
   var o=el("div"),w=el("div"),m=el(vid?"video":"img"),bar=el("div"),cl=el("button","","✕ إغلاق"),zm=el("button","","🔍 تكبير"),rt=el("button","","↻ تدوير"),z=false,ls=false;
@@ -629,6 +679,8 @@ function openFS(src,vid){if(!src||$("fso"))return;
     ls=true;rt.textContent="↻ عمودي";
     if(so&&so.lock){(o.requestFullscreen&&!document.fullscreenElement?o.requestFullscreen():Promise.resolve()).catch(function(){}).then(function(){return so.lock("landscape")}).catch(function(){setCss(true)})}else setCss(true)};
   cl.onclick=closeFS;bar.appendChild(zm);bar.appendChild(rt);bar.appendChild(cl);w.appendChild(m);o.appendChild(bar);o.appendChild(w);document.body.appendChild(o);
+  var tm=el("div");tm.style.cssText="position:absolute;left:50%;bottom:calc(env(safe-area-inset-bottom,0px) + 16px);transform:translateX(-50%);padding:10px 18px;border-radius:14px;background:rgba(0,0,0,.75);border:1.5px solid #e11d1d;color:#fff;font:800 1.2rem var(--b);display:none;direction:ltr";o.appendChild(tm);
+  o._ti=setInterval(function(){tm.style.display=RT.ti?"block":"none";if(RT.ti)tm.textContent="⏱ "+fmt(Math.max(0,(RT.end-Date.now())/1000))},400);
   document.addEventListener("keydown",fsKey);
   if(o.requestFullscreen)o.requestFullscreen().catch(function(){})}
 document.addEventListener("click",function(e){var t=e.target;if(t&&t.classList&&t.classList.contains("xi")&&!t.closest("#fso")&&(t.tagName=="IMG"||t.tagName=="VIDEO"))openFS(t.currentSrc||t.src,t.tagName=="VIDEO")});
