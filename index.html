@@ -428,9 +428,9 @@ function home(){var g=$("qg"),L=cells();g.innerHTML="";DM0=store.g("dm",{});var 
       x.onclick=function(ev){ev.stopPropagation();if(x.dataset.c){L.splice(i,1);store.s("cells",L);home()}else{x.dataset.c="1";x.textContent="حذف؟";x.className="qx2 on";setTimeout(function(){x.dataset.c="";x.textContent="✕";x.className="qx2"},3000)}};c.appendChild(x)}
     else{var nd=KN&&q.t&&!hasD(q);NOD[q.k]=nd?1:0;c=el(q.t?"button":"div","qc"+(q.t?"":" em"));
       if(q.t){c.textContent=q.t;
-        if(nd&&!ADMIN){c.style.opacity=".5";c.setAttribute("aria-disabled","true");var sp=el("span","","🔒 قريباً");sp.style.cssText="display:block;font-size:.8rem;margin-top:4px";c.appendChild(sp);
+        if(nd&&!ADMIN){c.style.opacity=".5";c.setAttribute("aria-disabled","true");var wr=el("div"),sp=el("div","","🔒 قريباً");wr.appendChild(document.createTextNode(q.t));sp.style.cssText="font-size:.85rem;margin-top:4px;white-space:normal";wr.appendChild(sp);c.textContent="";c.appendChild(wr);
           c.onclick=function(){sp.textContent="🔒 قيد الإعداد، يُفتح قريباً";setTimeout(function(){sp.textContent="🔒 قريباً"},2000)}}
-        else{c.onclick=function(){openP(i)};if(nd&&ADMIN){var sp2=el("span","","⚠️ بلا تصميم (مقفلة للمتدربين)");sp2.style.cssText="display:block;font-size:.75rem;margin-top:4px;color:#f5a623";c.appendChild(sp2)}}}}
+        else{c.onclick=function(){openP(i)};if(nd&&ADMIN){var wr2=el("div"),sp2=el("div","","⚠️ بلا تصميم (مقفلة للمتدربين)");wr2.appendChild(document.createTextNode(q.t));sp2.style.cssText="font-size:.75rem;margin-top:4px;color:#f5a623;white-space:normal";wr2.appendChild(sp2);c.textContent="";c.appendChild(wr2)}}}}
     g.appendChild(c)});
   if(EDIT){var ad=el("button","qadd","+ إضافة خانة");ad.onclick=function(){L.push({k:"n"+Date.now(),p:"",t:""});store.s("cells",L);home();var t=g.querySelectorAll(".qi");if(t.length)t[t.length-1].focus()};g.appendChild(ad);
     var ex=el("button","qadd","📋 تصدير الخانات");ex.onclick=function(){var t=JSON.stringify(L.map(function(q){return{k:q.k,p:q.p,t:q.t}})),ta=g.querySelector(".vt")||g.appendChild(el("textarea","vt"));ta.style.gridColumn="1/-1";ta.readOnly=true;ta.value=t;ta.select();try{navigator.clipboard.writeText(t)}catch(e){}};g.appendChild(ex)}
