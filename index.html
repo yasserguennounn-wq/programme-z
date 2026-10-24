@@ -416,18 +416,26 @@ function fit(t){if(!t.offsetParent)return;t.style.height="auto";t.style.height=t
 function ov(){return store.g("plans3",{})}
 function tgE(){if(!ADMIN)return;EDIT=!EDIT;home()}
 function cells(){var c=store.g("cells",null);if(c)return c;var o=ov();return PLANS.map(function(q,i){return{k:q.p||"x"+i,p:q.p||"",t:o[i]!=null?o[i]:q.t}})}
-function home(){var g=$("qg"),L=cells();g.innerHTML="";
+var NOD={};
+function hasD(q){var b=PROGRAMS.some(function(x){return x.id==q.p})?q.p:q.k;return["b","m","p"].some(function(l){return DM0[b+"-"+l]})}
+var DM0={};
+function home(){var g=$("qg"),L=cells();g.innerHTML="";DM0=store.g("dm",{});var KN=Object.keys(DM0).length>0;
   if(!ADMIN)EDIT=false;$("eb").textContent=EDIT?"تم ✓":"✏️ تعديل";$("eb").className=(ADMIN?"":"hid ")+"eb"+(EDIT?" on":"");
   L.forEach(function(q,i){var c;
     if(EDIT){c=el("div","qc");var a=el("textarea","qi");a.rows=1;a.maxLength=80;a.value=q.t;a.setAttribute("aria-label","خانة "+(i+1));
       a.oninput=function(){q.t=a.value;store.s("cells",L);fit(a)};c.onclick=function(){a.focus()};c.appendChild(a);
       var x=el("button","qx2","✕");x.setAttribute("aria-label","حذف الخانة");
       x.onclick=function(ev){ev.stopPropagation();if(x.dataset.c){L.splice(i,1);store.s("cells",L);home()}else{x.dataset.c="1";x.textContent="حذف؟";x.className="qx2 on";setTimeout(function(){x.dataset.c="";x.textContent="✕";x.className="qx2"},3000)}};c.appendChild(x)}
-    else{c=el(q.t?"button":"div","qc"+(q.t?"":" em"));if(q.t){c.textContent=q.t;c.onclick=function(){openP(i)}}}
+    else{var nd=KN&&q.t&&!hasD(q);NOD[q.k]=nd?1:0;c=el(q.t?"button":"div","qc"+(q.t?"":" em"));
+      if(q.t){c.textContent=q.t;
+        if(nd&&!ADMIN){c.style.opacity=".5";c.setAttribute("aria-disabled","true");var sp=el("span","","🔒 قريباً");sp.style.cssText="display:block;font-size:.8rem;margin-top:4px";c.appendChild(sp);
+          c.onclick=function(){sp.textContent="🔒 قيد الإعداد، يُفتح قريباً";setTimeout(function(){sp.textContent="🔒 قريباً"},2000)}}
+        else{c.onclick=function(){openP(i)};if(nd&&ADMIN){var sp2=el("span","","⚠️ بلا تصميم (مقفلة للمتدربين)");sp2.style.cssText="display:block;font-size:.75rem;margin-top:4px;color:#f5a623";c.appendChild(sp2)}}}}
     g.appendChild(c)});
   if(EDIT){var ad=el("button","qadd","+ إضافة خانة");ad.onclick=function(){L.push({k:"n"+Date.now(),p:"",t:""});store.s("cells",L);home();var t=g.querySelectorAll(".qi");if(t.length)t[t.length-1].focus()};g.appendChild(ad);
     var ex=el("button","qadd","📋 تصدير الخانات");ex.onclick=function(){var t=JSON.stringify(L.map(function(q){return{k:q.k,p:q.p,t:q.t}})),ta=g.querySelector(".vt")||g.appendChild(el("textarea","vt"));ta.style.gridColumn="1/-1";ta.readOnly=true;ta.value=t;ta.select();try{navigator.clipboard.writeText(t)}catch(e){}};g.appendChild(ex)}
-  show("home");if(EDIT)[].forEach.call(g.querySelectorAll(".qi"),fit)}
+  show("home");if(EDIT)[].forEach.call(g.querySelectorAll(".qi"),fit);
+  var old=JSON.stringify(Object.keys(DM0).sort());dlist().then(function(m){if(!EDIT&&!$("home").classList.contains("hid")&&JSON.stringify(Object.keys(m).sort())!=old)home()})}
 function ck(){return BP+(VID?"#"+VID:"")}
 var LV=[{id:"b",n:"مبتدئ"},{id:"",n:"متقدم"},{id:"p",n:"متقدم جداً"}];
 var LDESC={b:"مبتدئ: تمرينان لكل عضلة، من 2 إلى 3 مجموعات، تكرار أعلى (من 12 إلى 15) وراحة أطول.","":"متقدم: البرنامج الأساسي بتمارينه ومجموعاته المعتادة.",p:"متقدم جداً: تمرين إضافي لكل عضلة، مجموعة أكثر (حتى 5 مجموعات)، وتكرار أقل بوزن أثقل."};
@@ -438,7 +446,7 @@ function lv(e){var r=e.r+"",num=/^\d+$/.test(r);
   if(VID=="b"){if(e.s==1){if(/دقيقة/.test(r))e.r="10-15 دقيقة"}else{if(num)e.r=Math.max(6,Math.round(r*.7))+"";else if(/ثانية|دقيقة/.test(r))e.r="30 ثانية";else e.r="12-15";if(!/ثانية|دقيقة/.test(r))e.s=Math.max(2,e.s-1)}if(e.rest)e.rest+=15}
   else if(VID=="p"){if(e.s==1){if(/دقيقة/.test(r))e.r="30 دقيقة"}else{e.s=Math.min(5,e.s+1);if(num)e.r=Math.round(r*1.3)+"";else if(/ثانية/.test(r))e.r="60 ثانية";else if(/دقيقة/.test(r))e.r="2 دقيقة";else e.r=TR[r]||r}}}
 function vst(){var c=store.g("lvcur:"+BP,"b");return{cur:LV.some(function(y){return y.id==c})?c:"b"}}
-function openP(i){var q=cells()[i];BP=PROGRAMS.some(function(x){return x.id==q.p})?q.p:q.k;VID=vst().cur;CP=ck();P=[];CT=q.t;showProg()}
+function openP(i){var q=cells()[i];if(!ADMIN&&NOD[q.k])return;BP=PROGRAMS.some(function(x){return x.id==q.p})?q.p:q.k;VID=vst().cur;CP=ck();P=[];CT=q.t;showProg()}
 function el(t,c,x){var n=document.createElement(t);if(c)n.className=c;if(x!=null)n.textContent=x;return n}
 function gs(){var u=store.g("pg2:"+CP,null);if(!u){var pr=PROGRAMS.filter(function(x){return x.id==BP})[0];u={g:(pr?pr.g:[{m:"",ids:[]}]).map(function(g){var ids=g.ids.slice();if(VID=="b")ids=ids.slice(0,2);else if(VID=="p"){var x=xt(g.m,ids);if(x)ids.push(x)}return{m:g.m,ids:ids,c:[]}})}}return u}
 function svG(u){store.s("pg2:"+CP,u)}
