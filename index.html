@@ -263,9 +263,11 @@ button.qc{width:100%;justify-content:center;text-align:center;color:var(--ink);f
 <div id="hm" class="hid hm">
   <div class="bn"><img id="lg3" alt="" width="58" height="58" onclick="tapLogo()"><div><b>Welcome to ZEDAM GYM</b><small>أهلاً بك في قاعتك</small></div></div>
   <div class="gr"><h2 id="hn"></h2><div class="pn" id="hp"></div><button class="lk" id="lgo" onclick="logout()">تسجيل الخروج</button><button class="lk" id="bdb" style="margin-inline-start:16px" onclick="bdScreen(true)">تعديل تاريخ ميلادي</button><button class="lk hid" id="adm" style="display:block" onclick="adminOff()">وضع المدير مفعّل · اضغط للخروج</button></div>
+  <button id="rqb" class="hid" onclick="memList()" style="display:block;width:100%;margin-top:12px;min-height:52px;border-radius:14px;border:0;background:var(--am);color:#fff;font:800 1rem var(--b)"></button>
   <div id="mot"></div>
   <button class="nx go" onclick="EDIT=false;home()">بداية البرنامج</button>
   <div class="ct">
+    <a class="cb" id="cr" role="button" tabindex="0" onclick="openRules()"><span class="ic"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/><path d="M9 7h7M9 11h7"/></svg></span><span class="tx">قواعد وقوانين القاعة</span><span class="ch">‹</span></a>
     <a class="cb" id="cc" target="_blank" rel="noopener" onclick="return cl()"><span class="ic"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M10.3 3.9 1.8 18a2 2 0 0 0 1.7 3h17a2 2 0 0 0 1.7-3L13.7 3.9a2 2 0 0 0-3.4 0z"/><path d="M12 9v4M12 17h.01"/></svg></span><span class="tx">تقديم شكوى</span><span class="ch">‹</span></a>
     <a class="cb" id="ci" target="_blank" rel="noopener" onclick="return cl()"><span class="ic"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="10"/><path d="M9.1 9a3 3 0 0 1 5.8 1c0 2-3 2.5-3 4.5M12 17.5h.01"/></svg></span><span class="tx">تقديم استفسار</span><span class="ch">‹</span></a>
     <a class="cb" id="cp" onclick="return cl()"><span class="ic"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M22 16.9v3a2 2 0 0 1-2.2 2 19.8 19.8 0 0 1-8.6-3.1 19.5 19.5 0 0 1-6-6A19.8 19.8 0 0 1 2.1 4.2 2 2 0 0 1 4.1 2h3a2 2 0 0 1 2 1.7c.1 1 .4 1.9.7 2.8a2 2 0 0 1-.5 2.1L8.1 9.9a16 16 0 0 0 6 6l1.3-1.3a2 2 0 0 1 2.1-.4c.9.3 1.8.6 2.8.7a2 2 0 0 1 1.7 2z"/></svg></span><span class="tx">رقم هاتف القاعة</span><small id="cpn" dir="ltr"></small></a>
@@ -332,6 +334,13 @@ button.qc{width:100%;justify-content:center;text-align:center;color:var(--ink);f
 <script>
 /* ===== 1) إعدادات القاعة: عدّلها هنا ===== */
 var GYM_PHONE="0665200291",ANN=["مرحباً بكم في تطبيق ZEDAM GYM الجديد 💪"];
+var RULES=[
+ {h:"الاشتراك والدخول",i:["الاشتراك شخصي ولا يجوز نقله أو إعارته لغيرك.","أبرز رقم هاتفك عند الدخول إن طُلب منك ذلك.","جدّد اشتراكك قبل انتهائه ليستمر دخولك دون انقطاع.","تحتفظ الإدارة بحق إيقاف الاشتراك عند مخالفة هذه القواعد."]},
+ {h:"السلوك العام",i:["احترم المدربين والمتدربين، وتجنّب الصراخ والألفاظ النابية.","يُمنع التدخين بكل أنواعه داخل القاعة.","يُمنع حمل أو تعاطي أو بيع أي مواد ممنوعة داخل القاعة.","يُمنع تصوير المتدربين الآخرين دون إذنهم."]},
+ {h:"اللباس والنظافة",i:["ارتدِ ملابس رياضية نظيفة وحذاءً رياضياً مخصصاً للقاعة.","أحضر منشفة صغيرة وامسح الجهاز بعد استعماله.","اهتم بنظافتك الشخصية احتراماً لمن يتدرب معك."]},
+ {h:"الأجهزة والأوزان",i:["أعد الأوزان والأدوات إلى مكانها بعد كل تمرين.","لا تحجز جهازاً أثناء الراحة الطويلة، وتناوب مع غيرك.","لا تُسقط الأوزان من ارتفاع، واطلب مساعداً عند الأوزان الثقيلة.","أبلغ الإدارة عن أي جهاز معطّل ولا تستعمله."]},
+ {h:"السلامة",i:["سخّن من 5 إلى 10 دقائق قبل بدء التمرين.","أخبر المدرب بأي إصابة أو حالة صحية قبل التمرين.","الإدارة غير مسؤولة عن الأغراض الشخصية المفقودة."]}
+];
 /* ===== 2) التمارين: لكل تمرين حقل img لإضافة صورة لاحقاً ===== */
 var P=[
 {n:"ضغط البنش بالبار",s:4,r:"8-10",rest:90,m:"الصدر (الأوسط)",st:["استلقِ على البنش وثبّت قدميك على الأرض.","أمسك البار بعرض أوسع قليلاً من الكتفين.","أنزل البار ببطء إلى منتصف الصدر.","ادفع للأعلى دون قفل المرفقين تماماً."],er:["رفع الأرداف عن البنش","ترك البار يرتد على الصدر","وزن ثقيل بدون مساعد"]},
@@ -405,7 +414,7 @@ function showHm(){SPL=false;
   $("hn").textContent=M.fn?"مرحباً، "+M.fn+" "+M.ln:"مرحباً بالمدير";$("hp").textContent=M.ph||"";
   $("an").innerHTML=ANN.length?ANN.map(function(x){return'<div class="ai">'+x+'</div>'}).join(""):'<div class="ai mt">لا توجد إعلانات حالياً</div>';
   var p=gpn();$("cc").href=p?wa("شكوى: "):"#";$("ci").href=p?wa("استفسار: "):"#";$("cp").href=p?"tel:+"+p:"#";
-  $("cpn").textContent=GYM_PHONE||"غير مضاف بعد";$("adm").className=ADMIN?"lk":"lk hid";$("adb").className=ADMIN?"tk":"tk hid";$("lgo").className=M.ph?"lk":"lk hid";$("lgo2").style.display=M.ph?"block":"none";mot();$("bdb").className=M.ph?"lk":"lk hid";$("nt").textContent="";show("hm")}
+  $("cpn").textContent=GYM_PHONE||"غير مضاف بعد";$("adm").className=ADMIN?"lk":"lk hid";$("adb").className=ADMIN?"tk":"tk hid";$("lgo").className=M.ph?"lk":"lk hid";$("lgo2").style.display=M.ph?"block":"none";mot();if(ADMIN){reqBadge();reqPoll()}$("bdb").className=M.ph?"lk":"lk hid";$("nt").textContent="";show("hm")}
 function ldM(){M=store.g("member",{})}
 function svM(){store.s("member",M)}
 function setE(k,m){$("f"+k).className="fd"+(m?" er":"");$("e"+k).textContent=m}
@@ -666,6 +675,22 @@ function progTools(){var w=el("div"),SB="min-height:52px;min-width:64px;border-r
     var arr=(all[id]||[]).filter(function(q){return q.d!=d}),en={d:d,w:rd(v)};if(r)en.r=r;arr.push(en);all[id]=arr;store.s("lifts",all);lkSet(kk,d);enq({t:"lu",ex:id,d:d,w:en.w,r:r});
     fill();ms.style.color="#1e8e5a";ms.textContent="تم الحفظ ✓ ويمكنك رؤية تطورك في متابعة تقدمي."};
   gc.appendChild(sel);gc.appendChild(hn);gc.appendChild(row);gc.appendChild(row2);gc.appendChild(sg2);gc.appendChild(ms);w.appendChild(gc);fill();return w}
+
+/* ===== ركن قواعد وقوانين القاعة ===== */
+function closeRls(){var o=$("rls");if(o){o.remove();document.removeEventListener("keydown",rlsKey)}}
+function rlsKey(e){if(e.key=="Escape")closeRls()}
+function openRules(){if($("rls"))return;
+  var o=el("div"),bar=el("div"),w=el("div"),cl=el("button","","✕ إغلاق");
+  o.id="rls";o.style.cssText="position:fixed;inset:0;z-index:9998;background:var(--bg);display:flex;flex-direction:column;overflow:hidden";
+  bar.style.cssText="display:flex;align-items:center;justify-content:space-between;gap:10px;padding:calc(env(safe-area-inset-top,0px) + 10px) 16px 10px;border-bottom:1.5px solid var(--ln)";
+  var t=el("b","","📜 قواعد وقوانين القاعة");t.style.cssText="font:800 1.15rem var(--d)";
+  cl.style.cssText="min-height:48px;padding:0 16px;border-radius:14px;border:1.5px solid var(--ln);background:var(--sf);color:var(--ink);font:700 1rem var(--b)";cl.onclick=closeRls;
+  bar.appendChild(t);bar.appendChild(cl);
+  w.style.cssText="flex:1;overflow:auto;padding:14px 16px calc(env(safe-area-inset-bottom,0px) + 24px);-webkit-overflow-scrolling:touch";
+  var n=0;RULES.forEach(function(g){var c=el("div","zg"),h=el("h3","",g.h);c.style.marginTop="12px";h.style.cssText="color:var(--amd);margin:0 0 6px";c.appendChild(h);
+    g.i.forEach(function(x){n++;var r=el("div","pm"),b=el("b","",n+". ");b.style.color="var(--amd)";r.style.margin="8px 0 0";r.appendChild(b);r.appendChild(document.createTextNode(x));c.appendChild(r)});w.appendChild(c)});
+  var f=el("div","pm","باستخدامك القاعة فإنك توافق على هذه القواعد، وهدفها سلامتك وراحة الجميع. 💪");f.style.cssText="text-align:center;margin-top:16px";w.appendChild(f);
+  o.appendChild(bar);o.appendChild(w);document.body.appendChild(o);document.addEventListener("keydown",rlsKey)}
 /* ===== عرض التصميم بملء الشاشة ===== */
 function fsHint(){var b=el("button","fsb","⛶ عرض بملء الشاشة");b.onclick=function(){var m=b.parentNode&&b.parentNode.querySelector(".xi");if(m)openFS(m.currentSrc||m.src,m.tagName=="VIDEO")};return b}
 function closeFS(){var o=$("fso");if(!o)return;try{if(screen.orientation&&screen.orientation.unlock)screen.orientation.unlock()}catch(e){}if(document.fullscreenElement&&document.exitFullscreen)document.exitFullscreen().catch(function(){});clearInterval(o._ti);o.remove();document.removeEventListener("keydown",fsKey)}
@@ -692,6 +717,17 @@ function openFS(src,vid){if(!src||$("fso"))return;
   document.addEventListener("keydown",fsKey);
   if(o.requestFullscreen)o.requestFullscreen().catch(function(){})}
 document.addEventListener("click",function(e){var t=e.target;if(t&&t.classList&&t.classList.contains("xi")&&!t.closest("#fso")&&(t.tagName=="IMG"||t.tagName=="VIDEO"))openFS(t.currentSrc||t.src,t.tagName=="VIDEO")});
+
+/* ===== تنبيه المدير بطلبات التسجيل الجديدة (داخل التطبيق أثناء فتحه) ===== */
+var RQN=-1,RQT=null;
+function ntBeep(){try{var A=window.AudioContext||window.webkitAudioContext;RT.ac=RT.ac||new A();var c=RT.ac,i;for(i=0;i<2;i++){var o=c.createOscillator(),g=c.createGain();o.connect(g);g.connect(c.destination);o.frequency.value=660;g.gain.value=.2;o.start(c.currentTime+i*.3);o.stop(c.currentTime+i*.3+.18)}}catch(e){}}
+function reqBadge(){if(!ADMIN)return;
+  aapi("GET","signup_requests?select=id").then(function(r){if(!r.ok||!Array.isArray(r.data))return;var n=r.data.length,b=$("adb"),bn=$("rqb");
+    b.textContent=n?"👥 المتدربون · 🔴 "+n:"👥 المتدربون (المدير)";
+    bn.className=n?"":"hid";bn.textContent=n?"🔔 "+(n==1?"طلب تسجيل جديد":n+" طلبات تسجيل جديدة")+" · اضغط للمراجعة":"";
+    if(RQN>=0&&n>RQN){try{navigator.vibrate&&navigator.vibrate([200,100,200])}catch(e){}ntBeep();if(!$("mem").classList.contains("hid"))rqList()}
+    RQN=n})}
+function reqPoll(){if(RQT)return;RQT=setInterval(function(){if(ADMIN&&!document.hidden)reqBadge()},45000)}
 /* ===== التحفيز: حصص الأسبوع + سلسلة الالتزام + الأرقام القياسية (يُحسب من بيانات الهاتف) ===== */
 function dd(a,b){return Math.round((new Date(a+"T00:00:00")-new Date(b+"T00:00:00"))/864e5)}
 function mot(){var h=$("mot");h.innerHTML="";if(!M.ph)return;
@@ -782,7 +818,11 @@ function rqList(){var h=$("mrq");h.innerHTML="";
             var w="213"+q.phone.slice(1),a=el("a","nx","📲 إرسال الرمز لـ "+q.first_name+" عبر واتساب");
             a.target="_blank";a.rel="noopener";a.style.cssText="display:block;text-align:center;margin-top:10px";
             a.href="https://wa.me/"+w+"?text="+encodeURIComponent("السلام عليكم "+q.first_name+"، تم قبول تسجيلك في ZEDAM GYM.\nرقم الهاتف: "+q.phone+"\nرمز الدخول: "+c+"\nاشتراكك ساري حتى "+fd(se));
-            b.innerHTML="";b.appendChild(t);b.appendChild(a)}
+            var cb2=el("div"),lb=el("div","pm","رمز دخول المتدرب، أعطه له الآن ليدخل فوراً"),bg=el("div","",c),inf=el("div","pm","الهاتف: "+q.phone+" · الاشتراك حتى "+fd(se));
+            cb2.style.cssText="margin-top:10px;padding:14px;border:2px dashed var(--am);border-radius:14px;text-align:center";
+            bg.style.cssText="font:800 2.8rem var(--d);letter-spacing:.18em;direction:ltr;margin:6px 0";
+            cb2.appendChild(lb);cb2.appendChild(bg);cb2.appendChild(inf);
+            b.innerHTML="";b.appendChild(t);b.appendChild(cb2);b.appendChild(a)}
           else{ok.disabled=false;ms.textContent=r2.status==409?"هذا الرقم مسجّل مسبقاً كمتدرب. ارفض الطلب.":"تعذر القبول ("+r2.status+")."}})};
       no.onclick=function(){aapi("DELETE","signup_requests?id=eq."+q.id).then(function(){rqList()})};
       b.appendChild(t);b.appendChild(ok);b.appendChild(no);b.appendChild(ms);h.appendChild(b)})})}
@@ -905,6 +945,7 @@ function hsync(id){var d=dp(id);try{
 function hGo(id){HOP=true;if(id=="hm")showHm();else if(id=="home")home();else if(id=="mem")memList();else showProg()}
 try{history.replaceState({d:0},"");window.addEventListener("popstate",function(){
   if(PGO){PGO=false;return}
+  if($("rls")){closeRls();try{history.pushState({d:HD},"")}catch(x){}return}
   if($("pm2").className.indexOf("hid")<0){closePin();try{history.pushState({d:HD},"")}catch(x){}return}
   var c=["st","hm","home","prg","trk","mem","mdt","bd","det","fin"].filter(function(x){return $(x).className.indexOf("hid")<0})[0];
   if(c=="det")stopT();if(c=="home")EDIT=false;
