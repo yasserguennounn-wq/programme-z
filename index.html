@@ -231,6 +231,18 @@ button.qc{width:100%;justify-content:center;text-align:center;color:var(--ink);f
 .rtb{height:8px;border-radius:8px;background:var(--ln);overflow:hidden;margin-top:10px}
 .rtb i{display:block;height:100%;width:0;background:#e11d1d;transition:width .25s linear}
 .bt{flex:1;min-height:48px}
+
+.bn b{font-size:clamp(.95rem,4.8vw,1.15rem);white-space:nowrap}
+#mib{color:var(--mut);text-decoration:underline;font-weight:700;display:none;margin:12px auto 0;min-height:44px;text-align:center}
+#mot .zg{margin-top:8px;padding:10px}
+#mot .tcd{gap:8px}
+#mot .tcc{padding:6px 12px;gap:0}
+#mot .tcc small{font-size:.78rem}
+#mot .tcc .b{font-size:1.05rem}
+#mot .pm{margin:6px 0 0}
+.cb{min-height:48px;padding:6px 14px}
+.cb .ic svg{width:18px;height:18px}
+.cb .ctx{flex:1}
 </style>
 </head>
 <body>
@@ -261,20 +273,21 @@ button.qc{width:100%;justify-content:center;text-align:center;color:var(--ink);f
   </div>
 </div>
 <div id="hm" class="hid hm">
-  <div class="bn"><img id="lg3" alt="" width="58" height="58" onclick="tapLogo()"><div><b>Welcome to ZEDAM GYM</b><small>أهلاً بك في قاعتك</small></div></div>
-  <div class="gr"><h2 id="hn"></h2><div class="pn" id="hp"></div><button class="lk" id="lgo" onclick="logout()">تسجيل الخروج</button><button class="lk" id="bdb" style="margin-inline-start:16px" onclick="bdScreen(true)">تعديل تاريخ ميلادي</button><button class="lk hid" id="adm" style="display:block" onclick="adminOff()">وضع المدير مفعّل · اضغط للخروج</button></div>
+  <div class="bn"><img id="lg3" alt="" width="58" height="58" onclick="tapLogo()"><div><b>WELCOME TO ZEDAM GYM</b><small>أهلاً بك في قاعتك</small></div></div>
+  <div class="gr"><h2 id="hn"></h2><div class="pn" id="hp"></div><button class="lk" id="lgo" onclick="logout()">تسجيل الخروج</button><button class="lk hid" id="adm" style="display:block" onclick="adminOff()">وضع المدير مفعّل · اضغط للخروج</button></div>
   <button id="rqb" class="hid" onclick="memList()" style="display:block;width:100%;margin-top:12px;min-height:52px;border-radius:14px;border:0;background:var(--am);color:#fff;font:800 1rem var(--b)"></button>
   <div id="mot"></div>
   <button class="nx go" onclick="EDIT=false;home()">بداية البرنامج</button>
   <div class="ct">
-    <a class="cb" id="cr" role="button" tabindex="0" onclick="openRules()"><span class="ic"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/><path d="M9 7h7M9 11h7"/></svg></span><span class="tx">قواعد وقوانين القاعة</span><span class="ch">‹</span></a>
-    <a class="cb" id="cc" target="_blank" rel="noopener" onclick="return cl()"><span class="ic"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M10.3 3.9 1.8 18a2 2 0 0 0 1.7 3h17a2 2 0 0 0 1.7-3L13.7 3.9a2 2 0 0 0-3.4 0z"/><path d="M12 9v4M12 17h.01"/></svg></span><span class="tx">تقديم شكوى</span><span class="ch">‹</span></a>
-    <a class="cb" id="ci" target="_blank" rel="noopener" onclick="return cl()"><span class="ic"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="10"/><path d="M9.1 9a3 3 0 0 1 5.8 1c0 2-3 2.5-3 4.5M12 17.5h.01"/></svg></span><span class="tx">تقديم استفسار</span><span class="ch">‹</span></a>
-    <a class="cb" id="cp" onclick="return cl()"><span class="ic"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M22 16.9v3a2 2 0 0 1-2.2 2 19.8 19.8 0 0 1-8.6-3.1 19.5 19.5 0 0 1-6-6A19.8 19.8 0 0 1 2.1 4.2 2 2 0 0 1 4.1 2h3a2 2 0 0 1 2 1.7c.1 1 .4 1.9.7 2.8a2 2 0 0 1-.5 2.1L8.1 9.9a16 16 0 0 0 6 6l1.3-1.3a2 2 0 0 1 2.1-.4c.9.3 1.8.6 2.8.7a2 2 0 0 1 1.7 2z"/></svg></span><span class="tx">رقم هاتف القاعة</span><small id="cpn" dir="ltr"></small></a>
+    <a class="cb" id="cr" role="button" tabindex="0" onclick="openRules()"><span class="ic"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/><path d="M9 7h7M9 11h7"/></svg></span><span class="ctx">قواعد وقوانين القاعة</span><span class="ch">‹</span></a>
+    <a class="cb" id="cc" target="_blank" rel="noopener" onclick="return cl()"><span class="ic"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M10.3 3.9 1.8 18a2 2 0 0 0 1.7 3h17a2 2 0 0 0 1.7-3L13.7 3.9a2 2 0 0 0-3.4 0z"/><path d="M12 9v4M12 17h.01"/></svg></span><span class="ctx">تقديم شكوى</span><span class="ch">‹</span></a>
+    <a class="cb" id="ci" target="_blank" rel="noopener" onclick="return cl()"><span class="ic"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="10"/><path d="M9.1 9a3 3 0 0 1 5.8 1c0 2-3 2.5-3 4.5M12 17.5h.01"/></svg></span><span class="ctx">تقديم استفسار</span><span class="ch">‹</span></a>
+    <a class="cb" id="cp" onclick="return cl()"><span class="ic"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M22 16.9v3a2 2 0 0 1-2.2 2 19.8 19.8 0 0 1-8.6-3.1 19.5 19.5 0 0 1-6-6A19.8 19.8 0 0 1 2.1 4.2 2 2 0 0 1 4.1 2h3a2 2 0 0 1 2 1.7c.1 1 .4 1.9.7 2.8a2 2 0 0 1-.5 2.1L8.1 9.9a16 16 0 0 0 6 6l1.3-1.3a2 2 0 0 1 2.1-.4c.9.3 1.8.6 2.8.7a2 2 0 0 1 1.7 2z"/></svg></span><span class="ctx">رقم هاتف القاعة</span><small id="cpn" dir="ltr"></small></a>
   </div>
   <div class="nt" id="nt"></div>
   <button id="lgo2" onclick="logout()" style="display:none;width:100%;margin-top:14px;padding:16px;border-radius:14px;border:2px solid var(--am);background:transparent;color:var(--amd);font:800 1.05rem var(--d)">تسجيل الخروج</button>
   <div class="an"><h3>📢 إعلانات القاعة</h3><div id="an"></div></div>
+  <button class="lk" id="mib" onclick="openMe()">👤 معلوماتي الشخصية</button>
   <button class="tk hid" id="adb" style="margin-top:18px" onclick="memList()">👥 المتدربون (المدير)</button>
 </div>
 <div id="home" class="hid"><div class="qs">
@@ -414,7 +427,7 @@ function showHm(){SPL=false;
   $("hn").textContent=M.fn?"مرحباً، "+M.fn+" "+M.ln:"مرحباً بالمدير";$("hp").textContent=M.ph||"";
   $("an").innerHTML=ANN.length?ANN.map(function(x){return'<div class="ai">'+x+'</div>'}).join(""):'<div class="ai mt">لا توجد إعلانات حالياً</div>';
   var p=gpn();$("cc").href=p?wa("شكوى: "):"#";$("ci").href=p?wa("استفسار: "):"#";$("cp").href=p?"tel:+"+p:"#";
-  $("cpn").textContent=GYM_PHONE||"غير مضاف بعد";$("adm").className=ADMIN?"lk":"lk hid";$("adb").className=ADMIN?"tk":"tk hid";$("lgo").className=M.ph?"lk":"lk hid";$("lgo2").style.display=M.ph?"block":"none";mot();if(ADMIN){reqBadge();reqPoll()}$("bdb").className=M.ph?"lk":"lk hid";$("nt").textContent="";show("hm")}
+  $("cpn").textContent=GYM_PHONE||"غير مضاف بعد";$("adm").className=ADMIN?"lk":"lk hid";$("adb").className=ADMIN?"tk":"tk hid";$("lgo").className=M.ph?"lk":"lk hid";$("lgo2").style.display=M.ph?"block":"none";mot();if(ADMIN){reqBadge();reqPoll()}$("mib").style.display=M.ph?"block":"none";$("nt").textContent="";show("hm")}
 function ldM(){M=store.g("member",{})}
 function svM(){store.s("member",M)}
 function setE(k,m){$("f"+k).className="fd"+(m?" er":"");$("e"+k).textContent=m}
@@ -676,6 +689,39 @@ function progTools(){var w=el("div"),SB="min-height:52px;min-width:64px;border-r
     fill();ms.style.color="#1e8e5a";ms.textContent="تم الحفظ ✓ ويمكنك رؤية تطورك في متابعة تقدمي."};
   gc.appendChild(sel);gc.appendChild(hn);gc.appendChild(row);gc.appendChild(row2);gc.appendChild(sg2);gc.appendChild(ms);w.appendChild(gc);fill();return w}
 
+
+/* ===== معلوماتي الشخصية ===== */
+function closeMe(){var o=$("mei");if(o){o.remove();document.removeEventListener("keydown",meKey)}}
+function meKey(e){if(e.key=="Escape")closeMe()}
+function dtxt(d){return d==0?"اليوم":d==1?"يوم واحد":d==2?"يومان":d<=10?d+" أيام":d+" يوماً"}
+function openMe(){if($("mei"))return;var m=curM()||{};
+  var o=el("div"),bar=el("div"),w=el("div"),cl=el("button","","✕ إغلاق");
+  o.id="mei";o.style.cssText="position:fixed;inset:0;z-index:9998;background:var(--bg);display:flex;flex-direction:column;overflow:hidden";
+  bar.style.cssText="display:flex;align-items:center;justify-content:space-between;gap:10px;padding:calc(env(safe-area-inset-top,0px) + 10px) 16px 10px;border-bottom:1.5px solid var(--ln)";
+  var t=el("b","","👤 معلوماتي الشخصية");t.style.cssText="font:800 1.15rem var(--d)";
+  cl.style.cssText="min-height:48px;padding:0 16px;border-radius:14px;border:1.5px solid var(--ln);background:var(--sf);color:var(--ink);font:700 1rem var(--b)";cl.onclick=closeMe;
+  bar.appendChild(t);bar.appendChild(cl);
+  w.style.cssText="flex:1;overflow:auto;padding:14px 16px calc(env(safe-area-inset-bottom,0px) + 24px)";
+  function row(l,v){var r=el("div","pm"),b=el("b","",l+": "),s2=el("span","",v);r.style.margin="8px 0 0";r.appendChild(b);r.appendChild(s2);return[r,s2]}
+  var c1=el("div","zg"),a=row("الاسم",((M.ln||"")+" "+(M.fn||"")).trim()||"—"),b2=row("الهاتف",M.ph||"—"),c2=row("الاشتراك","—");
+  c1.style.marginTop="0";b2[1].dir="ltr";[a,b2,c2].forEach(function(x){c1.appendChild(x[0])});w.appendChild(c1);
+  function paint(){var mm=curM()||{},se=mm.sub_end,s2=c2[1];
+    if(!se){s2.textContent="غير محدد";s2.style.color="";return}
+    var d=Math.round((new Date(se+"T00:00:00")-new Date(td()+"T00:00:00"))/864e5);
+    if(d<0){s2.textContent="منتهي منذ "+dtxt(-d)+" ("+fd(se)+")";s2.style.color="#ff5a5a"}
+    else if(d<=5){s2.textContent=(d==0?"ينتهي اليوم":"ينتهي بعد "+dtxt(d))+" ("+fd(se)+") · جدّد اشتراكك";s2.style.color="#f5a623"}
+    else{s2.textContent="ساري حتى "+fd(se)+" (متبقٍّ "+dtxt(d)+")";s2.style.color="#1e8e5a"}}
+  paint();
+  var c3=el("div","zg"),lb=el("label","","تاريخ الميلاد"),bi=el("input","tin"),sv=el("button","zt","حفظ تاريخ الميلاد"),ms=el("div","vn");
+  c3.style.marginTop="12px";lb.style.fontWeight="800";bi.type="date";bi.dir="ltr";bi.max=td();bi.value=m.bd||"";bi.style.cssText="width:100%;margin-top:8px";sv.style.cssText="width:100%;min-height:48px;margin-top:10px";
+  sv.onclick=function(){var v=bi.value;if(!v||v<"1930-01-01"||v>td()){ms.style.color="#ff6b6b";ms.textContent="أدخل تاريخ ميلاد صحيحاً.";return}
+    ms.style.color="";ms.textContent="جارٍ الحفظ...";sv.disabled=true;
+    api("POST","rpc/set_birth",{p_date:v}).then(function(r){sv.disabled=false;if(r.ok){var mm=curM()||{};mm.bd=v;store.s("sbm",mm);ms.style.color="#1e8e5a";ms.textContent="تم الحفظ ✓"}else{ms.style.color="#ff6b6b";ms.textContent=r.status==0?"لا يوجد اتصال بالإنترنت.":"تعذر الحفظ ("+r.status+")."}})};
+  c3.appendChild(lb);c3.appendChild(bi);c3.appendChild(sv);c3.appendChild(ms);w.appendChild(c3);
+  var nt=el("div","pm","لتعديل الاسم أو رقم الهاتف تواصل مع الإدارة، فالهاتف هو مفتاح دخولك وربط بياناتك.");nt.style.cssText="margin-top:14px;font-size:.9rem";w.appendChild(nt);
+  if(gpn()){var wb=el("a","",String("💬 تواصل مع الإدارة"));wb.href=wa("طلب تعديل بياناتي: ");wb.target="_blank";wb.rel="noopener";wb.style.cssText="display:block;text-align:center;margin-top:10px;min-height:48px;line-height:48px;border-radius:14px;border:1.5px solid var(--am);color:var(--amd);font-weight:700;text-decoration:none";w.appendChild(wb)}
+  o.appendChild(bar);o.appendChild(w);document.body.appendChild(o);document.addEventListener("keydown",meKey);
+  if(m.id)api("GET","members?select=sub_end,birth_date&id=eq."+m.id).then(function(r){if(r.ok&&r.data&&r.data[0]){var mm=curM()||{};mm.sub_end=r.data[0].sub_end;mm.bd=r.data[0].birth_date||mm.bd;store.s("sbm",mm);if($("mei")){paint();if(!bi.value&&mm.bd)bi.value=mm.bd}}})}
 /* ===== ركن قواعد وقوانين القاعة ===== */
 function closeRls(){var o=$("rls");if(o){o.remove();document.removeEventListener("keydown",rlsKey)}}
 function rlsKey(e){if(e.key=="Escape")closeRls()}
@@ -971,6 +1017,7 @@ function hsync(id){var d=dp(id);try{
 function hGo(id){HOP=true;if(id=="hm")showHm();else if(id=="home")home();else if(id=="mem")memList();else showProg()}
 try{history.replaceState({d:0},"");window.addEventListener("popstate",function(){
   if(PGO){PGO=false;return}
+  if($("mei")){closeMe();try{history.pushState({d:HD},"")}catch(x){}return}
   if($("rls")){closeRls();try{history.pushState({d:HD},"")}catch(x){}return}
   if($("pm2").className.indexOf("hid")<0){closePin();try{history.pushState({d:HD},"")}catch(x){}return}
   var c=["st","hm","home","prg","trk","mem","mdt","bd","det","fin"].filter(function(x){return $(x).className.indexOf("hid")<0})[0];
