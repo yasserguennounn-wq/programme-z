@@ -679,17 +679,43 @@ function progTools(){var w=el("div"),SB="min-height:52px;min-width:64px;border-r
 /* ===== ركن قواعد وقوانين القاعة ===== */
 function closeRls(){var o=$("rls");if(o){o.remove();document.removeEventListener("keydown",rlsKey)}}
 function rlsKey(e){if(e.key=="Escape")closeRls()}
+function rulesGet(){var r=store.g("rules",null);return Array.isArray(r)&&r.length?r:RULES}
+function rulesFetch(done){var go=function(){return(ADMIN?aapi:api)("GET","gym_rules?select=content&id=eq.1")};
+  go().then(function(r){if(r.status==401&&!ADMIN)return anon().then(function(s){return s?go():r});return r}).then(function(r){
+    if(r.ok&&r.data&&r.data[0]&&Array.isArray(r.data[0].content)&&r.data[0].content.length){var c=r.data[0].content;if(JSON.stringify(c)!=JSON.stringify(store.g("rules",null))){store.s("rules",c);if(done)done()}}}).catch(function(){})}
 function openRules(){if($("rls"))return;
-  var o=el("div"),bar=el("div"),w=el("div"),cl=el("button","","✕ إغلاق");
+  var o=el("div"),bar=el("div"),w=el("div"),cl=el("button","","✕ إغلاق"),editing=false;
   o.id="rls";o.style.cssText="position:fixed;inset:0;z-index:9998;background:var(--bg);display:flex;flex-direction:column;overflow:hidden";
   bar.style.cssText="display:flex;align-items:center;justify-content:space-between;gap:10px;padding:calc(env(safe-area-inset-top,0px) + 10px) 16px 10px;border-bottom:1.5px solid var(--ln)";
   var t=el("b","","📜 قواعد وقوانين القاعة");t.style.cssText="font:800 1.15rem var(--d)";
   cl.style.cssText="min-height:48px;padding:0 16px;border-radius:14px;border:1.5px solid var(--ln);background:var(--sf);color:var(--ink);font:700 1rem var(--b)";cl.onclick=closeRls;
   bar.appendChild(t);bar.appendChild(cl);
   w.style.cssText="flex:1;overflow:auto;padding:14px 16px calc(env(safe-area-inset-bottom,0px) + 24px);-webkit-overflow-scrolling:touch";
-  var n=0;RULES.forEach(function(g){var c=el("div","zg"),h=el("h3","",g.h);c.style.marginTop="12px";h.style.cssText="color:var(--amd);margin:0 0 6px";c.appendChild(h);
-    g.i.forEach(function(x){n++;var r=el("div","pm"),b=el("b","",n+". ");b.style.color="var(--amd)";r.style.margin="8px 0 0";r.appendChild(b);r.appendChild(document.createTextNode(x));c.appendChild(r)});w.appendChild(c)});
-  var f=el("div","pm","باستخدامك القاعة فإنك توافق على هذه القواعد، وهدفها سلامتك وراحة الجميع. 💪");f.style.cssText="text-align:center;margin-top:16px";w.appendChild(f);
+  var BS="min-height:48px;width:100%;border-radius:14px;border:1.5px solid var(--am);background:transparent;color:var(--amd);font:700 1rem var(--b)";
+  function view(note){editing=false;w.innerHTML="";
+    if(note){var nt=el("div","vn",note);nt.style.cssText="color:#1e8e5a;margin-bottom:8px";w.appendChild(nt)}
+    if(ADMIN){var eb=el("button","","✏️ تعديل القواعد");eb.style.cssText=BS;eb.onclick=edit;w.appendChild(eb)}
+    var n=0;rulesGet().forEach(function(g){var c=el("div","zg"),h=el("h3","",g.h);c.style.marginTop="12px";h.style.cssText="color:var(--amd);margin:0 0 6px";c.appendChild(h);
+      g.i.forEach(function(x){n++;var r=el("div","pm"),b=el("b","",n+". ");b.style.color="var(--amd)";r.style.margin="8px 0 0";r.appendChild(b);r.appendChild(document.createTextNode(x));c.appendChild(r)});w.appendChild(c)});
+    var f=el("div","pm","باستخدامك القاعة فإنك توافق على هذه القواعد، وهدفها سلامتك وراحة الجميع. 💪");f.style.cssText="text-align:center;margin-top:16px";w.appendChild(f)}
+  function edit(){editing=true;w.innerHTML="";var rows=[],box=el("div"),ms=el("div","vn");
+    var hint=el("div","pm","اكتب عنوان كل قسم، وتحته كل قاعدة في سطر مستقل. القسم الذي ليس له عنوان أو قواعد يُتجاهل.");hint.style.fontSize=".9rem";w.appendChild(hint);
+    function add(g){var c=el("div","zg"),h=el("input","tin"),tx=el("textarea","tin"),x=el("button","lk","حذف القسم");
+      c.style.marginTop="12px";h.value=g.h||"";h.placeholder="عنوان القسم";h.style.cssText="width:100%;font-weight:800";
+      tx.value=(g.i||[]).join("\n");tx.placeholder="اكتب كل قاعدة في سطر مستقل";tx.style.cssText="width:100%;min-height:150px;margin-top:8px;line-height:1.7;resize:vertical";
+      x.onclick=function(){c.remove();rows=rows.filter(function(r){return r.c!==c})};c.appendChild(h);c.appendChild(tx);c.appendChild(x);box.appendChild(c);rows.push({c:c,h:h,t:tx})}
+    rulesGet().forEach(add);w.appendChild(box);
+    var ad=el("button","","+ إضافة قسم"),sv=el("button","zt","حفظ"),cn=el("button","lk","إلغاء");
+    ad.style.cssText=BS+";margin-top:12px";ad.onclick=function(){add({h:"",i:[]})};sv.style.cssText="width:100%;min-height:52px;margin-top:12px";cn.style.cssText="display:block;margin:10px auto 0;min-height:48px";cn.onclick=function(){view()};
+    sv.onclick=function(){var out=[];rows.forEach(function(r){var h=r.h.value.trim(),i=r.t.value.split("\n").map(function(x){return x.trim()}).filter(Boolean);if(h&&i.length)out.push({h:h,i:i})});
+      if(!out.length){ms.style.color="#ff6b6b";ms.textContent="أضف قسماً واحداً على الأقل بعنوان وقاعدة.";return}
+      if(JSON.stringify(out).length>20000){ms.style.color="#ff6b6b";ms.textContent="النص طويل جداً، اختصره.";return}
+      sv.disabled=true;ms.style.color="#1e8e5a";ms.textContent="جارٍ الحفظ...";
+      aapi("POST","gym_rules?on_conflict=id",{id:1,content:out},UP).then(function(r){sv.disabled=false;
+        if(r.ok){store.s("rules",out);view("✅ تم الحفظ وتظهر للمتدربين الآن.")}
+        else{ms.style.color="#ff6b6b";ms.textContent=(r.status==404||r.status==400)?"شغّل ملف supabase-rules.sql في Supabase أولاً ("+r.status+").":(r.status==401||r.status==403)?"هذا الحساب ليس حساب المدير ("+r.status+").":"تعذر الحفظ ("+r.status+")."}})};
+    w.appendChild(ad);w.appendChild(sv);w.appendChild(ms);w.appendChild(cn)}
+  view();rulesFetch(function(){if(!editing&&$("rls"))view()});
   o.appendChild(bar);o.appendChild(w);document.body.appendChild(o);document.addEventListener("keydown",rlsKey)}
 /* ===== عرض التصميم بملء الشاشة ===== */
 function fsHint(){var b=el("button","fsb","⛶ عرض بملء الشاشة");b.onclick=function(){var m=b.parentNode&&b.parentNode.querySelector(".xi");if(m)openFS(m.currentSrc||m.src,m.tagName=="VIDEO")};return b}
