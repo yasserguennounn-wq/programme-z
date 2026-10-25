@@ -288,6 +288,7 @@ button.qc{width:100%;justify-content:center;text-align:center;color:var(--ink);f
   <div class="bn"><img id="lg3" alt="" width="58" height="58" onclick="tapLogo()"><div><b>WELCOME TO ZEDAM GYM</b><small>أهلاً بك في قاعتك</small></div><button id="gb" class="gb" onclick="gsOpen()" aria-label="الإعدادات"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12.22 2h-.44a2 2 0 0 0-2 2v.18a2 2 0 0 1-1 1.73l-.43.25a2 2 0 0 1-2 0l-.15-.08a2 2 0 0 0-2.73.73l-.22.38a2 2 0 0 0 .73 2.73l.15.1a2 2 0 0 1 1 1.72v.51a2 2 0 0 1-1 1.74l-.15.09a2 2 0 0 0-.73 2.73l.22.38a2 2 0 0 0 2.73.73l.15-.08a2 2 0 0 1 2 0l.43.25a2 2 0 0 1 1 1.73V20a2 2 0 0 0 2 2h.44a2 2 0 0 0 2-2v-.18a2 2 0 0 1 1-1.73l.43-.25a2 2 0 0 1 2 0l.15.08a2 2 0 0 0 2.73-.73l.22-.39a2 2 0 0 0-.73-2.73l-.15-.08a2 2 0 0 1-1-1.74v-.5a2 2 0 0 1 1-1.74l.15-.09a2 2 0 0 0 .73-2.73l-.22-.38a2 2 0 0 0-2.73-.73l-.15.08a2 2 0 0 1-2 0l-.43-.25a2 2 0 0 1-1-1.73V4a2 2 0 0 0-2-2z"/><circle cx="12" cy="12" r="3"/></svg></button></div>
   <div class="gr" style="display:flex;align-items:center;justify-content:space-between;gap:12px"><div style="flex:1;min-width:0"><h2 id="hn"></h2><div class="pn" id="hp"></div><button class="lk" id="lgo" onclick="logout()">تسجيل الخروج</button><button class="lk hid" id="adm" style="display:block" onclick="adminOff()">وضع المدير مفعّل · اضغط للخروج</button></div><button id="av" class="avb" onclick="openMe()" aria-label="صورتي الشخصية"></button></div>
   <button id="rqb" class="hid" onclick="memList()" style="display:block;width:100%;margin-top:12px;min-height:52px;border-radius:14px;border:0;background:var(--am);color:#fff;font:800 1rem var(--b)"></button>
+  <button class="tk hid" id="adb" style="margin-top:12px" onclick="memList()">👥 المتدربون</button>
   <div id="mot"></div>
   <button class="nx go" onclick="EDIT=false;home()">بداية البرنامج</button>
   <div class="an"><h3>📢 إعلانات القاعة</h3><div id="an"></div></div>
@@ -304,7 +305,6 @@ button.qc{width:100%;justify-content:center;text-align:center;color:var(--ink);f
         </div>
       <div class="nt" id="nt"></div>
       <button class="lk" id="mib" onclick="openMe()">👤 معلوماتي الشخصية</button>
-      <button class="tk hid" id="adb" style="margin-top:18px" onclick="memList()">👥 المتدربون (المدير)</button>
       <button id="lgo2" onclick="logout()" style="display:none;width:100%;margin-top:14px;padding:16px;border-radius:14px;border:2px solid var(--am);background:transparent;color:var(--amd);font:800 1.05rem var(--d)">تسجيل الخروج</button>
       </div>
     </div>
@@ -857,7 +857,7 @@ var RQN=-1,RQT=null;
 function ntBeep(){try{var A=window.AudioContext||window.webkitAudioContext;RT.ac=RT.ac||new A();var c=RT.ac,i;for(i=0;i<2;i++){var o=c.createOscillator(),g=c.createGain();o.connect(g);g.connect(c.destination);o.frequency.value=660;g.gain.value=.2;o.start(c.currentTime+i*.3);o.stop(c.currentTime+i*.3+.18)}}catch(e){}}
 function reqBadge(){if(!ADMIN)return;
   aapi("GET","signup_requests?select=id").then(function(r){if(!r.ok||!Array.isArray(r.data))return;var n=r.data.length,b=$("adb"),bn=$("rqb");
-    b.textContent=n?"👥 المتدربون · 🔴 "+n:"👥 المتدربون (المدير)";
+    b.textContent=n?"👥 المتدربون · 🔴 "+n:"👥 المتدربون";
     bn.className=n?"":"hid";bn.textContent=n?"🔔 "+(n==1?"طلب تسجيل جديد":n+" طلبات تسجيل جديدة")+" · اضغط للمراجعة":"";
     if(RQN>=0&&n>RQN){try{navigator.vibrate&&navigator.vibrate([200,100,200])}catch(e){}ntBeep();if(!$("mem").classList.contains("hid"))rqList()}
     RQN=n})}
