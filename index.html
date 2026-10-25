@@ -993,6 +993,22 @@ function mdet0(m){CM=m;show("mdt");$("mdn").textContent=m.last_name+" "+m.first_
   var s=mst(m),st=el("div","pm","الحالة: "+s[0]);st.style.color=s[1];b.appendChild(st);
   var wb=el("a","tk","📲 إرسال الدعوة والرمز على واتساب");wb.style.cssText="display:block;text-align:center;text-decoration:none";wb.target="_blank";wb.rel="noopener";
   wb.href=waTo(m.phone,"مرحباً "+m.first_name+"، أهلاً بك في تطبيق ZEDAM GYM.\nالرابط: "+location.origin+"\nرقم هاتفك: "+m.phone+"\nرمز الدخول: "+m.code);b.appendChild(wb);
+  var eb=el("button","qadd","✏️ تعديل بيانات المتدرب"),ef=el("div","hid");eb.style.cssText="display:block;width:100%;margin-top:14px";
+  var eln=el("input","tin"),efn=el("input","tin"),eph=el("input","tin"),ecd=el("input","tin"),ems=el("div","vn"),er=el("div","lgr");
+  eln.value=m.last_name||"";efn.value=m.first_name||"";eph.value=m.phone||"";ecd.value=m.code||"";eph.dir="ltr";eph.inputMode="tel";ecd.dir="ltr";
+  ef.appendChild(fld("اللقب",eln));ef.appendChild(fld("الاسم",efn));ef.appendChild(fld("الهاتف",eph));ef.appendChild(fld("رمز الدخول",ecd));
+  var sv0=el("button","qadd","حفظ البيانات");sv0.style.flex="1";sv0.style.gridColumn="auto";er.appendChild(sv0);ef.appendChild(er);ef.appendChild(ems);
+  eb.onclick=function(){ef.className=ef.className.indexOf("hid")<0?"hid":""};
+  sv0.onclick=function(){var p=normPh(eph.value),c=ecd.value.trim(),L=eln.value.trim(),F=efn.value.trim();
+    if(L.length<2||F.length<2){ems.textContent="أدخل اللقب والاسم.";return}
+    if(!p){ems.textContent="رقم هاتف غير صحيح.";return}
+    if(!/^\d{4,12}$/.test(c)){ems.textContent="الرمز أرقام فقط (من 4 إلى 12).";return}
+    var q={last_name:L,first_name:F,phone:p,code:c};if(c!=m.code)q.fails=0;
+    ems.textContent="جارٍ الحفظ...";
+    aapi("PATCH","members?id=eq."+CM.id,q,{Prefer:"return=representation"}).then(function(r){
+      if(r.ok&&r.data&&r.data[0]){CM=r.data[0];MEMS=MEMS.map(function(x){return x.id==CM.id?CM:x});mdet(CM)}
+      else ems.textContent=r.status==409?"هذا الرقم مسجل لمتدرب آخر.":r.status==401?"انتهت جلسة المدير.":r.status==0?"لا يوجد اتصال بالإنترنت.":"تعذر الحفظ ("+r.status+")."})};
+  b.appendChild(eb);b.appendChild(ef);
   var sd=el("input","tin");sd.type="date";sd.dir="ltr";sd.value=m.sub_end||"";b.appendChild(fld("تاريخ انتهاء الاشتراك",sd));
   var r1=el("div","lgr"),r2=el("div","lgr");r2.style.marginTop="8px";
   function bt(r,t,fn){var x=el("button","qadd",t);x.style.flex="1";x.style.gridColumn="auto";x.onclick=fn;r.appendChild(x)}
