@@ -437,7 +437,7 @@ function sv(){store.s("progress:"+K,D)}
 function dk(i){return CP+":"+(P[i]?P[i].id:i)}
 function cnt(i){return(D[dk(i)]||[]).filter(Boolean).length}
 function fmt(t){t=Math.max(0,Math.ceil(t));var m=Math.floor(t/60),s=t%60;return m+":"+(s<10?"0":"")+s}
-function show(id){hsync(id);["st","hm","home","prg","trk","mem","mdt","bd","det","fin"].forEach(function(x){var b=x=="fin"?"fin":x=="st"?"st":x=="hm"?"hm":"";$(x).className=((x==id?"":"hid ")+b).trim()});[].forEach.call(document.querySelectorAll("video"),function(v){v.pause()});window.scrollTo(0,0)}
+function show(id){if(id!="prg")ptStop();hsync(id);["st","hm","home","prg","trk","mem","mdt","bd","det","fin"].forEach(function(x){var b=x=="fin"?"fin":x=="st"?"st":x=="hm"?"hm":"";$(x).className=((x==id?"":"hid ")+b).trim()});[].forEach.call(document.querySelectorAll("video"),function(v){v.pause()});window.scrollTo(0,0)}
 var M={};
 function gpn(){var p=(GYM_PHONE||"").replace(/\D/g,"");if(p.charAt(0)=="0")p="213"+p.slice(1);return p}
 function cl(){if(!gpn()){$("nt").textContent="لم يتم إضافة رقم القاعة بعد.";return false}$("nt").textContent="";return true}
@@ -537,7 +537,7 @@ function gateC(mb,live,go){var L=lc(VID),sk="lvc:"+L,sc=store.g(sk,null);
     b.onclick=sub;i.onkeydown=function(ev){if(ev.key=="Enter")sub()};
     c.appendChild(t);c.appendChild(i);c.appendChild(b);c.appendChild(e);mb.innerHTML="";mb.appendChild(c);vch()})}
 function showProg(){var box=$("rows"),key=BP+"-"+(VID==""?"m":VID),tk=(showProg.t=(showProg.t||0)+1),mb=el("div"),dc=ADMIN?dcard(key):null,url=DS()+"public/designs/"+key;
-  box.innerHTML="";P=[];$("pt").textContent=CT;vch();show("prg");
+  box.innerHTML="";P=[];$("pt").textContent=CT;vch();show("prg");ptStart();
   if(dc)box.appendChild(dc);if(ADMIN&&LOCKED[VID])box.appendChild(ccard());box.appendChild(mb);box.appendChild(progTools());
   function live(){return tk===showProg.t}
   function none(){if(!live())return;mb.innerHTML="";var n=el("div","pm","قريباً");n.style.marginTop="14px";mb.appendChild(n)}
@@ -587,14 +587,17 @@ function flush(){var m=curM();if(!m||FQ||!navigator.onLine)return Promise.resolv
     if(o.t=="bu")pr=api("POST","body_log?on_conflict=member_id,kind,d",{member_id:m.id,kind:o.kind,d:o.d,v:o.v},UP);
     else if(o.t=="bd")pr=api("DELETE","body_log?member_id=eq."+m.id+"&kind=eq."+o.kind+"&d=eq."+o.d);
     else if(o.t=="lu")pr=api("POST","lift_log?on_conflict=member_id,exercise,d",{member_id:m.id,exercise:o.ex,d:o.d,w:o.w,reps:o.r||null},UP);
+    else if(o.t=="su")pr=api("POST","session_log?on_conflict=member_id,d",{member_id:m.id,d:o.d},UP);
     else pr=api("DELETE","lift_log?member_id=eq."+m.id+"&exercise=eq."+encodeURIComponent(o.ex)+"&d=eq."+o.d);
     return pr.then(function(r){if(r.ok||(r.status>=400&&r.status<500&&r.status!=401&&r.status!=408&&r.status!=429)){var q2=store.g("sbq",[]);q2.shift();store.s("sbq",q2);return next()}FQ=false})})()}
 function pushAll(){var m=curM(),rows=[],lr=[],P=[],L=lifts();
   store.g("meas",[]).forEach(function(e){if(e.w!=null)rows.push({member_id:m.id,kind:"weight",d:e.d,v:e.w});if(e.x!=null)rows.push({member_id:m.id,kind:"waist",d:e.d,v:e.x})});
   Object.keys(L).forEach(function(k){L[k].forEach(function(e){lr.push({member_id:m.id,exercise:k,d:e.d,w:e.w,reps:e.r||null})})});
+  var sr=(store.g("sess",[])||[]).map(function(d){return{member_id:m.id,d:d}});if(sr.length)P.push(api("POST","session_log?on_conflict=member_id,d",sr,UP));
   if(rows.length)P.push(api("POST","body_log?on_conflict=member_id,kind,d",rows,UP));if(lr.length)P.push(api("POST","lift_log?on_conflict=member_id,exercise,d",lr,UP));return Promise.all(P)}
 function pull(){var m=curM();if(!m)return Promise.resolve();
-  return Promise.all([api("GET","body_log?select=kind,d,v&member_id=eq."+m.id+"&order=d"),api("GET","lift_log?select=exercise,d,w,reps&member_id=eq."+m.id+"&order=d")]).then(function(R){
+  return Promise.all([api("GET","body_log?select=kind,d,v&member_id=eq."+m.id+"&order=d"),api("GET","lift_log?select=exercise,d,w,reps&member_id=eq."+m.id+"&order=d"),api("GET","session_log?select=d&member_id=eq."+m.id+"&order=d")]).then(function(R){
+    if(R[2]&&R[2].ok&&Array.isArray(R[2].data)){var sa=store.g("sess",[])||[];R[2].data.forEach(function(x){if(sa.indexOf(x.d)<0)sa.push(x.d)});sa.sort();store.s("sess",sa.slice(-200))}
     if(R[0].ok&&Array.isArray(R[0].data)){var ms=[];R[0].data.forEach(function(x){var e=ms.filter(function(q){return q.d==x.d})[0];if(!e){e={d:x.d};ms.push(e)}e[x.kind=="weight"?"w":"x"]=Number(x.v)});store.s("meas",ms)}
     if(R[1].ok&&Array.isArray(R[1].data)){var L={};R[1].data.forEach(function(x){var o={d:x.d,w:Number(x.w)};if(x.reps)o.r=x.reps;(L[x.exercise]=L[x.exercise]||[]).push(o)});store.s("lifts",L)}})}
 function syncNow(){var m=curM();if(!m||!navigator.onLine)return;
@@ -606,7 +609,7 @@ function syncNow(){var m=curM();if(!m||!navigator.onLine)return;
     if(!x.active||(x.sub_end&&x.sub_end<td())){lockOut("انتهى اشتراكك. تواصل مع القاعة لتجديده.");return}
     store.s("sbm",{id:m.id,sub_end:x.sub_end,bd:x.birth_date||null});M.fn=x.first_name;M.ln=x.last_name;svM();
     flush().then(function(){if(!store.g("sbq",[]).length)return pull()})})}
-function clearMember(){["sbs","sbm","member","meas","lifts","sbq","logt","avatar"].forEach(function(k){store.r(k)});M={}}
+function clearMember(){["sbs","sbm","member","meas","lifts","sbq","logt","avatar","sess"].forEach(function(k){store.r(k)});M={}}
 function lockOut(msg){clearMember();stForm(msg)}
 function logout(){flush().then(function(){clearMember();stForm()})}
 /* ===== دخول المتدرب: رقم الهاتف + رمز من القاعة ===== */
@@ -775,6 +778,16 @@ function rulesGet(){var r=store.g("rules",null);return Array.isArray(r)&&r.lengt
 function rulesFetch(done){var go=function(){return(ADMIN?aapi:api)("GET","gym_rules?select=content&id=eq.1")};
   go().then(function(r){if(r.status==401&&!ADMIN)return anon().then(function(s){return s?go():r});return r}).then(function(r){
     if(r.ok&&r.data&&r.data[0]&&Array.isArray(r.data[0].content)&&r.data[0].content.length){var c=r.data[0].content;if(JSON.stringify(c)!=JSON.stringify(store.g("rules",null))){store.s("rules",c);if(done)done()}}}).catch(function(){})}
+/* حصة تلقائية: 3 دقائق متواصلة في شاشة البرنامج (والتطبيق ظاهر) تُسجَّل ذلك اليوم حصة. تُحفظ الأيام في المفتاح sess وتقرؤها دالة mot */
+var PT={iv:0,acc:0,last:0};
+function ptDone(){var d=td(),a=store.g("sess",[])||[];if(a.indexOf(d)<0){a.push(d);a.sort();store.s("sess",a.slice(-200));if(curM())enq({t:"su",d:d})}ptStop();
+  var t=el("div","","✅ تم تسجيل حصتك اليوم");t.style.cssText="position:fixed;left:50%;bottom:calc(28px + env(safe-area-inset-bottom,0px));transform:translateX(-50%);z-index:70;background:#1e8e5a;color:#fff;padding:12px 20px;border-radius:14px;font:800 .95rem var(--b);box-shadow:0 6px 20px rgba(0,0,0,.4)";
+  document.body.appendChild(t);setTimeout(function(){if(t.parentNode)t.parentNode.removeChild(t)},3500)}
+function ptStart(){if(PT.iv||ADMIN||!M.ph)return;if((store.g("sess",[])||[]).indexOf(td())>=0)return;
+  PT.acc=0;PT.last=document.hidden?0:Date.now();
+  PT.iv=setInterval(function(){if(document.hidden||!PT.last)return;if(PT.acc+(Date.now()-PT.last)>=180000)ptDone()},1000)}
+function ptStop(){if(PT.iv)clearInterval(PT.iv);PT.iv=0;PT.acc=0;PT.last=0}
+document.addEventListener("visibilitychange",function(){if(!PT.iv)return;if(document.hidden){if(PT.last)PT.acc+=Date.now()-PT.last;PT.last=0}else PT.last=Date.now()});
 function gsOpen(){$("gs").className="gs"}
 function gsClose(){var g=$("gs");if(g)g.className="gs hid"}
 (function(){var g=$("gs");if(g)g.addEventListener("click",function(e){if(e.target.closest("#cr,#mib,#adb,#lgo2"))setTimeout(gsClose,0)})})();
@@ -855,6 +868,7 @@ function mot(){var h=$("mot");h.innerHTML="";if(!M.ph)return;
   var days=[],i,k,v;
   try{for(i=0;i<localStorage.length;i++){k=localStorage.key(i);if(k&&k.indexOf("zg:progress:zg-")==0){try{v=JSON.parse(localStorage.getItem(k))||{}}catch(e){v={}}
     if(Object.keys(v).some(function(q){return(v[q]||[]).some(Boolean)}))days.push(k.slice(15))}}}catch(e){}
+  try{(store.g("sess",[])||[]).forEach(function(d){if(days.indexOf(d)<0)days.push(d)})}catch(e){}
   days.sort();var t=td(),n=new Date();n.setDate(n.getDate()-((n.getDay()+1)%7));var ws=ymd(n);
   var wk=days.filter(function(d){return d>=ws}).length,st=0;
   if(days.length&&dd(t,days[days.length-1])<=2){st=1;for(i=days.length-1;i>0;i--){if(dd(days[i],days[i-1])<=2)st++;else break}}
