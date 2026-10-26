@@ -1019,6 +1019,14 @@ function mdet(m){mdet0(m);var b=$("mdb"),g=el("div","zg"),btn=el("button","nx","
     d.appendChild(im);d.appendChild(x);b.insertBefore(d,b.firstChild)})}
 function mdet0(m){CM=m;show("mdt");$("mdn").textContent=m.last_name+" "+m.first_name;var b=$("mdb"),ms=el("div","vn");b.innerHTML="";
   var g=el("div","tcd");g.appendChild(card("الهاتف",m.phone));g.appendChild(card("رمز الدخول",m.code));g.appendChild(card("العمر",m.birth_date?age(m.birth_date)+" سنة":"—",m.birth_date?fd(m.birth_date):""));b.appendChild(g);
+  var sx=el("div","tcd"),sc1=card("🔥 سلسلة الالتزام","…"),sc2=card("📅 حصص هذا الأسبوع","…"),sn=el("div","pm mm","جارٍ تحميل الإحصائيات...");sx.appendChild(sc1);sx.appendChild(sc2);sx.style.marginTop="12px";b.appendChild(sx);b.appendChild(sn);
+  aapi("GET","session_log?select=d&member_id=eq."+m.id+"&order=d").then(function(r){
+    if(!r.ok||!Array.isArray(r.data)){sn.textContent=r.status==404?"جدول الحصص غير مفعّل. نفّذ سكربت sessions.sql في Supabase.":r.status==0?"لا يوجد اتصال بالإنترنت.":"تعذر تحميل الإحصائيات.";return}
+    var days=r.data.map(function(x){return x.d}).sort(),t0=td(),n0=new Date(),i0,wk0,st0=0;n0.setDate(n0.getDate()-((n0.getDay()+1)%7));var ws0=ymd(n0);
+    wk0=days.filter(function(d){return d>=ws0}).length;
+    if(days.length&&dd(t0,days[days.length-1])<=2){st0=1;for(i0=days.length-1;i0>0;i0--){if(dd(days[i0],days[i0-1])<=2)st0++;else break}}
+    [[sc1,st0],[sc2,wk0]].forEach(function(p){var bb=p[0].querySelector(".b");bb.textContent=p[1]+"";bb.appendChild(el("span","u","حصص"))});
+    sn.textContent=days.length?"آخر حصة: "+fd(days[days.length-1])+" · إجمالي الحصص: "+days.length:"لا توجد حصص مسجّلة بعد."});
   var s=mst(m),st=el("div","pm","الحالة: "+s[0]);st.style.color=s[1];b.appendChild(st);
   var wb=el("a","tk","📲 إرسال الدعوة والرمز على واتساب");wb.style.cssText="display:block;text-align:center;text-decoration:none";wb.target="_blank";wb.rel="noopener";
   wb.href=waTo(m.phone,"مرحباً "+m.first_name+"، أهلاً بك في تطبيق ZEDAM GYM.\nالرابط: "+location.origin+"\nرقم هاتفك: "+m.phone+"\nرمز الدخول: "+m.code);b.appendChild(wb);
