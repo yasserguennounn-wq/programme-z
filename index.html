@@ -802,6 +802,7 @@ function rulesFetch(done){var go=function(){return(ADMIN?aapi:api)("GET","gym_ru
   go().then(function(r){if(r.status==401&&!ADMIN)return anon().then(function(s){return s?go():r});return r}).then(function(r){
     if(r.ok&&r.data&&r.data[0]&&Array.isArray(r.data[0].content)&&r.data[0].content.length){var c=r.data[0].content;if(JSON.stringify(c)!=JSON.stringify(store.g("rules",null))){store.s("rules",c);if(done)done()}}}).catch(function(){})}
 /* حصة تلقائية: 3 دقائق متواصلة في شاشة البرنامج (والتطبيق ظاهر) تُسجَّل ذلك اليوم حصة. تُحفظ الأيام في المفتاح sess وتقرؤها دالة mot */
+function dayGap(a,b){return Math.round((new Date(a+"T00:00:00")-new Date(b+"T00:00:00"))/864e5)}
 var PT={iv:0,acc:0,last:0};
 function ptDone(){var d=td(),a=store.g("sess",[])||[];if(a.indexOf(d)<0){a.push(d);a.sort();store.s("sess",a.slice(-200));if(curM())enq({t:"su",d:d})}ptStop();
   var t=el("div","","✅ تم تسجيل حصتك اليوم");t.style.cssText="position:fixed;left:50%;bottom:calc(28px + env(safe-area-inset-bottom,0px));transform:translateX(-50%);z-index:70;background:#1e8e5a;color:#fff;padding:12px 20px;border-radius:14px;font:800 .95rem var(--b);box-shadow:0 6px 20px rgba(0,0,0,.4)";
@@ -1022,11 +1023,11 @@ function mdet0(m){CM=m;show("mdt");$("mdn").textContent=m.last_name+" "+m.first_
   var sx=el("div","tcd"),sc1=card("🔥 سلسلة الالتزام","…"),sc2=card("📅 حصص هذا الأسبوع","…"),sn=el("div","pm mm","جارٍ تحميل الإحصائيات...");sx.appendChild(sc1);sx.appendChild(sc2);sx.style.marginTop="12px";b.appendChild(sx);b.appendChild(sn);
   aapi("GET","session_log?select=d&member_id=eq."+m.id+"&order=d").then(function(r){
     if(!r.ok||!Array.isArray(r.data)){sn.textContent=r.status==404?"جدول الحصص غير مفعّل. نفّذ سكربت sessions.sql في Supabase.":r.status==0?"لا يوجد اتصال بالإنترنت.":"تعذر تحميل الإحصائيات.";return}
-    var days=r.data.map(function(x){return x.d}).sort(),t0=td(),n0=new Date(),i0,wk0,st0=0;n0.setDate(n0.getDate()-((n0.getDay()+1)%7));var ws0=ymd(n0);
+    try{var days=r.data.map(function(x){return x.d}).sort(),t0=td(),n0=new Date(),i0,wk0,st0=0;n0.setDate(n0.getDate()-((n0.getDay()+1)%7));var ws0=ymd(n0);
     wk0=days.filter(function(d){return d>=ws0}).length;
-    if(days.length&&dd(t0,days[days.length-1])<=2){st0=1;for(i0=days.length-1;i0>0;i0--){if(dd(days[i0],days[i0-1])<=2)st0++;else break}}
+    if(days.length&&dayGap(t0,days[days.length-1])<=2){st0=1;for(i0=days.length-1;i0>0;i0--){if(dayGap(days[i0],days[i0-1])<=2)st0++;else break}}
     [[sc1,st0],[sc2,wk0]].forEach(function(p){var bb=p[0].querySelector(".b");bb.textContent=p[1]+"";bb.appendChild(el("span","u","حصص"))});
-    sn.textContent=days.length?"آخر حصة: "+fd(days[days.length-1])+" · إجمالي الحصص: "+days.length:"لا توجد حصص مسجّلة بعد."});
+    sn.textContent=days.length?"آخر حصة: "+fd(days[days.length-1])+" · إجمالي الحصص: "+days.length:"لا توجد حصص مسجّلة بعد."}catch(e){sn.textContent="تعذر عرض الإحصائيات."}});
   var s=mst(m),st=el("div","pm","الحالة: "+s[0]);st.style.color=s[1];b.appendChild(st);
   var wb=el("a","tk","📲 إرسال الدعوة والرمز على واتساب");wb.style.cssText="display:block;text-align:center;text-decoration:none";wb.target="_blank";wb.rel="noopener";
   wb.href=waTo(m.phone,"مرحباً "+m.first_name+"، أهلاً بك في تطبيق ZEDAM GYM.\nالرابط: "+location.origin+"\nرقم هاتفك: "+m.phone+"\nرمز الدخول: "+m.code);b.appendChild(wb);
