@@ -454,7 +454,13 @@ var PROGRAMS=[
 {id:"cf",g:[G("جسم كامل","burpee kb boxj")]}];
 var LIB=X;Object.keys(X).forEach(function(k){X[k].id=k});
 /* ===== 4) التخزين: كل ميزة جديدة تأخذ مفتاحها (weights، measures...) ===== */
-var store={g:function(k,d){try{if(!ADMIN&&/^(ox|nm|plans3|pg2:|ld|cells)/.test(k))return d;var v=localStorage.getItem("zg:"+k);return v?JSON.parse(v):d}catch(e){return d}},s:function(k,v){try{localStorage.setItem("zg:"+k,JSON.stringify(v))}catch(e){}},r:function(k){try{localStorage.removeItem("zg:"+k)}catch(e){}}};
+var store={g:function(k,d){try{if(!ADMIN&&/^(ox|nm|plans3|pg2:|ld|cells)/.test(k))return d;var v=localStorage.getItem("zg:"+k);return v?JSON.parse(v):d}catch(e){return d}},s:function(k,v){try{localStorage.setItem("zg:"+k,JSON.stringify(v))}catch(e){}if(IDK[k])idbSet(k,v)},r:function(k){try{localStorage.removeItem("zg:"+k)}catch(e){}if(IDK[k])idbSet(k,null)}};
+/* نسخة احتياطية لبيانات الدخول في IndexedDB: إذا مُسح localStorage يُستعاد الدخول تلقائياً */
+var IDK={member:1,sbm:1,sbs:1};
+function idbO(){return new Promise(function(res,rej){try{var r=indexedDB.open("zg-id",1);r.onupgradeneeded=function(){r.result.createObjectStore("k")};r.onsuccess=function(){res(r.result)};r.onerror=function(){rej()}}catch(e){rej()}})}
+function idbSet(k,v){idbO().then(function(d){var t=d.transaction("k","readwrite");if(v==null)t.objectStore("k").delete(k);else t.objectStore("k").put(JSON.stringify(v),k)}).catch(function(){})}
+function idbRestore(){return idbO().then(function(d){return new Promise(function(res){var o=d.transaction("k").objectStore("k"),ks=Object.keys(IDK),n=0,out={};ks.forEach(function(k){var q=o.get(k);q.onsuccess=function(){if(q.result)out[k]=q.result;if(++n==ks.length)res(out)};q.onerror=function(){if(++n==ks.length)res(out)}})})}).catch(function(){return{}})}
+try{if(navigator.storage&&navigator.storage.persist)navigator.storage.persist()}catch(e){}
 var BP="",VID="",CP="",CT="",C=2*Math.PI*88,D={},cur=0,tab=0,ti=null,end=0,tot=0,K="zg-"+new Date().toISOString().slice(0,10);
 function $(i){return document.getElementById(i)}
 function ld(){D=store.g("progress:"+K,{})}
@@ -600,7 +606,7 @@ function setS(k,r){var s={at:r.access_token,rt:r.refresh_token,exp:Math.floor(Da
 function jf(u,o){return fetch(u,o).then(function(r){return r.text().then(function(t){var d=null;try{d=t?JSON.parse(t):null}catch(e){}return{ok:r.ok,status:r.status,data:d}})}).catch(function(){return{ok:false,status:0,data:null}})}
 function auth(p,b){return jf(SBU+"/auth/v1/"+p,{method:"POST",headers:{apikey:SBK,"Content-Type":"application/json"},body:JSON.stringify(b)})}
 function fresh(k){var s=sg(k);if(!s)return Promise.resolve(null);if(s.exp>Date.now()/1000)return Promise.resolve(s);
-  return auth("token?grant_type=refresh_token",{refresh_token:s.rt}).then(function(r){if(r.ok&&r.data&&r.data.access_token)return setS(k,r.data);if(r.status==400||r.status==401){store.r(k);return null}return s})}
+  return auth("token?grant_type=refresh_token",{refresh_token:s.rt}).then(function(r){if(r.ok&&r.data&&r.data.access_token)return setS(k,r.data);if(k=="sba"&&(r.status==400||r.status==401)){store.r(k);return null}return k=="sba"?s:null})}
 function api(m,p,b,x,k){return fresh(k||"sbs").then(function(s){if(!s)return{ok:false,status:401,data:null};var h={apikey:SBK,Authorization:"Bearer "+s.at,"Content-Type":"application/json"};if(x)for(var q in x)h[q]=x[q];return jf(SBU+"/rest/v1/"+p,{method:m,headers:h,body:b==null?undefined:JSON.stringify(b)})})}
 function aapi(m,p,b,x){return api(m,p,b,x,"sba")}
 function anon(){return auth("signup",{data:{}}).then(function(r){if(r.ok&&r.data&&r.data.access_token)return setS("sbs",r.data);AE=r.data?(r.data.msg||r.data.message||r.data.error_description||""):"";return null})}
@@ -630,7 +636,7 @@ function syncNow(){var m=curM();if(!m||!navigator.onLine)return;
     if(r.status==0)return;
     if(r.status==401||r.status==403)return;
     var x=r.ok&&Array.isArray(r.data)?r.data[0]:null;
-    if(!x){lockOut("انتهت جلستك على هذا الهاتف. أدخل رقمك ورمزك من جديد.");return}
+    if(!x)return;
     if(!x.active||(x.sub_end&&x.sub_end<td())){lockOut("انتهى اشتراكك. تواصل مع القاعة لتجديده.");return}
     store.s("sbm",{id:m.id,sub_end:x.sub_end,bd:x.birth_date||null});M.fn=x.first_name;M.ln=x.last_name;svM();
     flush().then(function(){if(!store.g("sbq",[]).length)return pull()})})}
@@ -1327,7 +1333,8 @@ function startT(t){stopT();if(!t)return;tot=t;end=Date.now()+t*1000;$("tl").text
 function addT(n){if(ti){end+=n*1000;tot+=n;draw()}else startT(n)}
 function resetT(){stopT();$("tt").textContent=fmt(P[cur].rest);$("tl").textContent="وقت الراحة";$("tp").textContent="ابدأ الراحة";$("arc").setAttribute("stroke-dashoffset",0)}
 function stopT(){if(ti){clearInterval(ti);ti=null}}
-$("lg2").src=$("lg").src;$("lg3").src=$("lg").src;ld();ldM();window.addEventListener("online",function(){flush()});if(M.ph){splash();syncNow()}else stForm();
+$("lg2").src=$("lg").src;$("lg3").src=$("lg").src;ld();ldM();window.addEventListener("online",function(){flush()});function boot(){if(M.ph){["member","sbm","sbs"].forEach(function(k){var v=store.g(k,null);if(v)idbSet(k,v)});splash();syncNow()}else stForm()}
+if(M.ph||!window.indexedDB)boot();else idbRestore().then(function(o){var ok=false;try{if(o.member&&o.sbm){localStorage.setItem("zg:member",o.member);localStorage.setItem("zg:sbm",o.sbm);if(o.sbs)localStorage.setItem("zg:sbs",o.sbs);ok=true}}catch(e){}if(ok)ldM();boot()});
 </script>
 <script>
 if("serviceWorker" in navigator&&location.protocol.indexOf("http")==0){window.addEventListener("load",function(){navigator.serviceWorker.register("sw.js").catch(function(){})})}
