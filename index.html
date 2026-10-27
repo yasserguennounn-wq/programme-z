@@ -505,7 +505,8 @@ function home(){var g=$("qg"),L=cells();g.innerHTML="";DM0=store.g("dm",{});var 
           c.onclick=function(){sp.textContent="🔒 قيد الإعداد، يُفتح قريباً";setTimeout(function(){sp.textContent="🔒 قريباً"},2000)}}
         else{c.onclick=function(){openP(i)};if(nd&&ADMIN){var wr2=el("div"),sp2=el("div","","⚠️ بلا تصميم (مقفلة للمتدربين)");wr2.appendChild(document.createTextNode(q.t));sp2.style.cssText="font-size:.75rem;margin-top:4px;color:#f5a623;white-space:normal";wr2.appendChild(sp2);c.textContent="";c.appendChild(wr2)}}}}
     g.appendChild(c)});
-  if(EDIT){var ad=el("button","qadd","+ إضافة خانة");ad.onclick=function(){L.push({k:"n"+Date.now(),p:"",t:""});store.s("cells",L);home();var t=g.querySelectorAll(".qi");if(t.length)t[t.length-1].focus()};g.appendChild(ad);
+  if(EDIT){var at=el("button","qadd","+ إضافة خانة في الأعلى");at.style.gridColumn="1/-1";at.onclick=function(){L.unshift({k:"n"+Date.now(),p:"",t:""});store.s("cells",L);home();var t=g.querySelector(".qi");if(t)t.focus()};g.insertBefore(at,g.firstChild);
+    var ad=el("button","qadd","+ إضافة خانة");ad.onclick=function(){L.push({k:"n"+Date.now(),p:"",t:""});store.s("cells",L);home();var t=g.querySelectorAll(".qi");if(t.length)t[t.length-1].focus()};g.appendChild(ad);
     var ex=el("button","qadd","📋 تصدير الخانات");ex.onclick=function(){var t=JSON.stringify(L.map(function(q){return{k:q.k,p:q.p,t:q.t}})),ta=g.querySelector(".vt")||g.appendChild(el("textarea","vt"));ta.style.gridColumn="1/-1";ta.readOnly=true;ta.value=t;ta.select();try{navigator.clipboard.writeText(t)}catch(e){}};g.appendChild(ex)}
   show("home");if(EDIT)[].forEach.call(g.querySelectorAll(".qi"),fit);
   var old=JSON.stringify(Object.keys(DM0).sort());dlist().then(function(m){if(!EDIT&&!$("home").classList.contains("hid")&&JSON.stringify(Object.keys(m).sort())!=old)home()})}
