@@ -773,6 +773,7 @@ function pnClick(){var b=$("pnb");b.disabled=true;pushOn().then(function(r){b.di
 var DAYN=[["السبت",6],["الأحد",0],["الاثنين",1],["الثلاثاء",2],["الأربعاء",3],["الخميس",4],["الجمعة",5]];
 function closePush(){var o=$("pse");if(o){o.remove();document.removeEventListener("keydown",psKey)}}
 function psKey(e){if(e.key=="Escape")closePush()}
+var CK={};
 function openPush(){if($("pse"))return;
   var o=el("div"),bar=el("div"),w=el("div"),cl=el("button","","✕ إغلاق"),info=el("div","pm"),ms=el("div","vn"),list=el("div"),tools=el("div");
   o.id="pse";o.style.cssText="position:fixed;inset:0;z-index:9998;background:var(--bg);display:flex;flex-direction:column;overflow:hidden";
@@ -785,7 +786,7 @@ function openPush(){if($("pse"))return;
   function bad(r){ms.style.color="#ff6b6b";ms.textContent=(r.status==404||r.status==400)?"شغّل ملف supabase-push.sql أولاً ("+r.status+").":(r.status==401||r.status==403)?"هذا الحساب ليس حساب المدير ("+r.status+").":"تعذر التنفيذ ("+r.status+")."}
   function load(){list.innerHTML="";tools.innerHTML="";ms.textContent="";
     aapi("GET","push_subs?select=endpoint").then(function(r){if(r.ok)info.textContent="الأجهزة المشتركة في الإشعارات: "+(r.data||[]).length});
-    aapi("GET","push_schedule?select=*&order=at_time.asc,id.asc").then(function(r){if(!r.ok){bad(r);return}
+    aapi("GET","push_clicks?select=body,d,n").then(function(kr){CK={};if(kr.ok&&Array.isArray(kr.data))kr.data.forEach(function(x){var o=CK[x.body]||(CK[x.body]={t:0,d:{}});o.t+=x.n;o.d[x.d]=x.n})}).then(function(){return aapi("GET","push_schedule?select=*&order=at_time.asc,id.asc")}).then(function(r){if(!r.ok){bad(r);return}
       var rows=r.data||[];
       if(!rows.length){var sd=el("button","zt","➕ إضافة الرسائل الثلاث المقترحة");sd.style.cssText="width:100%;min-height:48px;margin-top:12px";
         sd.onclick=function(){sd.disabled=true;var T="ZEDAM GYM";aapi("POST","push_schedule",[
@@ -804,7 +805,7 @@ function openPush(){if($("pse"))return;
     tm.type="time";tm.value=String(a.at_time||"17:00").slice(0,5);tm.dir="ltr";tm.style.cssText="margin-top:10px;width:100%";
     en.type="checkbox";en.checked=!!a.enabled;lb.appendChild(en);lb.appendChild(document.createTextNode(" مفعّلة (تُرسل في موعدها)"));lb.style.cssText="display:block;margin-top:10px";
     sv.style.cssText="width:100%;min-height:48px;margin-top:10px";dl.style.cssText="display:block;margin:6px auto 0;min-height:44px";
-    var sb=el("div","pm",a.last_sent_on?"آخر إرسال: "+fd(a.last_sent_on):"لم تُرسل بعد");sb.style.fontSize=".85rem";
+    var sb=el("div","pm",a.last_sent_on?"آخر إرسال: "+fd(a.last_sent_on):"لم تُرسل بعد");sb.style.fontSize=".85rem";var kk=CK[(a.body||"").trim()],ck=el("div","pm","👆 الضغطات على الإشعار: "+(kk?kk.t+" (اليوم: "+(kk.d[td()]||0)+")":"0"));ck.style.fontSize=".85rem";
     sv.onclick=function(){var t1=ti.value.trim(),b2=bo.value.trim();mm.style.color="#ff6b6b";
       if(!t1||!b2){mm.textContent="اكتب العنوان والنص.";return}
       if(en.checked&&!sel.length){mm.textContent="اختر يوماً واحداً على الأقل.";return}
@@ -812,7 +813,7 @@ function openPush(){if($("pse"))return;
       sv.disabled=true;mm.style.color="";mm.textContent="جارٍ الحفظ...";
       aapi("PATCH","push_schedule?id=eq."+a.id,{title:t1,body:b2,days:sel.slice().sort(),at_time:tm.value+":00",enabled:en.checked}).then(function(r){sv.disabled=false;if(r.ok){mm.style.color="#1e8e5a";mm.textContent="تم الحفظ ✓"}else{mm.style.color="#ff6b6b";mm.textContent="تعذر الحفظ ("+r.status+")."}})};
     dl.onclick=function(){if(dl.dataset.c){aapi("DELETE","push_schedule?id=eq."+a.id).then(function(r){if(r.ok)c.remove();else bad(r)})}else{dl.dataset.c="1";dl.textContent="تأكيد الحذف؟";setTimeout(function(){dl.dataset.c="";dl.textContent="حذف"},3000)}};
-    [ti,bo,dr,tm,lb,sb,sv,dl,mm].forEach(function(x){c.appendChild(x)});list.appendChild(c)}
+    [ti,bo,dr,tm,lb,sb,ck,sv,dl,mm].forEach(function(x){c.appendChild(x)});list.appendChild(c)}
   o.appendChild(bar);o.appendChild(w);document.body.appendChild(o);document.addEventListener("keydown",psKey);load()}
 /* ===== معلوماتي الشخصية ===== */
 function closeMe(){var o=$("mei");if(o){o.remove();document.removeEventListener("keydown",meKey)}}
