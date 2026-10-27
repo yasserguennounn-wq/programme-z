@@ -1,5 +1,5 @@
 /* ZEDAM GYM service worker. عند أي تحديث للتطبيق غيّر رقم النسخة V ليتجدد التخزين */
-const V="zg-v43";
+const V="zg-v45";
 const SHELL=["./","index.html","manifest.webmanifest","icon-192.png","icon-512.png"];
 self.addEventListener("install",e=>{e.waitUntil(caches.open(V).then(c=>c.addAll(SHELL)).then(()=>self.skipWaiting()))});
 self.addEventListener("activate",e=>{e.waitUntil(caches.keys().then(ks=>Promise.all(ks.filter(k=>k!==V).map(k=>caches.delete(k)))).then(()=>self.clients.claim()))});
@@ -17,3 +17,9 @@ self.addEventListener("fetch",e=>{
     e.respondWith(fetch(r).then(n=>{const k=n.clone();caches.open(V).then(c=>c.put("index.html",k));return n}).catch(()=>caches.match("index.html")));return}
   e.respondWith(caches.open(V).then(c=>c.match(r).then(m=>{const f=fetch(r).then(n=>{if(n.ok)c.put(r,n.clone());return n}).catch(()=>m);return m||f})))
 });
+
+/* ===== الإشعارات ===== */
+self.addEventListener("push",e=>{let d={};try{d=e.data.json()}catch(_){d={body:e.data?e.data.text():""}}
+  e.waitUntil(self.registration.showNotification(d.title||"ZEDAM GYM",{body:d.body||"",icon:"icon-192.png",badge:"icon-192.png",dir:"rtl",lang:"ar",data:{url:d.url||"./"}}))});
+self.addEventListener("notificationclick",e=>{e.notification.close();
+  e.waitUntil(self.clients.matchAll({type:"window",includeUncontrolled:true}).then(l=>{for(const c of l){if("focus" in c)return c.focus()}return self.clients.openWindow((e.notification.data&&e.notification.data.url)||"./")}))});
