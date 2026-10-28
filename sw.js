@@ -1,5 +1,5 @@
 /* ZEDAM GYM service worker. عند أي تحديث للتطبيق غيّر رقم النسخة V ليتجدد التخزين */
-const V="zg-v51";
+const V="zg-v52";
 const MD="zg-media"; /* كاش دائم للتصاميم والخطوط والصور: لا يُمسح عند تحديث التطبيق حتى تبقى البرامج تظهر بدون إنترنت */
 const SHELL=["./","index.html","manifest.webmanifest","icon-192.png","icon-512.png"];
 self.addEventListener("install",e=>{e.waitUntil(caches.open(V).then(c=>c.addAll(SHELL)).then(()=>self.skipWaiting()))});
