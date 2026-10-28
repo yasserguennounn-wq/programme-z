@@ -265,6 +265,10 @@ button.qc{width:100%;justify-content:center;text-align:center;color:var(--ink);f
 .qr2{display:flex;gap:10px;justify-content:center;margin-top:14px}
 .qr2 .zt{padding:12px 20px}
 .soi.qr{border:1.5px solid var(--ln);background:var(--sf);color:#fff;padding:0;cursor:pointer}
+
+@keyframes anFrame{0%,100%{border-color:var(--am);box-shadow:0 0 0 1px var(--am),0 0 12px rgba(225,29,29,.35)}50%{border-color:var(--ink);box-shadow:0 0 0 1px var(--ink),0 0 12px rgba(255,255,255,.2)}}
+.an{animation:anFrame 6s ease-in-out infinite}
+@media (prefers-reduced-motion:reduce){.an{animation:none}}
 </style>
 </head>
 <body>
