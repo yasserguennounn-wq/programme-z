@@ -788,6 +788,21 @@ function pushSync(){if(!curM()||!pushOK()||window.PSF||Notification.permission!=
   navigator.serviceWorker.ready.then(function(reg){return reg.pushManager.getSubscription()}).then(function(s){if(s)return pushSave(s).then(function(r){if(r=="ok")store.s("pushOn",1)})}).catch(function(){})}
 function pnPaint(){var b=$("pnb");if(b)b.className=(M.ph&&pushOK()&&Notification.permission=="default")?"":"hid"}
 function pnClick(){var b=$("pnb");b.disabled=true;pushOn().then(function(r){b.disabled=false;if(r=="ok"||r=="denied")pnPaint();else b.textContent="تعذر التفعيل، أعد المحاولة"})}
+
+/* ===== إشعار تجريبي من المدير إلى هاتفه فقط ===== */
+function pushTest(btn,ms){
+  var fail=function(t){btn.disabled=false;ms.style.color="#ff6b6b";ms.textContent=t};
+  if(!pushOK()){fail("هذا المتصفح لا يدعم الإشعارات.");return}
+  btn.disabled=true;ms.style.color="";ms.textContent="جارٍ التجهيز...";
+  (Notification.permission=="granted"?Promise.resolve("granted"):Notification.requestPermission()).then(function(p){
+    if(p!="granted"){fail("لم تمنح إذن الإشعارات لهذا الهاتف.");return}
+    return navigator.serviceWorker.ready.then(function(reg){return reg.pushManager.getSubscription().then(function(s){return s||reg.pushManager.subscribe({userVisibleOnly:true,applicationServerKey:u8(PUSH_KEY)})})}).then(function(sub){
+      return fresh("sba").then(function(se){if(!se){fail("انتهت جلسة المدير، ادخل من جديد.");return}
+        ms.textContent="جارٍ الإرسال...";
+        return fetch(SBU+"/functions/v1/send-scheduled-push",{method:"POST",headers:{"Content-Type":"application/json",Authorization:"Bearer "+se.at,apikey:SBK},body:JSON.stringify({test:true,subscription:sub.toJSON(),title:"ZEDAM GYM",body:"✅ إشعار تجريبي: إن رأيت هذه الرسالة فالإشعارات تعمل على هاتفك."})}).then(function(r){return r.json().catch(function(){return{}}).then(function(j){btn.disabled=false;
+          if(r.ok&&j.ok){ms.style.color="#1e8e5a";ms.textContent="أُرسل الإشعار ✓ انتظر ثوانٍ. إن لم يظهر فالمشكلة في إعدادات هذا الهاتف."}
+          else if(r.status==403)fail("رفض الخادم الطلب (403): تأكد أنك داخل بحساب المدير ونشرت الدالة الجديدة.");
+          else fail("رفضته خدمة الإشعارات: "+(j.error||r.status))})})})})}).catch(function(e){fail("تعذر الإرسال: "+((e&&e.message)||"تحقق من الإنترنت"))})}
 var DAYN=[["السبت",6],["الأحد",0],["الاثنين",1],["الثلاثاء",2],["الأربعاء",3],["الخميس",4],["الجمعة",5]];
 function closePush(){var o=$("pse");if(o){o.remove();document.removeEventListener("keydown",psKey)}}
 function psKey(e){if(e.key=="Escape")closePush()}
@@ -800,7 +815,8 @@ function openPush(){if($("pse"))return;
   cl.style.cssText="min-height:48px;padding:0 16px;border-radius:14px;border:1.5px solid var(--ln);background:var(--sf);color:var(--ink);font:700 1rem var(--b)";cl.onclick=closePush;bar.appendChild(t);bar.appendChild(cl);
   w.style.cssText="flex:1;overflow:auto;padding:14px 16px calc(env(safe-area-inset-bottom,0px) + 24px)";
   var hint=el("div","pm","تُرسل كل رسالة تلقائياً في يومها وساعتها (بتوقيت الجزائر) إلى كل من فعّل الإشعارات. الدقة ±15 دقيقة. لا تُرسل مرتين في اليوم نفسه.");hint.style.fontSize=".9rem";
-  w.appendChild(hint);w.appendChild(info);w.appendChild(ms);w.appendChild(tools);w.appendChild(list);
+  var tb=el("button","","🔔 إرسال إشعار تجريبي لهاتفي الآن");tb.style.cssText="width:100%;min-height:48px;margin-top:12px;border-radius:14px;border:1.5px solid var(--am);background:var(--am);color:#fff;font:700 1rem var(--b)";tb.onclick=function(){pushTest(tb,ms)};
+  w.appendChild(hint);w.appendChild(info);w.appendChild(tb);w.appendChild(ms);w.appendChild(tools);w.appendChild(list);
   function bad(r){ms.style.color="#ff6b6b";ms.textContent=(r.status==404||r.status==400)?"شغّل ملف supabase-push.sql أولاً ("+r.status+").":(r.status==401||r.status==403)?"هذا الحساب ليس حساب المدير ("+r.status+").":"تعذر التنفيذ ("+r.status+")."}
   function load(){list.innerHTML="";tools.innerHTML="";ms.textContent="";
     aapi("GET","push_subs?select=endpoint").then(function(r){if(r.ok)info.textContent="الأجهزة المشتركة في الإشعارات: "+(r.data||[]).length});
