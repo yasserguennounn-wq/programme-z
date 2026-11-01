@@ -308,7 +308,7 @@ button.qc{width:100%;justify-content:center;text-align:center;color:var(--ink);f
 </div>
 <div id="hm" class="hid hm">
   <div class="bn"><img id="lg3" alt="" width="58" height="58" onclick="tapLogo()"><div><b>WELCOME TO ZEDAM GYM</b><small>أهلاً بك في قاعتك</small></div><button id="gb" class="gb" onclick="gsOpen()" aria-label="الإعدادات"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12.22 2h-.44a2 2 0 0 0-2 2v.18a2 2 0 0 1-1 1.73l-.43.25a2 2 0 0 1-2 0l-.15-.08a2 2 0 0 0-2.73.73l-.22.38a2 2 0 0 0 .73 2.73l.15.1a2 2 0 0 1 1 1.72v.51a2 2 0 0 1-1 1.74l-.15.09a2 2 0 0 0-.73 2.73l.22.38a2 2 0 0 0 2.73.73l.15-.08a2 2 0 0 1 2 0l.43.25a2 2 0 0 1 1 1.73V20a2 2 0 0 0 2 2h.44a2 2 0 0 0 2-2v-.18a2 2 0 0 1 1-1.73l.43-.25a2 2 0 0 1 2 0l.15.08a2 2 0 0 0 2.73-.73l.22-.39a2 2 0 0 0-.73-2.73l-.15-.08a2 2 0 0 1-1-1.74v-.5a2 2 0 0 1 1-1.74l.15-.09a2 2 0 0 0 .73-2.73l-.22-.38a2 2 0 0 0-2.73-.73l-.15.08a2 2 0 0 1-2 0l-.43-.25a2 2 0 0 1-1-1.73V4a2 2 0 0 0-2-2z"/><circle cx="12" cy="12" r="3"/></svg></button></div>
-  <div class="gr" style="display:flex;align-items:center;justify-content:space-between;gap:12px"><div style="flex:1;min-width:0"><h2 id="hn"></h2><div class="pn" id="hp"></div><button class="lk" id="lgo" onclick="logout()">تسجيل الخروج</button><button class="lk hid" id="adm" style="display:block" onclick="adminOff()">وضع المدير مفعّل · اضغط للخروج</button></div><button id="av" class="avb" onclick="openMe()" aria-label="صورتي الشخصية"></button></div>
+  <div class="gr" style="display:flex;align-items:center;justify-content:space-between;gap:12px"><div style="flex:1;min-width:0"><h2 id="hn"></h2><div class="pn" id="hp"></div><button class="lk" id="lgo" onclick="logout()">تسجيل الخروج</button><button class="lk hid" id="adm" style="display:block" onclick="adminOff()">وضع المدير مفعّل · اضغط للخروج</button><div class="pm" id="ver" style="display:none;font-size:.85rem;margin-top:6px"></div></div><button id="av" class="avb" onclick="openMe()" aria-label="صورتي الشخصية"></button></div>
   <button id="rqb" class="hid" onclick="memList()" style="display:block;width:100%;margin-top:12px;min-height:52px;border-radius:14px;border:0;background:var(--am);color:#fff;font:800 1rem var(--b)"></button>
   <button class="tk hid" id="psb" onclick="openPush()">🔔 الرسائل المجدولة</button>
   <button class="tk hid" id="adb" style="margin-top:12px" onclick="memList()">👥 المتدربون</button>
@@ -491,7 +491,7 @@ function showHm(){SPL=false;annApply();
   $("hn").textContent=M.fn?"مرحباً، "+M.fn+" "+M.ln:"مرحباً بالمدير";$("hp").textContent=M.ph||"";
   $("an").innerHTML=ANN.length?ANN.map(function(x){return'<div class="ai">'+esc(x)+'</div>'}).join(""):'<div class="ai mt">لا توجد إعلانات حالياً</div>';
   var p=gpn();$("cc").href=p?wa("شكوى: "):"#";$("ci").href=p?wa("استفسار: "):"#";$("cp").href=p?"tel:+"+p:"#";
-  $("cpn").textContent=GYM_PHONE||"غير مضاف بعد";$("adm").className=ADMIN?"lk":"lk hid";$("anb").className=ADMIN?"qadd":"qadd hid";$("adb").className=ADMIN?"tk":"tk hid";$("psb").className=ADMIN?"tk":"tk hid";$("qri").className=ADMIN?"soi qr":"soi qr hid";$("lgo").className=M.ph?"lk":"lk hid";$("lgo2").style.display=M.ph?"block":"none";mot();pnPaint();pushSync();if(ADMIN){reqBadge();reqPoll()}$("mib").style.display=M.ph?"block":"none";avPaint();if(M.ph&&!store.g("avatar",null)&&!window.AVF){window.AVF=1;avFetch()}$("nt").textContent="";if($("nt2"))$("nt2").textContent="";gsClose();qrClose();show("hm");annFetch(paintAnn)}
+  $("cpn").textContent=GYM_PHONE||"غير مضاف بعد";$("adm").className=ADMIN?"lk":"lk hid";$("anb").className=ADMIN?"qadd":"qadd hid";$("adb").className=ADMIN?"tk":"tk hid";$("ver").style.display=ADMIN?"block":"none";if(ADMIN)verPaint();$("psb").className=ADMIN?"tk":"tk hid";$("qri").className=ADMIN?"soi qr":"soi qr hid";$("lgo").className=M.ph?"lk":"lk hid";$("lgo2").style.display=M.ph?"block":"none";mot();pnPaint();pushSync();if(ADMIN){reqBadge();reqPoll()}$("mib").style.display=M.ph?"block":"none";avPaint();if(M.ph&&!store.g("avatar",null)&&!window.AVF){window.AVF=1;avFetch()}$("nt").textContent="";if($("nt2"))$("nt2").textContent="";gsClose();qrClose();show("hm");annFetch(paintAnn)}
 function ldM(){M=store.g("member",{})}
 function svM(){store.s("member",M)}
 function setE(k,m){$("f"+k).className="fd"+(m?" er":"");$("e"+k).textContent=m}
@@ -803,6 +803,23 @@ function pushTest(btn,ms){
           if(r.ok&&j.ok){ms.style.color="#1e8e5a";ms.textContent="أُرسل الإشعار ✓ انتظر ثوانٍ. إن لم يظهر فالمشكلة في إعدادات هذا الهاتف."}
           else if(r.status==403)fail("رفض الخادم الطلب (403): تأكد أنك داخل بحساب المدير ونشرت الدالة الجديدة.");
           else fail("رفضته خدمة الإشعارات: "+(j.error||r.status))})})})})}).catch(function(e){fail("تعذر الإرسال: "+((e&&e.message)||"تحقق من الإنترنت"))})}
+
+/* ===== حالة إشعارات كل متدرب: مفعّلة / عطّلها أو حذف التطبيق / أوقفها بنفسه / لم يفعّلها ===== */
+function pushNm(m){return((m.last_name||"")+" "+(m.first_name||"")).trim()||m.phone||"—"}
+function pushStatus(box,btn){box.innerHTML="";var ld=el("div","pm","جارٍ التحميل...");box.appendChild(ld);btn.disabled=true;
+  Promise.all([aapi("GET","members?select=id,first_name,last_name,phone&order=last_name.asc"),aapi("GET","push_subs?select=member_id,status,dead_at,off_at,last_ok_at")]).then(function(rs){btn.disabled=false;box.innerHTML="";
+    var a=rs[0],b=rs[1];if(!a.ok||!b.ok){var t=el("div","vn",(b.status==400||b.status==404)?"شغّل ملف supabase-push-status.sql أولاً.":"تعذر التحميل ("+(a.ok?b.status:a.status)+").");t.style.color="#ff6b6b";box.appendChild(t);return}
+    var by={};(b.data||[]).forEach(function(r){(by[String(r.member_id)]=by[String(r.member_id)]||[]).push(r)});
+    var g={on:[],dead:[],off:[],none:[]};
+    (a.data||[]).forEach(function(m){var r=by[String(m.id)]||[],st=r.some(function(x){return x.status=="active"})?"on":r.some(function(x){return x.status=="dead"})?"dead":r.some(function(x){return x.status=="off"})?"off":"none",d="";
+      if(st=="dead"){var q=r.filter(function(x){return x.status=="dead"})[0];d=q&&q.dead_at?" ("+fd(String(q.dead_at).slice(0,10))+")":""}
+      if(st=="off"){var q2=r.filter(function(x){return x.status=="off"})[0];d=q2&&q2.off_at?" ("+fd(String(q2.off_at).slice(0,10))+")":""}
+      g[st].push(pushNm(m)+d)});
+    function sec(ic,tt,arr,names,col){var d=el("details"),sm=el("summary","",ic+" "+tt+": "+arr.length);sm.style.cssText="min-height:44px;line-height:44px;font-weight:800;cursor:pointer"+(col?";color:"+col:"");d.appendChild(sm);
+      if(names&&arr.length){var p=el("div","pm",arr.join(" · "));p.style.cssText="font-size:.9rem;line-height:1.9;margin:0 0 8px";d.appendChild(p)}box.appendChild(d)}
+    var c=el("div","zg");c.style.marginTop="10px";
+    var o=box;box=c;sec("🔔","مفعّلة",g.on,false);sec("⚠️","عطّلها أو حذف التطبيق",g.dead,true,"#f5a623");sec("🔕","أوقفها بنفسه",g.off,true);sec("➖","لم يفعّلها بعد",g.none,true);o.appendChild(c);
+    var n=el("div","pm","ملاحظة: يُكتشف تعطيل الإشعارات أو حذف التطبيق عند أول إرسال بعده (رسالة مجدولة)، فلا يظهر فوراً.");n.style.cssText="font-size:.85rem;margin-top:6px";o.appendChild(n)})}
 var DAYN=[["السبت",6],["الأحد",0],["الاثنين",1],["الثلاثاء",2],["الأربعاء",3],["الخميس",4],["الجمعة",5]];
 function closePush(){var o=$("pse");if(o){o.remove();document.removeEventListener("keydown",psKey)}}
 function psKey(e){if(e.key=="Escape")closePush()}
@@ -816,7 +833,8 @@ function openPush(){if($("pse"))return;
   w.style.cssText="flex:1;overflow:auto;padding:14px 16px calc(env(safe-area-inset-bottom,0px) + 24px)";
   var hint=el("div","pm","تُرسل كل رسالة تلقائياً في يومها وساعتها (بتوقيت الجزائر) إلى كل من فعّل الإشعارات. الدقة ±15 دقيقة. لا تُرسل مرتين في اليوم نفسه.");hint.style.fontSize=".9rem";
   var tb=el("button","","🔔 إرسال إشعار تجريبي لهاتفي الآن");tb.style.cssText="width:100%;min-height:48px;margin-top:12px;border-radius:14px;border:1.5px solid var(--am);background:var(--am);color:#fff;font:700 1rem var(--b)";tb.onclick=function(){pushTest(tb,ms)};
-  w.appendChild(hint);w.appendChild(info);w.appendChild(tb);w.appendChild(ms);w.appendChild(tools);w.appendChild(list);
+  var sbn=el("button","","📋 حالة إشعارات المتدربين"),sp=el("div");sbn.style.cssText="width:100%;min-height:48px;margin-top:10px;border-radius:14px;border:1.5px solid var(--ln);background:var(--sf);color:var(--ink);font:700 1rem var(--b)";sbn.onclick=function(){pushStatus(sp,sbn)};
+  w.appendChild(hint);w.appendChild(info);w.appendChild(tb);w.appendChild(sbn);w.appendChild(sp);w.appendChild(ms);w.appendChild(tools);w.appendChild(list);
   function bad(r){ms.style.color="#ff6b6b";ms.textContent=(r.status==404||r.status==400)?"شغّل ملف supabase-push.sql أولاً ("+r.status+").":(r.status==401||r.status==403)?"هذا الحساب ليس حساب المدير ("+r.status+").":"تعذر التنفيذ ("+r.status+")."}
   function load(){list.innerHTML="";tools.innerHTML="";ms.textContent="";
     aapi("GET","push_subs?select=endpoint").then(function(r){if(r.ok)info.textContent="الأجهزة المشتركة في الإشعارات: "+(r.data||[]).length});
@@ -849,6 +867,12 @@ function openPush(){if($("pse"))return;
     dl.onclick=function(){if(dl.dataset.c){aapi("DELETE","push_schedule?id=eq."+a.id).then(function(r){if(r.ok)c.remove();else bad(r)})}else{dl.dataset.c="1";dl.textContent="تأكيد الحذف؟";setTimeout(function(){dl.dataset.c="";dl.textContent="حذف"},3000)}};
     [ti,bo,dr,tm,lb,sb,ck,sv,dl,mm].forEach(function(x){c.appendChild(x)});list.appendChild(c)}
   o.appendChild(bar);o.appendChild(w);document.body.appendChild(o);document.addEventListener("keydown",psKey);load()}
+
+/* ===== رقم النسخة (يظهر في صفحة المدير) ===== */
+var APP_V=54;
+function verPaint(){var e=$("ver");if(!e)return;e.textContent="نسخة التطبيق: "+APP_V;
+  if(window.caches&&caches.keys)caches.keys().then(function(ks){var v=ks.map(function(k){var m=/zg-v(\d+)/.exec(k);return m?+m[1]:0}).sort(function(a,b){return b-a})[0];
+    if(v&&v!=APP_V){e.textContent+=" · نسخة الملفات المخزّنة: "+v+" ⚠️ أغلق التطبيق وافتحه مرتين لتكتمل";e.style.color="#f5a623"}else if(v){e.style.color=""}}).catch(function(){})}
 /* ===== معلوماتي الشخصية ===== */
 function closeMe(){var o=$("mei");if(o){o.remove();document.removeEventListener("keydown",meKey)}}
 function meKey(e){if(e.key=="Escape")closeMe()}
@@ -1177,6 +1201,14 @@ function mdet(m){mdet0(m);var b=$("mdb"),g=el("div","zg"),btn=el("button","nx","
       x.onclick=function(){if(x.dataset.c){aapi("DELETE","progress_photos?id=eq."+p.id).then(function(){d.remove()})}else{x.dataset.c="1";x.textContent="تأكيد الحذف؟";setTimeout(function(){x.dataset.c="";x.textContent="حذف"},3000)}};
       d.appendChild(cp);d.appendChild(im);d.appendChild(x);out.appendChild(d)})})};
   g.appendChild(btn);g.appendChild(out);b.appendChild(g);
+  var pnf=el("div","pm","🔔 الإشعارات: جارٍ التحميل...");pnf.style.margin="14px 0 0";b.insertBefore(pnf,g);
+  aapi("GET","push_subs?member_id=eq."+encodeURIComponent(m.id)+"&select=status,created_at,dead_at,off_at,last_ok_at&order=created_at.desc").then(function(r){
+    if(!r.ok){pnf.textContent=(r.status==400||r.status==404)?"🔔 الإشعارات: شغّل supabase-push-status.sql لعرض الحالة.":"🔔 الإشعارات: تعذر التحميل.";return}
+    var rows=r.data||[],on=rows.filter(function(x){return x.status=="active"}),dd=rows.filter(function(x){return x.status=="dead"}),of=rows.filter(function(x){return x.status=="off"}),ds=function(v){return fd(String(v).slice(0,10))};
+    if(on.length){var lo=on.map(function(x){return x.last_ok_at}).filter(Boolean).sort().pop();pnf.textContent="🔔 الإشعارات: مفعّلة"+(on.length>1?" ("+on.length+" أجهزة)":"")+(lo?" · آخر وصول "+ds(lo):"");pnf.style.color="#1e8e5a"}
+    else if(dd.length){pnf.textContent="⚠️ الإشعارات: عطّلها أو حذف التطبيق"+(dd[0].dead_at?" · اكتُشف "+ds(dd[0].dead_at):"");pnf.style.color="#f5a623"}
+    else if(of.length){pnf.textContent="🔕 الإشعارات: أوقفها المتدرب بنفسه"+(of[0].off_at?" · "+ds(of[0].off_at):"")}
+    else pnf.textContent="➖ الإشعارات: لم يفعّلها بعد"});
   aapi("GET","member_avatars?member_id=eq."+encodeURIComponent(m.id)+"&select=img").then(function(r){if(!r.ok||!r.data||!r.data[0])return;var d=el("div"),im=el("img"),x=el("button","lk","حذف الصورة الشخصية");
     im.src=r.data[0].img;im.style.cssText="width:96px;height:96px;border-radius:50%;object-fit:cover;display:block;margin:0 auto;border:3px solid var(--am)";d.style.cssText="text-align:center;margin-bottom:12px";
     x.onclick=function(){if(x.dataset.c){aapi("DELETE","member_avatars?member_id=eq."+encodeURIComponent(m.id)).then(function(){d.remove()})}else{x.dataset.c="1";x.textContent="تأكيد الحذف؟";setTimeout(function(){x.dataset.c="";x.textContent="حذف الصورة الشخصية"},3000)}};
