@@ -296,6 +296,7 @@ button.qc{width:100%;justify-content:center;text-align:center;color:var(--ink);f
     <p style="color:#777;font-size:.8rem;text-align:center;margin:14px 0 0">وزنك وقياساتك وأوزان تمارينك تُحفظ على خادم آمن، ولا يراها إلا أنت ومدرب القاعة.</p>
     <a class="lk" id="lwa" target="_blank" rel="noopener" style="display:block;text-align:center;margin-top:14px;color:#a8a8a8">ليس لديك رمز؟ تواصل مع القاعة</a>
   </div>
+  <div class="fm hid" id="sgd"></div>
   <div class="fm hid" id="sgm">
     <div class="fd"><label for="sgl">اللقب</label><input id="sgl" type="text" autocomplete="family-name" maxlength="40"></div>
     <div class="fd"><label for="sgn">الاسم</label><input id="sgn" type="text" autocomplete="given-name" maxlength="40"></div>
@@ -663,7 +664,7 @@ function lockOut(msg){clearMember();stForm(msg)}
 function logout(){flush().then(function(){clearMember();stForm()})}
 /* ===== دخول المتدرب: رقم الهاتف + رمز من القاعة ===== */
 function normPh(v){var p=String(v).replace(/[\u0660-\u0669]/g,function(c){return c.charCodeAt(0)-1632}).replace(/[\s.\-()]/g,"");return/^(0|\+?213)[567]\d{8}$/.test(p)?p.replace(/^\+?213/,"0"):""}
-function stForm(msg){SPL=false;$("sb").className="hid bk2";$("fm").className="fm";$("sgm").className="fm hid";$("stp").textContent="أدخل رقم هاتفك والرمز الذي أعطتك إياه القاعة";$("stp").className="";$("ph").value="";$("cd").value="";["ph","cd"].forEach(function(k){setE(k,"")});$("lms").textContent=msg||"";
+function stForm(msg){SPL=false;$("sb").className="hid bk2";$("fm").className="fm";$("sgm").className="fm hid";$("sgd").className="fm hid";$("stp").textContent="أدخل رقم هاتفك والرمز الذي أعطتك إياه القاعة";$("stp").className="";$("ph").value="";$("cd").value="";["ph","cd"].forEach(function(k){setE(k,"")});$("lms").textContent=msg||"";var sp0=store.g("sgp",null);if(sp0&&!msg){$("ph").value=sp0.ph;$("cd").value=sp0.code;$("lms").textContent="طلبك قيد المراجعة. عند موافقة القاعة اضغط «دخول»."}
   var p=gpn();$("lwa").href=p?"https://wa.me/"+p+"?text="+encodeURIComponent("السلام عليكم، أريد رمز الدخول إلى تطبيق ZEDAM GYM."):"#";show("st")}
 function login(){var ph=normPh($("ph").value),cd=String($("cd").value).replace(/[\u0660-\u0669]/g,function(c){return c.charCodeAt(0)-1632}).trim(),ok=true,b=$("lgb");
   if(!ph){setE("ph","أدخل رقماً صحيحاً من 10 أرقام يبدأ بـ 05 أو 06 أو 07");ok=false}else setE("ph","");
@@ -676,8 +677,8 @@ function login(){var ph=normPh($("ph").value),cd=String($("cd").value).replace(/
     return claim().then(function(r){if(r.status==401){store.r("sbs");return anon().then(function(s2){return s2?claim():r})}return r}).then(function(r){
       if(!r.ok||!r.data){end("تعذر الدخول الآن. أعد المحاولة بعد قليل.");return}
       var d=r.data,t=d.status;
-      if(t=="ok"){M={fn:d.first_name,ln:d.last_name,ph:ph};svM();store.s("sbm",{id:d.member_id,sub_end:d.sub_end});pushAll().then(function(){return pull()}).then(function(){return fetchBd()}).then(function(){end();if(curM().bd)showHm();else bdScreen(false)});return}
-      end(t=="expired"?"انتهى اشتراكك. تواصل مع القاعة لتجديده.":t=="locked"?"محاولات خاطئة كثيرة. حاول بعد 15 دقيقة.":"رقم الهاتف أو الرمز غير صحيح.")})})}
+      if(t=="ok"){M={fn:d.first_name,ln:d.last_name,ph:ph};svM();store.s("sbm",{id:d.member_id,sub_end:d.sub_end});store.r("sgp");pushAll().then(function(){return pull()}).then(function(){return fetchBd()}).then(function(){end();if(curM().bd)showHm();else bdScreen(false)});return}
+      end(t=="expired"?"انتهى اشتراكك. تواصل مع القاعة لتجديده.":t=="locked"?"محاولات خاطئة كثيرة. حاول بعد 15 دقيقة.":(store.g("sgp",null)?"لم تتم الموافقة على طلبك بعد. انتظر رد القاعة ثم أعد المحاولة.":"رقم الهاتف أو الرمز غير صحيح."))})})}
 /* ===== دخول المدير: بريد وكلمة مرور حقيقيان ===== */
 /* وضع المدير يبقى طوال جلسة التطبيق فقط؛ عند فتح التطبيق من جديد يبدأ بوضع المتدرب */
 try{if(sessionStorage.getItem("zadm")!="1")store.r("sba")}catch(e){store.r("sba")}
@@ -869,7 +870,7 @@ function openPush(){if($("pse"))return;
   o.appendChild(bar);o.appendChild(w);document.body.appendChild(o);document.addEventListener("keydown",psKey);load()}
 
 /* ===== رقم النسخة (يظهر في صفحة المدير) ===== */
-var APP_V=54;
+var APP_V=55;
 function verPaint(){var e=$("ver");if(!e)return;e.textContent="نسخة التطبيق: "+APP_V;
   if(window.caches&&caches.keys)caches.keys().then(function(ks){var v=ks.map(function(k){var m=/zg-v(\d+)/.exec(k);return m?+m[1]:0}).sort(function(a,b){return b-a})[0];
     if(v&&v!=APP_V){e.textContent+=" · نسخة الملفات المخزّنة: "+v+" ⚠️ أغلق التطبيق وافتحه مرتين لتكتمل";e.style.color="#f5a623"}else if(v){e.style.color=""}}).catch(function(){})}
@@ -1141,36 +1142,47 @@ function photosUI(){var sl=$("tsl");sl.innerHTML="";PU.forEach(function(u){URL.r
       c.appendChild(im);c.appendChild(cap);if(!p.up&&curM()){var up=el("button","lk","رفع");up.style.fontSize=".8rem";up.onclick=function(){up.textContent="...";pUp(p).then(function(r){PMSG=r=="ok"?"☁️ تم رفع الصورة.":"تعذر الرفع الآن.";photosUI()})};c.appendChild(up)}c.appendChild(x);gr.appendChild(c)});
     box.appendChild(gr);box.appendChild(note)})}
 /* ===== تسجيل المتدرب بنفسه ===== */
-function sgForm(){$("fm").className="hid";$("sgm").className="fm";$("stp").textContent="سجّل بياناتك وسنرسل لك رمز الدخول عبر واتساب";$("sgs").textContent=""}
+function sgForm(){$("fm").className="hid";$("sgd").className="fm hid";$("sgm").className="fm";$("stp").textContent="سجّل بياناتك وسيظهر لك رمز دخولك، ثم أرسل طلبك إلى القاعة على واتساب";$("sgs").textContent=""}
 function sgSend(){var ln=$("sgl").value.trim(),fn=$("sgn").value.trim(),ph=normPh($("sgp").value),bd=$("sgb").value,b=$("sgx"),m=$("sgs");
   if(ln.length<2||fn.length<2){m.style.color="#ff6b6b";m.textContent="أدخل اللقب والاسم.";return}
   if(!ph){m.style.color="#ff6b6b";m.textContent="أدخل رقماً صحيحاً من 10 أرقام يبدأ بـ 05 أو 06 أو 07";return}
   if(!bd||bd>td()||bd<"1920-01-01"){m.style.color="#ff6b6b";m.textContent="أدخل تاريخ ميلاد صحيح (إجباري).";return}
   m.textContent="";b.disabled=true;b.textContent="جارٍ الإرسال...";
   var end=function(t,ok){b.disabled=false;b.textContent="إرسال طلب التسجيل";m.style.color=ok?"#1e8e5a":"#ff6b6b";m.textContent=t};
-  var call=function(){return api("POST","rpc/request_signup",{p_last:ln,p_first:fn,p_phone:ph,p_birth:bd||null})};
+  var cd=code6(),call=function(){return api("POST","rpc/request_signup",{p_last:ln,p_first:fn,p_phone:ph,p_birth:bd||null,p_code:cd})};
   (sg("sbs")?Promise.resolve(sg("sbs")):anon()).then(function(s){
     if(!s){end("تعذر الاتصال بالخادم. أعد المحاولة.");return}
     return call().then(function(r){if(r.status==401){store.r("sbs");return anon().then(function(s2){return s2?call():r})}return r}).then(function(r){
       if(!r.ok){end("تعذر الإرسال الآن. أعد المحاولة بعد قليل.");return}
       var t=r.data;
-      if(t=="ok")end("✅ وصل طلبك. سنرسل لك رمز الدخول عبر واتساب قريباً.",true);
+      if(t=="ok"){end("",true);sgDone(ln,fn,ph,bd,cd)}
       else if(t=="exists")end("هذا الرقم مسجّل مسبقاً. ادخل برقمك والرمز، أو تواصل مع القاعة.");
       else end(t=="busy"?"ضغط كبير الآن. حاول لاحقاً.":"تحقق من البيانات المدخلة.")})})}
+
+function sgDone(ln,fn,ph,bd,cd){store.s("sgp",{ph:ph,code:cd});
+  var d=$("sgd");d.innerHTML="";
+  var t=el("div","","✅ تم تسجيل طلبك"),box=el("div"),lb=el("div","pm","رمز دخولك (احفظه)"),bg=el("div","",cd),nt=el("div","pm","لن يعمل الرمز إلا بعد موافقة القاعة على طلبك. أرسل طلبك الآن إلى القاعة بالزر التالي."),back=el("button","lk","العودة إلى شاشة الدخول");
+  t.style.cssText="font:800 1.3rem var(--d);text-align:center;margin-bottom:10px";
+  box.style.cssText="padding:14px;border:2px dashed var(--am);border-radius:14px;text-align:center";
+  bg.style.cssText="font:800 2.8rem var(--d);letter-spacing:.18em;direction:ltr;margin:6px 0";nt.style.cssText="margin-top:12px;text-align:center";
+  box.appendChild(lb);box.appendChild(bg);d.appendChild(t);d.appendChild(box);d.appendChild(nt);
+  if(gpn()){var a=el("a","nx","📲 أرسل طلبك إلى القاعة على واتساب");a.href="https://wa.me/"+gpn()+"?text="+encodeURIComponent("طلب تسجيل جديد في ZEDAM GYM\nالاسم: "+ln+" "+fn+"\nالهاتف: "+ph+"\nتاريخ الميلاد: "+bd+"\nرمز الدخول: "+cd+"\nأرجو تفعيل حسابي.");a.target="_blank";a.rel="noopener";a.style.cssText="display:block;text-align:center;margin-top:14px;text-decoration:none";d.appendChild(a)}
+  back.style.cssText="display:block;margin:12px auto 0;min-height:44px";back.onclick=function(){stForm()};d.appendChild(back);
+  ["sgl","sgn","sgp","sgb"].forEach(function(k){$(k).value=""});$("stp").textContent="وصل طلبك";$("sgm").className="fm hid";d.className="fm"}
 /* المدير: طلبات التسجيل الجديدة */
 function rqList(){var h=$("mrq");h.innerHTML="";
   aapi("GET","signup_requests?select=*&order=created_at.asc").then(function(r){
     if(!r.ok||!r.data||!r.data.length)return;
     h.appendChild(el("div","qt","طلبات التسجيل ("+r.data.length+")"));
-    r.data.forEach(function(q){var b=el("div","zg"),t=el("div","pm",q.last_name+" "+q.first_name+" · "+q.phone),ms=el("div","vn"),ok=el("button","nx","قبول وتوليد الرمز"),no=el("button","lk","رفض");
+    r.data.forEach(function(q){var b=el("div","zg"),t=el("div","pm",q.last_name+" "+q.first_name+" · "+q.phone),ms=el("div","vn"),ok=el("button","nx",q.code?"✅ قبول الطلب":"قبول وتوليد الرمز"),no=el("button","lk","رفض");
       ok.style.marginTop="10px";
-      ok.onclick=function(){var c=code6(),se=addD("",30);ok.disabled=true;ms.textContent="";
+      ok.onclick=function(){var c=(q.code&&/^\d{6}$/.test(q.code))?q.code:code6(),se=addD("",30);ok.disabled=true;ms.textContent="";
         aapi("POST","members",{last_name:q.last_name,first_name:q.first_name,phone:q.phone,code:c,sub_end:se,birth_date:q.birth_date||null},{Prefer:"return=representation"}).then(function(r2){
           if(r2.ok&&r2.data&&r2.data[0]){aapi("DELETE","signup_requests?id=eq."+q.id);MEMS.unshift(r2.data[0]);mlr();
             var w="213"+q.phone.slice(1),a=el("a","nx","📲 إرسال الرمز لـ "+q.first_name+" عبر واتساب");
             a.target="_blank";a.rel="noopener";a.style.cssText="display:block;text-align:center;margin-top:10px";
             a.href="https://wa.me/"+w+"?text="+encodeURIComponent("السلام عليكم "+q.first_name+"، تم قبول تسجيلك في ZEDAM GYM.\nرقم الهاتف: "+q.phone+"\nرمز الدخول: "+c+"\nاشتراكك ساري حتى "+fd(se));
-            var cb2=el("div"),lb=el("div","pm","رمز دخول المتدرب، أعطه له الآن ليدخل فوراً"),bg=el("div","",c),inf=el("div","pm","الهاتف: "+q.phone+" · الاشتراك حتى "+fd(se));
+            var cb2=el("div"),lb=el("div","pm",q.code?"رمز المتدرب (ظهر له عند التسجيل)، سيدخل به الآن":"رمز دخول المتدرب، أعطه له الآن ليدخل فوراً"),bg=el("div","",c),inf=el("div","pm","الهاتف: "+q.phone+" · الاشتراك حتى "+fd(se));
             cb2.style.cssText="margin-top:10px;padding:14px;border:2px dashed var(--am);border-radius:14px;text-align:center";
             bg.style.cssText="font:800 2.8rem var(--d);letter-spacing:.18em;direction:ltr;margin:6px 0";
             cb2.appendChild(lb);cb2.appendChild(bg);cb2.appendChild(inf);
