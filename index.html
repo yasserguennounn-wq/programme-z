@@ -294,7 +294,9 @@ button.qc{width:100%;justify-content:center;text-align:center;color:var(--ink);f
 #fm .pw{position:relative}
 #fm .fd input{height:64px;border-radius:999px;border:2px solid #333;background:#111;padding:0 26px 0 68px;font:600 1.05rem var(--b);color:#fff}
 #fm #cd{padding-right:78px}
-#fm .fd input::placeholder{color:#9a9a9a;font-weight:600}
+#fm .sgback{display:flex;align-items:center;justify-content:center;width:max-content;max-width:100%;min-height:52px;margin:18px auto 0;padding:0 34px;border:2px solid #e11d1d;border-radius:999px;color:#fff;font:700 1rem var(--b);cursor:pointer;text-decoration:none}
+.sgback:focus-visible{outline:none;box-shadow:0 0 0 3px rgba(225,29,29,.28)}
+.fd input::placeholder{color:#9a9a9a;font-weight:600}
 #fm .ic{position:absolute;left:26px;top:50%;transform:translateY(-50%);display:flex;pointer-events:none}
 #fm .eye{position:absolute;right:12px;top:50%;transform:translateY(-50%);height:36px;width:54px;padding:0 0 0 4px;background:none;border:0;border-left:1.5px solid #3a3a3a;display:flex;align-items:center;justify-content:center;cursor:pointer}
 #fm .fd{margin-bottom:18px}
@@ -330,10 +332,10 @@ body.kb .dbl{display:none}
     <div class="fd"><label for="sgl">اللقب</label><input id="sgl" type="text" autocomplete="family-name" maxlength="40"></div>
     <div class="fd"><label for="sgn">الاسم</label><input id="sgn" type="text" autocomplete="given-name" maxlength="40"></div>
     <div class="fd"><label for="sgp">رقم الهاتف</label><input id="sgp" type="tel" inputmode="tel" dir="ltr" style="text-align:right" placeholder="0555 12 34 56" autocomplete="tel" maxlength="16"></div>
-    <div class="fd"><label for="sgb">تاريخ الميلاد</label><input id="sgb" type="date" dir="ltr" required></div>
+    <div class="fd"><label for="sgb">تاريخ الميلاد</label><input id="sgb" type="text" dir="ltr" style="text-align:right"></div>
     <button class="nx" id="sgx" onclick="sgSend()">إرسال طلب التسجيل</button>
     <div class="m" id="sgs" style="margin-top:10px;text-align:center;color:#ff6b6b"></div>
-    <a class="lk" onclick="stForm()" style="display:block;text-align:center;margin-top:10px;color:#a8a8a8;cursor:pointer">لدي رمز، العودة للدخول</a>
+    <a class="lk sgback" role="button" tabindex="0" onclick="stForm()">لدي رمز العودة للدخول</a>
   </div>
 </div>
 <div id="hm" class="hid hm">
@@ -419,7 +421,7 @@ body.kb .dbl{display:none}
 <div id="bd" class="hid"><div class="qs" style="padding-top:40px">
   <div class="qt">تاريخ الميلاد</div>
   <p class="pm" id="bdp"></p>
-  <input id="bdi" class="tin" type="date" dir="ltr" min="1930-01-01" style="margin-top:8px">
+  <input id="bdi" class="tin" type="text" dir="ltr" style="margin-top:8px">
   <button class="nx" style="margin-top:14px" onclick="saveBd()">حفظ ومتابعة</button>
   <div class="vn" id="bdm"></div>
   <button class="lk hid" id="bdc" style="display:block;margin:10px auto 0" onclick="showHm()">إلغاء</button>
@@ -506,6 +508,15 @@ function idbRestore(){return idbO().then(function(d){return new Promise(function
 try{if(navigator.storage&&navigator.storage.persist)navigator.storage.persist()}catch(e){}
 var BP="",VID="",CP="",CT="",C=2*Math.PI*88,D={},cur=0,tab=0,ti=null,end=0,tot=0,K="zg-"+new Date().toISOString().slice(0,10);
 function $(i){return document.getElementById(i)}
+var _bdInit=function(){["sgb","bdi"].forEach(function(i){var e=document.getElementById(i);if(e)bdTxt(e)})};
+function bdTxt(inp){var pv=Object.getOwnPropertyDescriptor(HTMLInputElement.prototype,"value");
+  inp.type="text";inp.inputMode="numeric";inp.dir="ltr";inp.placeholder="01/01/2026";inp.maxLength=10;inp.autocomplete="off";inp.required=false;inp.setAttribute("aria-label","تاريخ الميلاد، مثال 01/01/2026");
+  Object.defineProperty(inp,"value",{configurable:true,
+    get:function(){var m=/^(\d{2})\/(\d{2})\/(\d{4})$/.exec(pv.get.call(inp));if(!m)return"";var d=+m[1],mo=+m[2],y=+m[3],t=new Date(y,mo-1,d);
+      return(t.getFullYear()==y&&t.getMonth()==mo-1&&t.getDate()==d)?m[3]+"-"+m[2]+"-"+m[1]:""},
+    set:function(v){var m=/^(\d{4})-(\d{2})-(\d{2})/.exec(v||"");pv.set.call(inp,m?m[3]+"/"+m[2]+"/"+m[1]:"")}});
+  inp.addEventListener("input",function(){var r=pv.get.call(inp).replace(/[\u0660-\u0669]/g,function(c){return c.charCodeAt(0)-1632}).replace(/[\u06F0-\u06F9]/g,function(c){return c.charCodeAt(0)-1776}),d=r.replace(/\D/g,"").slice(0,8),o=d.slice(0,2)+(d.length>2?"/"+d.slice(2,4):"")+(d.length>4?"/"+d.slice(4):"");if(o!=pv.get.call(inp))pv.set.call(inp,o)})}
+_bdInit();
 function ld(){D=store.g("progress:"+K,{})}
 function sv(){store.s("progress:"+K,D)}
 function dk(i){return CP+":"+(P[i]?P[i].id:i)}
@@ -818,7 +829,7 @@ function age(s){var b=new Date(s+"T00:00:00"),t=new Date(),a=t.getFullYear()-b.g
 function fetchBd(){var m=curM();if(!m)return Promise.resolve();return api("GET","members?select=birth_date&id=eq."+m.id).then(function(r){if(r.ok&&r.data&&r.data[0]){m.bd=r.data[0].birth_date||null;store.s("sbm",m)}})}
 function bdScreen(edit){var m=curM()||{};$("bdi").value=m.bd||"";$("bdi").max=td();$("bdm").textContent="";$("bdc").className=edit?"lk":"lk hid";
   $("bdp").textContent=edit?"يمكنك تعديل تاريخ ميلادك هنا.":"لإكمال حسابك أدخل تاريخ ميلادك. لا يراه إلا أنت ومدرب القاعة.";show("bd")}
-function saveBd(){var v=$("bdi").value;if(!v||v<"1930-01-01"||v>td()){$("bdm").textContent="أدخل تاريخ ميلاد صحيحاً.";return}
+function saveBd(){var v=$("bdi").value;if(!v||v<"1930-01-01"||v>td()){$("bdm").textContent="أدخل تاريخ الميلاد بالشكل 01/01/2000.";return}
   $("bdm").textContent="جارٍ الحفظ...";
   api("POST","rpc/set_birth",{p_date:v}).then(function(r){if(r.ok){var m=curM();m.bd=v;store.s("sbm",m);showHm()}else $("bdm").textContent=r.status==0?"لا يوجد اتصال بالإنترنت.":"تعذر الحفظ ("+r.status+")."})}
 function waTo(p,t){return"https://wa.me/213"+p.slice(1)+"?text="+encodeURIComponent(t)}
@@ -1042,8 +1053,8 @@ function openMe(){if($("mei"))return;var m=curM()||{};
     else{s2.textContent="ساري حتى "+fd(se)+" (متبقٍّ "+dtxt(d)+")";s2.style.color="#1e8e5a"}}
   paint();
   var c3=el("div","zg"),lb=el("label","","تاريخ الميلاد"),bi=el("input","tin"),sv=el("button","zt","حفظ تاريخ الميلاد"),ms=el("div","vn");
-  c3.style.marginTop="12px";lb.style.fontWeight="800";bi.type="date";bi.dir="ltr";bi.max=td();bi.value=m.bd||"";bi.style.cssText="width:100%;margin-top:8px";sv.style.cssText="width:100%;min-height:48px;margin-top:10px";
-  sv.onclick=function(){var v=bi.value;if(!v||v<"1930-01-01"||v>td()){ms.style.color="#ff6b6b";ms.textContent="أدخل تاريخ ميلاد صحيحاً.";return}
+  c3.style.marginTop="12px";lb.style.fontWeight="800";bdTxt(bi);bi.max=td();bi.value=m.bd||"";bi.style.cssText="width:100%;margin-top:8px";sv.style.cssText="width:100%;min-height:48px;margin-top:10px";
+  sv.onclick=function(){var v=bi.value;if(!v||v<"1930-01-01"||v>td()){ms.style.color="#ff6b6b";ms.textContent="أدخل تاريخ الميلاد بالشكل 01/01/2000.";return}
     ms.style.color="";ms.textContent="جارٍ الحفظ...";sv.disabled=true;
     api("POST","rpc/set_birth",{p_date:v}).then(function(r){sv.disabled=false;if(r.ok){var mm=curM()||{};mm.bd=v;store.s("sbm",mm);ms.style.color="#1e8e5a";ms.textContent="تم الحفظ ✓"}else{ms.style.color="#ff6b6b";ms.textContent=r.status==0?"لا يوجد اتصال بالإنترنت.":"تعذر الحفظ ("+r.status+")."}})};
   c3.appendChild(lb);c3.appendChild(bi);c3.appendChild(sv);c3.appendChild(ms);w.appendChild(c3);
@@ -1271,11 +1282,11 @@ function photosUI(){var sl=$("tsl");sl.innerHTML="";PU.forEach(function(u){URL.r
       c.appendChild(im);c.appendChild(cap);if(!p.up&&curM()){var up=el("button","lk","رفع");up.style.fontSize=".8rem";up.onclick=function(){up.textContent="...";pUp(p).then(function(r){PMSG=r=="ok"?"☁️ تم رفع الصورة.":"تعذر الرفع الآن.";photosUI()})};c.appendChild(up)}c.appendChild(x);gr.appendChild(c)});
     box.appendChild(gr);box.appendChild(note)})}
 /* ===== تسجيل المتدرب بنفسه ===== */
-function sgForm(){$("fm").className="hid";$("sgd").className="fm hid";$("sgm").className="fm";$("stp").textContent="سجّل بياناتك وسيظهر لك رمز دخولك، ثم أرسل طلبك إلى القاعة على واتساب";$("sgs").textContent=""}
+function sgForm(){$("fm").className="hid";$("sgd").className="fm hid";$("sgm").className="fm";$("stp").textContent="سجّل بياناتك وسيظهر لك رمز دخولك";$("sgs").textContent=""}
 function sgSend(){var ln=$("sgl").value.trim(),fn=$("sgn").value.trim(),ph=normPh($("sgp").value),bd=$("sgb").value,b=$("sgx"),m=$("sgs");
   if(ln.length<2||fn.length<2){m.style.color="#ff6b6b";m.textContent="أدخل اللقب والاسم.";return}
   if(!ph){m.style.color="#ff6b6b";m.textContent="أدخل رقماً صحيحاً من 10 أرقام يبدأ بـ 05 أو 06 أو 07";return}
-  if(!bd||bd>td()||bd<"1920-01-01"){m.style.color="#ff6b6b";m.textContent="أدخل تاريخ ميلاد صحيح (إجباري).";return}
+  if(!bd||bd>td()||bd<"1920-01-01"){m.style.color="#ff6b6b";m.textContent="أدخل تاريخ الميلاد بالشكل 01/01/2000 (إجباري).";return}
   m.textContent="";b.disabled=true;b.textContent="جارٍ الإرسال...";
   var end=function(t,ok){b.disabled=false;b.textContent="إرسال طلب التسجيل";m.style.color=ok?"#1e8e5a":"#ff6b6b";m.textContent=t};
   var cd=code6(),call=function(){return api("POST","rpc/request_signup",{p_last:ln,p_first:fn,p_phone:ph,p_birth:bd||null,p_code:cd})};
@@ -1322,11 +1333,11 @@ function rqList(){var h=$("mrq");h.innerHTML="";
 function madd(){var f=$("mfm");if(f.innerHTML){f.innerHTML="";return}
   var ln=el("input","tin"),fn=el("input","tin"),ph=el("input","tin"),sd=el("input","tin"),cd=el("input","tin"),ms=el("div","vn"),sb=el("button","nx","حفظ المتدرب");
   ph.dir="ltr";ph.inputMode="tel";ph.placeholder="0555123456";sd.type="date";sd.dir="ltr";sd.value=addD("",30);cd.dir="ltr";cd.value=code6();
-  var bdv=el("input","tin");bdv.type="date";bdv.dir="ltr";bdv.max=td();f.style.marginTop="12px";f.appendChild(fld("اللقب",ln));f.appendChild(fld("الاسم",fn));f.appendChild(fld("الهاتف",ph));f.appendChild(fld("انتهاء الاشتراك",sd));f.appendChild(fld("رمز الدخول (يمكنك تغييره)",cd));f.appendChild(fld("تاريخ الميلاد",bdv));
+  var bdv=el("input","tin");bdTxt(bdv);bdv.max=td();f.style.marginTop="12px";f.appendChild(fld("اللقب",ln));f.appendChild(fld("الاسم",fn));f.appendChild(fld("الهاتف",ph));f.appendChild(fld("انتهاء الاشتراك",sd));f.appendChild(fld("رمز الدخول (يمكنك تغييره)",cd));f.appendChild(fld("تاريخ الميلاد",bdv));
   sb.onclick=function(){var p=normPh(ph.value),c=cd.value.trim();
     if(ln.value.trim().length<2||fn.value.trim().length<2){ms.textContent="أدخل اللقب والاسم.";return}
     if(!p){ms.textContent="رقم هاتف غير صحيح.";return}
-    if(!bdv.value){ms.textContent="أدخل تاريخ الميلاد.";return}
+    if(!bdv.value){ms.textContent="أدخل تاريخ الميلاد بالشكل 01/01/2000.";return}
     if(!/^\d{4,12}$/.test(c)){ms.textContent="الرمز أرقام فقط (من 4 إلى 12).";return}
     aapi("POST","members",{last_name:ln.value.trim(),first_name:fn.value.trim(),phone:p,code:c,sub_end:sd.value||null,birth_date:bdv.value||null},{Prefer:"return=representation"}).then(function(r){
       if(r.ok&&r.data&&r.data[0]){f.innerHTML="";MEMS.unshift(r.data[0]);mlr();mdet(r.data[0])}else ms.textContent=r.status==409?"هذا الرقم مسجل مسبقاً.":"تعذر الحفظ ("+r.status+").";})};
@@ -1389,7 +1400,7 @@ function mdet0(m){CM=m;show("mdt");$("mdn").textContent=m.last_name+" "+m.first_
   bt(r1,"حفظ التاريخ",function(){upd({sub_end:sd.value||null},ms)});bt(r1,"+30 يوم",function(){upd({sub_end:addD(m.sub_end,30)},ms)});bt(r1,"+90 يوم",function(){upd({sub_end:addD(m.sub_end,90)},ms)});
   bt(r2,m.active?"⏸ إيقاف":"▶ تفعيل",function(){upd({active:!m.active},ms)});bt(r2,"🔄 رمز جديد",function(){upd({code:code6(),fails:0},ms)});
   b.appendChild(r1);b.appendChild(r2);
-  var bi=el("input","tin");bi.type="date";bi.dir="ltr";bi.max=td();bi.value=m.birth_date||"";b.appendChild(fld("تاريخ الميلاد",bi));
+  var bi=el("input","tin");bdTxt(bi);bi.max=td();bi.value=m.birth_date||"";b.appendChild(fld("تاريخ الميلاد",bi));
   var r3=el("div","lgr");bt(r3,"حفظ تاريخ الميلاد",function(){upd({birth_date:bi.value||null},ms)});b.appendChild(r3);b.appendChild(ms);
   var dl=el("button","qadd","🗑 حذف المتدرب");dl.style.cssText="display:block;width:100%;margin-top:28px;color:#ff5a5a;border-color:#e11d1d";
   dl.onclick=function(){if(dl.dataset.c){aapi("DELETE","members?id=eq."+m.id).then(function(r){if(r.ok){MEMS=MEMS.filter(function(q){return q.id!=m.id});memList()}else ms.textContent="تعذر الحذف."})}else{dl.dataset.c="1";dl.textContent="اضغط مرة أخرى للتأكيد";setTimeout(function(){dl.dataset.c="";dl.textContent="🗑 حذف المتدرب"},3000)}};b.appendChild(dl);
