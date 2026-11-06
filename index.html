@@ -620,7 +620,8 @@ function home(){var g=$("qg"),L=cells();g.innerHTML="";DM0=store.g("dm",{});var 
   var old=JSON.stringify(Object.keys(DM0).sort());dlist().then(function(m){if(!EDIT&&!$("home").classList.contains("hid")&&JSON.stringify(Object.keys(m).sort())!=old)home()});
   if(!window.CF||Date.now()-window.CF>60000){window.CF=Date.now();cellsFetch()}}
 function ck(){return BP+(VID?"#"+VID:"")}
-var LV=[{id:"b",n:"مبتدئ"},{id:"",n:"متقدم"},{id:"p",n:"متقدم جداً"}];
+var LV0=[{id:"b",n:"مبتدئ"},{id:"",n:"متقدم"},{id:"p",n:"متقدم جداً"}];
+var LV=(function(){var g=store.g("glv",null);return Array.isArray(g)&&g.length?g:LV0})(),LVE=false;
 var LDESC={b:"مبتدئ: تمرينان لكل عضلة، من 2 إلى 3 مجموعات، تكرار أعلى (من 12 إلى 15) وراحة أطول.","":"متقدم: البرنامج الأساسي بتمارينه ومجموعاته المعتادة.",p:"متقدم جداً: تمرين إضافي لكل عضلة، مجموعة أكثر (حتى 5 مجموعات)، وتكرار أقل بوزن أثقل."};
 var XT=[["الأكتاف الخلفية",["lat"]],["الأكتاف",["rear","lat"]],["الصدر",["fly","dips"]],["الظهر",["dbrow","crow","pulldown","brow"]],["الترايسبس",["dips","over","rope"]],["البايسبس",["hammer","bbc"]],["الذراعان",["hammer","over"]],["الأرجل الأمامية",["lext","lpress","squat"]],["الفخذ الأمامي",["lext"]],["الأرجل الخلفية",["lcurl","rdl"]],["الفخذ الخلفي",["lcurl","rdl"]],["البطن",["plank","lraise","crunch"]]];
 var TR={"8-10":"6-8","10-12":"8-10","12-15":"10-12","15-20":"12-15","10-15":"8-12","8-12":"6-10"};
@@ -628,13 +629,38 @@ function xt(m,ids){for(var i=0;i<XT.length;i++)if((m||"").indexOf(XT[i][0])>=0){
 function lv(e){var r=e.r+"",num=/^\d+$/.test(r);
   if(VID=="b"){if(e.s==1){if(/دقيقة/.test(r))e.r="10-15 دقيقة"}else{if(num)e.r=Math.max(6,Math.round(r*.7))+"";else if(/ثانية|دقيقة/.test(r))e.r="30 ثانية";else e.r="12-15";if(!/ثانية|دقيقة/.test(r))e.s=Math.max(2,e.s-1)}if(e.rest)e.rest+=15}
   else if(VID=="p"){if(e.s==1){if(/دقيقة/.test(r))e.r="30 دقيقة"}else{e.s=Math.min(5,e.s+1);if(num)e.r=Math.round(r*1.3)+"";else if(/ثانية/.test(r))e.r="60 ثانية";else if(/دقيقة/.test(r))e.r="2 دقيقة";else e.r=TR[r]||r}}}
-function vst(){var c=store.g("lvcur:"+BP,"b");return{cur:LV.some(function(y){return y.id==c})?c:"b"}}
+function vst(){var c=store.g("lvcur:"+BP,"b");return{cur:LV.some(function(y){return y.id==c})?c:LV[0].id}}
 function openP(i){var q=cells()[i];if(!ADMIN&&NOD[q.k])return;BP=PROGRAMS.some(function(x){return x.id==q.p})?q.p:q.k;VID=vst().cur;CP=ck();P=[];CT=q.t;showProg()}
 function el(t,c,x){var n=document.createElement(t);if(c)n.className=c;if(x!=null)n.textContent=x;return n}
 function gs(){var u=store.g("pg2:"+CP,null);if(!u){var pr=PROGRAMS.filter(function(x){return x.id==BP})[0];u={g:(pr?pr.g:[{m:"",ids:[]}]).map(function(g){var ids=g.ids.slice();if(VID=="b")ids=ids.slice(0,2);else if(VID=="p"){var x=xt(g.m,ids);if(x)ids.push(x)}return{m:g.m,ids:ids,c:[]}})}}return u}
 function svG(u){store.s("pg2:"+CP,u)}
+function lvSave(){store.s("glv",LV)}
+function lvPush(st){return aapi("POST","gym_levels?on_conflict=id",{id:1,content:LV},UP).then(function(r){lvSave();if(st)st.textContent=r.ok?"تم النشر للمتدربين ✓":r.status==0?"لا يوجد اتصال بالإنترنت.":(r.status==404||r.status==400)?"شغّل supabase-levels.sql في Supabase.":"تعذر النشر ("+r.status+").";return r})}
+function lvFetch(){var go=function(){return(ADMIN?aapi:api)("GET","gym_levels?select=content&id=eq.1")};
+  go().then(function(r){if(r.status==401&&!ADMIN)return anon().then(function(s){return s?go():r});return r}).then(function(r){
+    if(!r.ok||!r.data||!r.data.length)return;var c=r.data[0].content;
+    if(!Array.isArray(c)||!c.length||LVE)return;
+    if(JSON.stringify(c)!=JSON.stringify(LV)){LV=c;lvSave();if(!LV.some(function(y){return y.id==VID})){VID=LV[0].id;store.s("lvcur:"+BP,VID);CP=ck();showProg()}else vch()}}).catch(function(){})}
+function lvNew(){var id="l"+Date.now().toString(36);LV.push({id:id,n:"مستوى جديد"});lvSave();LVE=true;VID=id;store.s("lvcur:"+BP,id);CP=ck();showProg()}
 function vch(){var c=$("vch"),m=$("vm");c.innerHTML="";m.innerHTML="";
-  LV.forEach(function(x){var b=el("button","vchip"+(x.id==VID?" on":""),x.n+((LOCKED[x.id]&&!ADMIN&&!store.g("lvc:"+lc(x.id),null))?" 🔒":""));b.onclick=function(){VID=x.id;store.s("lvcur:"+BP,x.id);CP=ck();showProg()};c.appendChild(b)})}
+  LV.forEach(function(x){var b=el("button","vchip"+(x.id==VID?" on":""),x.n+((LOCKED[x.id]&&!ADMIN&&!store.g("lvc:"+lc(x.id),null))?" 🔒":""));b.onclick=function(){VID=x.id;store.s("lvcur:"+BP,x.id);CP=ck();showProg()};c.appendChild(b)});
+  if(!ADMIN)return;
+  var ad=el("button","vchip vadd","+ مستوى");ad.setAttribute("aria-label","إضافة مستوى");ad.onclick=lvNew;c.appendChild(ad);
+  var eb=el("button","vchip vadd",LVE?"تم ✓":"✏️");eb.setAttribute("aria-label","تعديل المستويات");
+  eb.onclick=function(){if(LVE){LVE=false;lvPush(st);vch()}else{LVE=true;vch()}};c.appendChild(eb);
+  var st=el("div","vn");
+  if(LVE){var pn=el("div","zg");pn.style.marginTop="12px";
+    LV.forEach(function(x,i){var r=el("div","qrow");r.style.cssText="display:flex;gap:6px;align-items:center;margin-bottom:8px";
+      var t=el("input","tin");t.value=x.n;t.maxLength=30;t.style.flex="1";t.setAttribute("aria-label","اسم المستوى "+(i+1));
+      t.oninput=function(){x.n=t.value.trim()||"مستوى";lvSave();var ch=c.children[i];if(ch&&!LOCKED[x.id])ch.textContent=x.n};
+      r.appendChild(t);
+      function mk(txt,al,fn,dis){var b=el("button","vchip",txt);b.setAttribute("aria-label",al);b.style.padding="8px 12px";if(dis){b.disabled=true;b.style.opacity=".35"}else b.onclick=fn;r.appendChild(b)}
+      mk("▶","تقديم",function(){var y=LV[i-1];LV[i-1]=LV[i];LV[i]=y;lvSave();vch()},i==0);
+      mk("◀","تأخير",function(){var y=LV[i+1];LV[i+1]=LV[i];LV[i]=y;lvSave();vch()},i==LV.length-1);
+      mk("✕","حذف المستوى",function(){if(!confirm("حذف مستوى «"+x.n+"»؟ تبقى تصاميمه محفوظة في الخادم."))return;LV.splice(i,1);lvSave();if(x.id==VID){VID=LV[0].id;store.s("lvcur:"+BP,VID);CP=ck();showProg()}else vch()},LV.length<=1);
+      pn.appendChild(r)});
+    pn.appendChild(st);m.appendChild(pn)}
+  else m.appendChild(st)}
 /* تصاميم المستويات: تُرفع من وضع المدير إلى Supabase Storage (حاوية designs). مفتاح الملف = رمز البرنامج + "-" + رمز المستوى (b مبتدئ، m متقدم، p متقدم جداً). احتياط: ملف بالاسم نفسه على GitHub مثل cta-b.jpg */
 function DS(){return SBU+"/storage/v1/object/"}
 var PF={};
@@ -681,7 +707,7 @@ function gateC(mb,live,go){var L=lc(VID),sk="lvc:"+L,sc=store.g(sk,null);
       chkC(L,v2).then(function(r){if(r==1){store.s(sk,{c:v2});showProg()}else e.textContent=r==-1?"لا يوجد اتصال بالإنترنت.":"الكود غير صحيح."})}
     b.onclick=sub;i.onkeydown=function(ev){if(ev.key=="Enter")sub()};
     c.appendChild(t);c.appendChild(i);c.appendChild(b);c.appendChild(e);mb.innerHTML="";mb.appendChild(c);vch()})}
-function showProg(){var box=$("rows"),key=BP+"-"+(VID==""?"m":VID),tk=(showProg.t=(showProg.t||0)+1),mb=el("div"),dc=ADMIN?dcard(key):null,url=DS()+"public/designs/"+key;
+function showProg(){if(!window.LF||Date.now()-window.LF>60000){window.LF=Date.now();lvFetch()}var box=$("rows"),key=BP+"-"+(VID==""?"m":VID),tk=(showProg.t=(showProg.t||0)+1),mb=el("div"),dc=ADMIN?dcard(key):null,url=DS()+"public/designs/"+key;
   box.innerHTML="";P=[];$("pt").textContent=CT;vch();show("prg");ptStart();
   if(dc)box.appendChild(dc);if(ADMIN&&LOCKED[VID])box.appendChild(ccard());box.appendChild(mb);box.appendChild(progTools());
   function live(){return tk===showProg.t}
