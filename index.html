@@ -288,6 +288,24 @@ button.qc{width:100%;justify-content:center;text-align:center;color:var(--ink);f
 .qrow .qadd{flex:1}
 
 #stp:empty{display:none}
+
+/* ===== شاشة الدخول بالتصميم الجديد ===== */
+.sr{position:absolute!important;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
+#fm .pw{position:relative}
+#fm .fd input{height:64px;border-radius:999px;border:2px solid #333;background:#111;padding:0 26px 0 68px;font:600 1.05rem var(--b);color:#fff}
+#fm #cd{padding-right:78px}
+#fm .fd input::placeholder{color:#9a9a9a;font-weight:600}
+#fm .ic{position:absolute;left:26px;top:50%;transform:translateY(-50%);display:flex;pointer-events:none}
+#fm .eye{position:absolute;right:12px;top:50%;transform:translateY(-50%);height:36px;width:54px;padding:0 0 0 4px;background:none;border:0;border-left:1.5px solid #3a3a3a;display:flex;align-items:center;justify-content:center;cursor:pointer}
+#fm .fd{margin-bottom:18px}
+#lgb{display:flex;align-items:center;justify-content:center;gap:14px;height:64px;border-radius:999px;border:0;background:linear-gradient(180deg,#f2141c,#cf0a10);font:800 1.25rem var(--d);box-shadow:0 8px 24px rgba(225,29,29,.35)}
+#lgb::after{content:"";width:28px;height:28px;background:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='white' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M15 3h4a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-4'/%3E%3Cpath d='M10 17l5-5-5-5'/%3E%3Cpath d='M15 12H3'/%3E%3C/svg%3E") center/contain no-repeat}
+#lsg{display:flex!important;align-items:center;justify-content:center;min-height:56px;margin-top:16px!important;border:2px solid #e11d1d;border-radius:999px;color:#fff;font:800 1.1rem var(--b)!important;text-decoration:none;background:transparent}
+#lsg:active{background:rgba(225,29,29,.18)}
+.dbl{display:flex;justify-content:center;margin-top:34px;max-width:100%;overflow:hidden}
+.dbl svg{max-width:100%;height:auto}
+@media (max-height:760px){.dbl{display:none}}
+body.kb .dbl{display:none}
 </style>
 </head>
 <body>
@@ -299,12 +317,13 @@ button.qc{width:100%;justify-content:center;text-align:center;color:var(--ink);f
   <div class="tg2">دليلك الشامل للتمرين</div>
   <p id="stp"></p>
   <div class="fm" id="fm">
-    <div class="fd" id="fph"><label for="ph">رقم الهاتف</label><input id="ph" type="tel" inputmode="tel" dir="ltr" style="text-align:right" placeholder="0555 12 34 56" autocomplete="tel" maxlength="16"><div class="m" id="eph"></div></div>
-    <div class="fd" id="fcd"><label for="cd">رمز الدخول (من القاعة)</label><input id="cd" type="text" inputmode="numeric" dir="ltr" style="text-align:right" autocomplete="off" maxlength="12" onkeydown="if(event.key=='Enter')login()"><div class="m" id="ecd"></div></div>
+    <div class="fd" id="fph"><label for="ph" class="sr">رقم الهاتف</label><div class="pw"><span class="ic"><svg viewBox="0 0 24 24" width="30" height="30" aria-hidden="true"><rect x="6" y="2" width="12" height="20" rx="3" fill="#fff"/><rect x="8" y="4.5" width="8" height="12" rx="1" fill="#111"/><circle cx="12" cy="19.2" r="1.1" fill="#111"/></svg></span><input id="ph" type="tel" inputmode="tel" dir="ltr" style="text-align:right" placeholder="رقم الهاتف" autocomplete="tel" maxlength="16"></div><div class="m" id="eph"></div></div>
+    <div class="fd" id="fcd"><label for="cd" class="sr">رمز الدخول (من القاعة)</label><div class="pw"><span class="ic"><svg viewBox="0 0 24 24" width="30" height="30" aria-hidden="true"><rect x="4.5" y="10" width="15" height="11" rx="2.5" fill="#fff"/><path d="M8 10V7.5a4 4 0 0 1 8 0V10" fill="none" stroke="#fff" stroke-width="2.4" stroke-linecap="round"/><circle cx="12" cy="15" r="1.6" fill="#111"/><rect x="11.3" y="15" width="1.4" height="3.4" rx=".7" fill="#111"/></svg></span><input id="cd" type="text" inputmode="numeric" dir="ltr" style="text-align:right" placeholder="رمز الدخول (من القاعة)" autocomplete="off" maxlength="12" onkeydown="if(event.key=='Enter')login()"><button type="button" class="eye" id="eye" onclick="eyeT()" aria-label="إخفاء الرمز"><svg viewBox="0 0 24 24" width="28" height="28" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M2 12s3.6-7 10-7 10 7 10 7-3.6 7-10 7S2 12 2 12z"/><circle cx="12" cy="12" r="3"/></svg></button></div><div class="m" id="ecd"></div></div>
     <button class="nx" id="lgb" onclick="login()">دخول</button>
     <div class="m" id="lms" style="color:#ff6b6b;margin-top:10px;text-align:center"></div>
     <a class="lk" id="lsg" onclick="sgForm()" style="display:block;text-align:center;margin-top:18px;color:#fff;font-weight:800;font-size:1.1rem;cursor:pointer">إنشاء حساب جديد</a>
     <a class="lk" id="lwa" target="_blank" rel="noopener" style="display:none">ليس لديك رمز؟ تواصل مع القاعة</a>
+    <div class="dbl" aria-hidden="true"><svg width="340" height="60" viewBox="0 0 340 60"><defs><linearGradient id="dg" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#f4f4f4"/><stop offset="1" stop-color="#8a8a8a"/></linearGradient></defs><polygon points="0,30 100,27 100,33" fill="#e11d1d"/><polygon points="340,30 240,27 240,33" fill="#e11d1d"/><rect x="140" y="26" width="60" height="8" fill="url(#dg)"/><rect x="128" y="8" width="12" height="44" rx="3" fill="url(#dg)"/><rect x="200" y="8" width="12" height="44" rx="3" fill="url(#dg)"/><rect x="114" y="16" width="12" height="28" rx="3" fill="url(#dg)"/><rect x="214" y="16" width="12" height="28" rx="3" fill="url(#dg)"/><rect x="108" y="22" width="6" height="16" rx="2" fill="url(#dg)"/><rect x="226" y="22" width="6" height="16" rx="2" fill="url(#dg)"/></svg></div>
   </div>
   <div class="fm hid" id="sgd"></div>
   <div class="fm hid" id="sgm">
@@ -946,10 +965,18 @@ function openPush(){if($("pse"))return;
   o.appendChild(bar);o.appendChild(w);document.body.appendChild(o);document.addEventListener("keydown",psKey);load()}
 
 /* ===== رقم النسخة (يظهر في صفحة المدير) ===== */
-var APP_V=61;
+var APP_V=63;
 function verPaint(){var e=$("ver");if(!e)return;e.textContent="نسخة التطبيق: "+APP_V;
   if(window.caches&&caches.keys)caches.keys().then(function(ks){var v=ks.map(function(k){var m=/zg-v(\d+)/.exec(k);return m?+m[1]:0}).sort(function(a,b){return b-a})[0];
     if(v&&v!=APP_V){e.textContent+=" · نسخة الملفات المخزّنة: "+v+" ⚠️ أغلق التطبيق وافتحه مرتين لتكتمل";e.style.color="#f5a623"}else if(v){e.style.color=""}}).catch(function(){})}
+
+/* ===== إظهار/إخفاء رمز الدخول ===== */
+var EYE_OFF='<svg viewBox="0 0 24 24" width="28" height="28" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M2 12s3.6-7 10-7 10 7 10 7-3.6 7-10 7S2 12 2 12z"/><circle cx="12" cy="12" r="3"/><path d="M3 3l18 18"/></svg>',EYE_ON='<svg viewBox="0 0 24 24" width="28" height="28" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M2 12s3.6-7 10-7 10 7 10 7-3.6 7-10 7S2 12 2 12z"/><circle cx="12" cy="12" r="3"/></svg>';
+function eyeT(){var i=$("cd"),e=$("eye"),h=i.type=="password";i.type=h?"text":"password";e.innerHTML=h?EYE_ON:EYE_OFF;e.setAttribute("aria-label",h?"إخفاء الرمز":"إظهار الرمز")}
+
+/* إخفاء الدمبل أثناء الكتابة حتى لا يضطر المتدرب للتمرير */
+document.addEventListener("focusin",function(e){if(e.target&&e.target.closest&&e.target.closest("#st"))document.body.classList.add("kb")});
+document.addEventListener("focusout",function(){setTimeout(function(){var a=document.activeElement;if(!(a&&a.closest&&a.closest("#st")&&/^(INPUT|TEXTAREA)$/.test(a.tagName)))document.body.classList.remove("kb")},200)});
 /* ===== معلوماتي الشخصية ===== */
 function closeMe(){var o=$("mei");if(o){o.remove();document.removeEventListener("keydown",meKey)}}
 function meKey(e){if(e.key=="Escape")closeMe()}
