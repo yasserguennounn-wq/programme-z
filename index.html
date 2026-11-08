@@ -1042,10 +1042,30 @@ function openPush(){if($("pse"))return;
   o.appendChild(bar);o.appendChild(w);document.body.appendChild(o);document.addEventListener("keydown",psKey);load()}
 
 /* ===== رقم النسخة (يظهر في صفحة المدير) ===== */
-var APP_V=67;
+var APP_V=68;
 function verPaint(){var e=$("ver");if(!e)return;e.textContent="نسخة التطبيق: "+APP_V;
   if(window.caches&&caches.keys)caches.keys().then(function(ks){var v=ks.map(function(k){var m=/zg-v(\d+)/.exec(k);return m?+m[1]:0}).sort(function(a,b){return b-a})[0];
     if(v&&v!=APP_V){e.textContent+=" · نسخة الملفات المخزّنة: "+v+" ⚠️ أغلق التطبيق وافتحه مرتين لتكتمل";e.style.color="#f5a623"}else if(v){e.style.color=""}}).catch(function(){})}
+
+/* ===== زر تثبيت التطبيق (يظهر للمتدرب بعد فتح الرابط) ===== */
+var IP=null;
+function instStd(){try{return window.matchMedia("(display-mode: standalone)").matches||navigator.standalone===true}catch(e){return false}}
+function instIOS(){return/iphone|ipad|ipod/i.test(navigator.userAgent)}
+function instHide(d){var b=$("inst");if(b)b.remove();if(d)try{localStorage.setItem("zg:instx",String(Date.now()))}catch(e){}}
+function instShow(){if(instStd()||$("inst")||ADMIN)return;
+  try{var x=+localStorage.getItem("zg:instx")||0;if(Date.now()-x<3*864e5)return}catch(e){}
+  var ios=instIOS();if(!IP&&!ios)return;
+  var b=el("div"),t=el("div","",ios?"لتثبيت التطبيق: اضغط زر المشاركة ثم «إضافة إلى الشاشة الرئيسية»":"ثبّت التطبيق على هاتفك للدخول السريع"),x=el("button","","✕");
+  b.id="inst";b.setAttribute("role","region");b.setAttribute("aria-label","تثبيت التطبيق");
+  b.style.cssText="position:fixed;left:12px;right:12px;bottom:calc(env(safe-area-inset-bottom,0px) + 12px);z-index:9000;display:flex;align-items:center;gap:10px;padding:12px 14px;border-radius:18px;background:#161616;border:1.5px solid #e11d1d;color:#fff;font:700 .95rem var(--b);box-shadow:0 8px 28px rgba(0,0,0,.55)";
+  t.style.flex="1";b.appendChild(t);
+  if(!ios){var g=el("button","","تثبيت");g.style.cssText="min-height:44px;padding:0 18px;border-radius:14px;border:0;background:#e11d1d;color:#fff;font:800 1rem var(--b)";
+    g.onclick=function(){if(!IP)return instHide(false);IP.prompt();IP.userChoice.then(function(){IP=null;instHide(false)}).catch(function(){})};b.appendChild(g)}
+  x.setAttribute("aria-label","إغلاق");x.style.cssText="min-width:44px;min-height:44px;border-radius:14px;border:1.5px solid #555;background:transparent;color:#fff;font:700 1rem var(--b)";
+  x.onclick=function(){instHide(true)};b.appendChild(x);document.body.appendChild(b)}
+window.addEventListener("beforeinstallprompt",function(e){e.preventDefault();IP=e;setTimeout(instShow,800)});
+window.addEventListener("appinstalled",function(){IP=null;instHide(false)});
+window.addEventListener("load",function(){setTimeout(instShow,2500)});
 
 /* ===== إظهار/إخفاء رمز الدخول ===== */
 var EYE_OFF='<svg viewBox="0 0 24 24" width="28" height="28" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M2 12s3.6-7 10-7 10 7 10 7-3.6 7-10 7S2 12 2 12z"/><circle cx="12" cy="12" r="3"/><path d="M3 3l18 18"/></svg>',EYE_ON='<svg viewBox="0 0 24 24" width="28" height="28" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M2 12s3.6-7 10-7 10 7 10 7-3.6 7-10 7S2 12 2 12z"/><circle cx="12" cy="12" r="3"/></svg>';
