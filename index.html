@@ -297,6 +297,7 @@ button.qc{width:100%;justify-content:center;text-align:center;color:var(--ink);f
 #fm .sgback{display:flex;align-items:center;justify-content:center;width:max-content;max-width:100%;min-height:52px;margin:18px auto 0;padding:0 34px;border:2px solid #e11d1d;border-radius:999px;color:#fff;font:700 1rem var(--b);cursor:pointer;text-decoration:none}
 .sgback:focus-visible{outline:none;box-shadow:0 0 0 3px rgba(225,29,29,.28)}
 .hsx:active{background:rgba(255,255,255,.16)!important}
+.soi.wa{background:#25d366}
 .fd input::placeholder{color:#9a9a9a;font-weight:600}
 #fm .ic{position:absolute;left:26px;top:50%;transform:translateY(-50%);display:flex;pointer-events:none}
 #fm .eye{position:absolute;right:12px;top:50%;transform:translateY(-50%);height:36px;width:54px;padding:0 0 0 4px;background:none;border:0;border-left:1.5px solid #3a3a3a;display:flex;align-items:center;justify-content:center;cursor:pointer}
@@ -347,14 +348,16 @@ body.kb .dbl{display:none}
   <button class="tk hid" id="adb" style="margin-top:12px" onclick="memList()">👥 المتدربون</button>
   <div id="mot"></div>
   <button id="pnb" class="hid" onclick="pnClick()" style="display:block;width:100%;margin-top:10px;min-height:48px;border-radius:14px;border:1.5px solid var(--am);background:transparent;color:var(--amd);font:700 1rem var(--b)">🔔 فعّل الإشعارات لتصلك رسائل القاعة</button>
+  <div id="sbc"></div>
   <button class="nx go" onclick="EDIT=false;home()">اختيار برنامج تدريبي</button>
   <button class="tk" id="tkh" onclick="TKH=1;trk()" style="margin:10px 0 0;min-height:52px;border-width:2px;box-shadow:0 0 0 3px rgba(225,29,29,.15)">📈 متابعة تقدمي</button>
   <div class="ct">
+    <a class="cb" id="chr" role="button" tabindex="0" onclick="hrOpen()" style="display:none"><span class="ic"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg></span><span class="ctx">أوقات العمل</span><small id="chs"></small></a>
     <a class="cb" id="cr" role="button" tabindex="0" onclick="openRules()"><span class="ic"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/><path d="M9 7h7M9 11h7"/></svg></span><span class="ctx">قواعد وقوانين القاعة</span><span class="ch">‹</span></a>
     <a class="cb" id="cp" onclick="return cl()"><span class="ic"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M22 16.9v3a2 2 0 0 1-2.2 2 19.8 19.8 0 0 1-8.6-3.1 19.5 19.5 0 0 1-6-6A19.8 19.8 0 0 1 2.1 4.2 2 2 0 0 1 4.1 2h3a2 2 0 0 1 2 1.7c.1 1 .4 1.9.7 2.8a2 2 0 0 1-.5 2.1L8.1 9.9a16 16 0 0 0 6 6l1.3-1.3a2 2 0 0 1 2.1-.4c.9.3 1.8.6 2.8.7a2 2 0 0 1 1.7 2z"/></svg></span><span class="ctx">رقم هاتف القاعة</span><small id="cpn" dir="ltr"></small></a>
   </div>
   <div class="nt" id="nt"></div>
-  <div class="soc"><button class="soi qr hid" id="qri" onclick="qrOpen()" aria-label="مشاركة التطبيق"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect width="5" height="5" x="3" y="3" rx="1"/><rect width="5" height="5" x="16" y="3" rx="1"/><rect width="5" height="5" x="3" y="16" rx="1"/><path d="M21 16h-3a2 2 0 0 0-2 2v3"/><path d="M21 21v.01"/><path d="M12 7v3a2 2 0 0 1-2 2H7"/><path d="M3 12h.01"/><path d="M12 3h.01"/><path d="M12 16v.01"/><path d="M16 12h1"/><path d="M21 12v.01"/><path d="M12 21v-1"/></svg></button><a class="soi" id="cfb" href="https://www.facebook.com/share/1CgME7smec/" target="_blank" rel="noopener" aria-label="صفحتنا على فيسبوك"><svg width="26" height="26" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M24 12.07C24 5.4 18.63 0 12 0S0 5.4 0 12.07C0 18.1 4.39 23.1 10.12 24v-8.44H7.08v-3.49h3.04V9.41c0-3.02 1.8-4.7 4.54-4.7 1.31 0 2.68.24 2.68.24v2.97h-1.5c-1.5 0-1.96.93-1.96 1.89v2.26h3.34l-.53 3.49h-2.8V24C19.61 23.1 24 18.1 24 12.07z"/></svg></a></div>
+  <div class="soc"><button class="soi qr hid" id="qri" onclick="qrOpen()" aria-label="مشاركة التطبيق"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect width="5" height="5" x="3" y="3" rx="1"/><rect width="5" height="5" x="16" y="3" rx="1"/><rect width="5" height="5" x="3" y="16" rx="1"/><path d="M21 16h-3a2 2 0 0 0-2 2v3"/><path d="M21 21v.01"/><path d="M12 7v3a2 2 0 0 1-2 2H7"/><path d="M3 12h.01"/><path d="M12 3h.01"/><path d="M12 16v.01"/><path d="M16 12h1"/><path d="M21 12v.01"/><path d="M12 21v-1"/></svg></button><a class="soi" id="cfb" href="https://www.facebook.com/share/1CgME7smec/" target="_blank" rel="noopener" aria-label="صفحتنا على فيسبوك"><svg width="26" height="26" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M24 12.07C24 5.4 18.63 0 12 0S0 5.4 0 12.07C0 18.1 4.39 23.1 10.12 24v-8.44H7.08v-3.49h3.04V9.41c0-3.02 1.8-4.7 4.54-4.7 1.31 0 2.68.24 2.68.24v2.97h-1.5c-1.5 0-1.96.93-1.96 1.89v2.26h3.34l-.53 3.49h-2.8V24C19.61 23.1 24 18.1 24 12.07z"/></svg></a><a class="soi wa" id="cwa" href="#" target="_blank" rel="noopener" aria-label="تواصل معنا على واتساب"><svg width="26" height="26" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413Z"/></svg></a></div>
   <div class="an"><h3>📢 إعلانات القاعة</h3><div id="an"></div><button class="qadd hid" id="anb" onclick="openAnnEdit()" style="display:block;width:100%;margin-top:12px">✏️ إدارة الإعلانات</button></div>
   <div id="qrm" class="gs hid" onclick="if(event.target===this)qrClose()">
     <div class="qmc" role="dialog" aria-label="مشاركة التطبيق">
@@ -532,8 +535,8 @@ function splash(){SPL=true;show("st");$("sb").className="hid bk2";$("fm").classN
 function showHm(){SPL=false;annApply();
   $("hn").textContent=M.fn?"مرحباً، "+M.fn+" "+M.ln:"مرحباً بالمدير";$("hp").textContent=M.ph||"";
   $("an").innerHTML=ANN.length?ANN.map(function(x){return'<div class="ai">'+esc(x)+'</div>'}).join(""):'<div class="ai mt">لا توجد إعلانات حالياً</div>';
-  var p=gpn();$("cc").href=p?wa("شكوى: "):"#";$("ci").href=p?wa("استفسار: "):"#";$("cp").href=p?"tel:+"+p:"#";
-  $("cpn").textContent=GYM_PHONE||"غير مضاف بعد";$("adm").className=ADMIN?"lk":"lk hid";$("anb").className=ADMIN?"qadd":"qadd hid";$("adb").className=ADMIN?"tk":"tk hid";$("ver").style.display=ADMIN?"block":"none";if(ADMIN)verPaint();$("psb").className=ADMIN?"tk":"tk hid";$("qri").className=ADMIN?"soi qr":"soi qr hid";$("lgo").className=M.ph?"lk":"lk hid";$("lgo2").style.display=M.ph?"block":"none";mot();pnPaint();pushSync();if(ADMIN){reqBadge();reqPoll()}$("mib").style.display=M.ph?"block":"none";avPaint();if(M.ph&&!store.g("avatar",null)&&!window.AVF){window.AVF=1;avFetch()}$("nt").textContent="";if($("nt2"))$("nt2").textContent="";gsClose();qrClose();show("hm");annFetch(paintAnn)}
+  var p=gpn();$("cc").href=p?wa("شكوى: "):"#";$("ci").href=p?wa("استفسار: "):"#";$("cp").href=p?"tel:+"+p:"#";$("cwa").href=p?"https://wa.me/"+p:"#";$("cwa").style.display=p?"flex":"none";
+  $("cpn").textContent=GYM_PHONE||"غير مضاف بعد";$("adm").className=ADMIN?"lk":"lk hid";$("anb").className=ADMIN?"qadd":"qadd hid";$("adb").className=ADMIN?"tk":"tk hid";$("ver").style.display=ADMIN?"block":"none";if(ADMIN)verPaint();$("psb").className=ADMIN?"tk":"tk hid";$("qri").className=ADMIN?"soi qr":"soi qr hid";$("lgo").className=M.ph?"lk":"lk hid";$("lgo2").style.display=M.ph?"block":"none";mot();pnPaint();pushSync();if(ADMIN){reqBadge();reqPoll()}$("mib").style.display=M.ph?"block":"none";avPaint();if(M.ph&&!store.g("avatar",null)&&!window.AVF){window.AVF=1;avFetch()}$("nt").textContent="";if($("nt2"))$("nt2").textContent="";gsClose();qrClose();sbPaint();hrPaint();if(!window.HF||Date.now()-window.HF>60000){window.HF=Date.now();hrFetch()}show("hm");annFetch(paintAnn)}
 function ldM(){M=store.g("member",{})}
 function svM(){store.s("member",M)}
 function setE(k,m){$("f"+k).className="fd"+(m?" er":"");$("e"+k).textContent=m}
@@ -832,13 +835,13 @@ function syncNow(){var m=curM();if(!m||!navigator.onLine)return;
     store.s("sbm",{id:m.id,sub_end:x.sub_end,bd:x.birth_date||null});M.fn=x.first_name;M.ln=x.last_name;svM();
     flush().then(function(){if(!store.g("sbq",[]).length)return pull()})})}
 function clearMember(){["sbs","sbm","member","meas","lifts","sbq","logt","avatar","sess"].forEach(function(k){store.r(k)});M={}}
-function lockOut(msg){clearMember();stForm(msg)}
+function lockOut(msg){if(M&&M.ph)RNP=M.ph;clearMember();stForm(msg)}
 function logout(){flush().then(function(){clearMember();stForm()})}
 /* ===== دخول المتدرب: رقم الهاتف + رمز من القاعة ===== */
 function normPh(v){var p=String(v).replace(/[\u0660-\u0669]/g,function(c){return c.charCodeAt(0)-1632}).replace(/[\s.\-()]/g,"");return/^(0|\+?213)[567]\d{8}$/.test(p)?p.replace(/^\+?213/,"0"):""}
 function stForm(msg){SPL=false;$("sb").className="hid bk2";$("fm").className="fm";$("sgm").className="fm hid";$("sgd").className="fm hid";$("stp").textContent="";$("stp").className="";$("ph").value="";$("cd").value="";["ph","cd"].forEach(function(k){setE(k,"")});$("lms").textContent=msg||"";var sp0=store.g("sgp",null);if(sp0&&!msg){$("ph").value=sp0.ph;$("cd").value=sp0.code;$("lms").textContent="طلبك قيد المراجعة. عند موافقة القاعة اضغط «دخول»."}
-  var p=gpn();$("lwa").href=p?"https://wa.me/"+p+"?text="+encodeURIComponent("السلام عليكم، أريد رمز الدخول إلى تطبيق ZEDAM GYM."):"#";show("st")}
-function login(){var ph=normPh($("ph").value),cd=String($("cd").value).replace(/[\u0660-\u0669]/g,function(c){return c.charCodeAt(0)-1632}).trim(),ok=true,b=$("lgb");
+  var p=gpn(),ex=!!msg&&msg.indexOf("انتهى اشتراكك")==0,lw=$("lwa");lw.textContent=ex?"🔄 طلب تجديد الاشتراك عبر واتساب":"ليس لديك رمز؟ تواصل مع القاعة";lw.className=ex?"lk sgback":"lk";lw.style.display=ex&&p?"flex":"none";lw.href=p?"https://wa.me/"+p+"?text="+encodeURIComponent(ex?"السلام عليكم، أرغب في تجديد اشتراكي في ZEDAM GYM."+(RNP?"\nرقم هاتفي: "+RNP:""):"السلام عليكم، أريد رمز الدخول إلى تطبيق ZEDAM GYM."):"#";show("st")}
+function login(){var ph=normPh($("ph").value);if(ph)RNP=ph;var cd=String($("cd").value).replace(/[\u0660-\u0669]/g,function(c){return c.charCodeAt(0)-1632}).trim(),ok=true,b=$("lgb");
   if(!ph){setE("ph","أدخل رقماً صحيحاً من 10 أرقام يبدأ بـ 05 أو 06 أو 07");ok=false}else setE("ph","");
   if(!cd){setE("cd","أدخل الرمز");ok=false}else setE("cd","");
   if(!ok)return;$("lms").textContent="";b.disabled=true;b.textContent="جارٍ الدخول...";
@@ -877,11 +880,12 @@ function code6(){var a=new Uint32Array(1);crypto.getRandomValues(a);return Strin
 function ymd(d){return d.getFullYear()+"-"+("0"+(d.getMonth()+1)).slice(-2)+"-"+("0"+d.getDate()).slice(-2)}
 function addD(s,n){var t=new Date();t.setHours(0,0,0,0);var d=s?new Date(s+"T00:00:00"):t;if(d<t)d=t;d.setDate(d.getDate()+n);return ymd(d)}
 function fld(l,i){var w=el("div","tfd");w.appendChild(el("label","",l));w.appendChild(i);return w}
-function mst(m){if(!m.active)return["موقوف","#9a9a9a"];if(m.sub_end&&m.sub_end<td())return["منتهي","#e11d1d"];return["ساري"+(m.sub_end?" حتى "+fd(m.sub_end):""),"#1e8e5a"]}
+function mst(m){if(!m.active)return["موقوف","#9a9a9a"];if(m.sub_end&&m.sub_end<td())return["منتهي","#e11d1d"];if(m.sub_end){var dd=sbDays(m.sub_end);if(dd<=7)return["ينتهي "+(dd==0?"اليوم":"بعد "+dtxt(dd))+" ("+fd(m.sub_end)+")","#f5a623"]}return["ساري"+(m.sub_end?" حتى "+fd(m.sub_end):""),"#1e8e5a"]}
 function memList(){show("mem");var h=$("mls");h.textContent="جارٍ التحميل...";
   aapi("GET","members?select=*&order=created_at.desc").then(function(r){if(!r.ok){h.textContent=r.status==401?"انتهت جلسة المدير. اخرج من وضع المدير وادخل من جديد.":"تعذر التحميل. تحقق من الإنترنت.";return}MEMS=r.data||[];mlr();rqList()})}
 function mlr(){var q=$("msq").value.trim().toLowerCase(),h=$("mls");h.innerHTML="";
-  var L=MEMS.filter(function(m){return!q||(m.first_name+" "+m.last_name+" "+m.phone).toLowerCase().indexOf(q)>=0});
+  var fr=el("div","vc");fr.style.marginBottom="10px";[["all","الكل"],["soon","ينتهي قريباً"],["exp","منتهي"]].forEach(function(f){var n=MEMS.filter(function(m){var o=MF;MF=f[0];var r=memF(m);MF=o;return r}).length,b=el("button","vchip"+(MF==f[0]?" on":""),f[1]+(f[0]=="all"?"":" ("+n+")"));b.onclick=function(){MF=f[0];mlr()};fr.appendChild(b)});h.appendChild(fr);
+  var L=MEMS.filter(function(m){return(!q||(m.first_name+" "+m.last_name+" "+m.phone).toLowerCase().indexOf(q)>=0)&&memF(m)});
   if(!L.length){h.appendChild(el("div","pm",MEMS.length?"لا نتائج.":"لا يوجد متدربون بعد."));return}
   L.forEach(function(m){var b=el("button","zb"),s=mst(m),sm=el("small","",s[0]);b.style.cssText="width:100%;margin-bottom:8px";sm.style.color=s[1];b.appendChild(el("span","",m.last_name+" "+m.first_name+(m.birth_date?" ("+age(m.birth_date)+" سنة)":"")));b.appendChild(sm);b.onclick=function(){mdet(m)};h.appendChild(b)})}
 
@@ -1042,7 +1046,7 @@ function openPush(){if($("pse"))return;
   o.appendChild(bar);o.appendChild(w);document.body.appendChild(o);document.addEventListener("keydown",psKey);load()}
 
 /* ===== رقم النسخة (يظهر في صفحة المدير) ===== */
-var APP_V=68;
+var APP_V=69;
 function verPaint(){var e=$("ver");if(!e)return;e.textContent="نسخة التطبيق: "+APP_V;
   if(window.caches&&caches.keys)caches.keys().then(function(ks){var v=ks.map(function(k){var m=/zg-v(\d+)/.exec(k);return m?+m[1]:0}).sort(function(a,b){return b-a})[0];
     if(v&&v!=APP_V){e.textContent+=" · نسخة الملفات المخزّنة: "+v+" ⚠️ أغلق التطبيق وافتحه مرتين لتكتمل";e.style.color="#f5a623"}else if(v){e.style.color=""}}).catch(function(){})}
@@ -1066,6 +1070,63 @@ function instShow(){if(instStd()||$("inst")||ADMIN)return;
 window.addEventListener("beforeinstallprompt",function(e){e.preventDefault();IP=e;setTimeout(instShow,800)});
 window.addEventListener("appinstalled",function(){IP=null;instHide(false)});
 window.addEventListener("load",function(){setTimeout(instShow,2500)});
+
+/* ===== حالة الاشتراك + طلب التجديد + أوقات العمل ===== */
+var DN=["الأحد","الاثنين","الثلاثاء","الأربعاء","الخميس","الجمعة","السبت"],HO=store.g("ghr",null),RNP="",MF="all";
+function sbDays(se){return Math.round((new Date(se+"T00:00:00")-new Date(td()+"T00:00:00"))/864e5)}
+function intlPh(p){p=String(p||"").replace(/\D/g,"");return p.charAt(0)=="0"?"213"+p.slice(1):p}
+function renewHref(){var m=curM()||{},se=m.sub_end;return wa("أرغب في تجديد اشتراكي"+(se?" (ينتهي في "+fd(se)+")":"")+".")}
+function remHref(m){var se=m.sub_end,d=se?sbDays(se):null,t="السلام عليكم "+m.first_name+"، ";
+  if(d===null)t+="نذكّرك بتجديد اشتراكك في ZEDAM GYM. للتجديد تواصل معنا.";
+  else if(d<0)t+="نذكّرك أن اشتراكك في ZEDAM GYM انتهى بتاريخ "+fd(se)+". للتجديد تواصل معنا.";
+  else t+="نذكّرك أن اشتراكك في ZEDAM GYM ينتهي "+(d==0?"اليوم":"بعد "+dtxt(d))+" ("+fd(se)+"). للتجديد تواصل معنا.";
+  return"https://wa.me/"+intlPh(m.phone)+"?text="+encodeURIComponent(t)}
+function memF(m){if(MF=="all")return true;if(!m.sub_end)return false;var d=sbDays(m.sub_end);return MF=="soon"?(m.active&&d>=0&&d<=7):d<0}
+function sbPaint(){var c=$("sbc");if(!c)return;c.innerHTML="";var m=curM();if(ADMIN||!M.ph||!m)return;
+  if(m.id&&(!window.SBF||Date.now()-window.SBF>60000)){window.SBF=Date.now();api("GET","members?select=sub_end&id=eq."+m.id).then(function(r){if(r.ok&&r.data&&r.data[0]){var mm=curM()||{};if(mm.sub_end!=r.data[0].sub_end){mm.sub_end=r.data[0].sub_end;store.s("sbm",mm);sbPaint()}}})}
+  var se=m.sub_end,d=el("div"),t=el("div","","🗓 اشتراكك"),s=el("div"),col="#9a9a9a",tx="غير محدد بعد",days=null;
+  if(se){days=sbDays(se);if(days<0){col="#ff5a5a";tx="منتهي منذ "+dtxt(-days)+" ("+fd(se)+")"}else if(days<=7){col="#f5a623";tx=(days==0?"ينتهي اليوم":"ينتهي بعد "+dtxt(days))+" ("+fd(se)+")"}else{col="#1e8e5a";tx="ساري حتى "+fd(se)+" · متبقٍّ "+dtxt(days)}}
+  d.style.cssText="margin-top:12px;padding:12px 14px;border-radius:14px;border:1.5px solid "+col+";background:#161616";
+  t.style.cssText="font:800 .95rem var(--b);color:#fff";s.style.cssText="margin-top:4px;font:700 1rem var(--b);color:"+col;s.textContent=tx;d.appendChild(t);d.appendChild(s);
+  if(days!==null&&days<=7&&gpn()){var b=el("a","","🔄 طلب تجديد الاشتراك");b.href=renewHref();b.target="_blank";b.rel="noopener";b.style.cssText="display:flex;align-items:center;justify-content:center;margin-top:10px;min-height:48px;border-radius:14px;border:1.5px solid "+col+";color:#fff;font:800 1rem var(--b);text-decoration:none";d.appendChild(b)}
+  c.appendChild(d)}
+function hrOk(c){return c&&Array.isArray(c.h)&&c.h.length==7&&c.h.every(function(x){return x&&/^\d{2}:\d{2}$/.test(x.o)&&/^\d{2}:\d{2}$/.test(x.c)})}
+function hrMin(t){var a=t.split(":");return+a[0]*60+ +a[1]}
+function hrNow(x){if(x.x)return false;var n=new Date(),m=n.getHours()*60+n.getMinutes(),o=hrMin(x.o),c=hrMin(x.c);return c>o?(m>=o&&m<c):(m>=o||m<c)}
+function hrPaint(){var r=$("chr");if(!r)return;r.style.display=(HO&&hrOk(HO))||ADMIN?"flex":"none";var s=$("chs");if(!s)return;
+  if(!(HO&&hrOk(HO))){s.textContent="اضغط لتحديدها";s.style.color="";return}
+  var x=HO.h[new Date().getDay()];s.textContent=x.x?"اليوم: مغلق":"اليوم: "+x.o+" – "+x.c+(hrNow(x)?" · مفتوح الآن":"");s.style.color=x.x?"":hrNow(x)?"#1e8e5a":""}
+function hrPush(st){return aapi("POST","gym_info?on_conflict=id",{id:1,content:HO},UP).then(function(r){if(st){st.style.color=r.ok?"#1e8e5a":"#ff6b6b";st.textContent=r.ok?"تم النشر للمتدربين ✓":r.status==0?"لا يوجد اتصال بالإنترنت.":(r.status==404||r.status==400)?"شغّل ملف supabase-levels.sql في Supabase.":"تعذر النشر ("+r.status+")."}return r})}
+function hrFetch(){var go=function(){return(ADMIN?aapi:api)("GET","gym_info?select=content&id=eq.1")};
+  go().then(function(r){if(r.status==401&&!ADMIN)return anon().then(function(s){return s?go():r});return r}).then(function(r){
+    if(!r.ok||!r.data||!r.data.length)return;var c=r.data[0].content;if(!hrOk(c))return;
+    if(JSON.stringify(c)!=JSON.stringify(HO)){HO=c;store.s("ghr",HO);hrPaint();if($("hri")&&!$("hri").dataset.e)hrOpen(true)}}).catch(function(){})}
+function hrOpen(re){var old=$("hri");if(old){if(!re)return;old.remove()}
+  var o=el("div"),bar=el("div"),w=el("div"),cl=el("button","","✕ إغلاق"),edit=false;
+  o.id="hri";o.style.cssText="position:fixed;inset:0;z-index:9998;background:var(--bg);display:flex;flex-direction:column;overflow:hidden";
+  bar.style.cssText="display:flex;align-items:center;justify-content:space-between;gap:10px;padding:calc(env(safe-area-inset-top,0px) + 12px) 16px 10px;border-bottom:1.5px solid var(--ln)";
+  var tt=el("div","","🕒 أوقات العمل");tt.style.cssText="font:800 1.15rem var(--d)";cl.style.cssText="min-height:48px;padding:0 14px;border-radius:14px;border:1.5px solid #555;background:#161616;color:#fff;font:700 1rem var(--b)";
+  cl.onclick=function(){o.remove()};bar.appendChild(tt);bar.appendChild(cl);
+  w.style.cssText="flex:1;overflow:auto;padding:14px 16px calc(env(safe-area-inset-bottom,0px) + 24px)";o.appendChild(bar);o.appendChild(w);document.body.appendChild(o);
+  function view(){edit=false;delete o.dataset.e;w.innerHTML="";var H=HO&&hrOk(HO)?HO:null,tdy=new Date().getDay();
+    if(!H)w.appendChild(el("div","pm","لم تُحدَّد أوقات العمل بعد."));
+    else{[6,0,1,2,3,4,5].forEach(function(i){var x=H.h[i],r=el("div");r.style.cssText="display:flex;justify-content:space-between;gap:10px;padding:12px 14px;margin-bottom:8px;border-radius:14px;background:#161616;border:1.5px solid "+(i==tdy?"#e11d1d":"var(--ln)");
+      var a=el("b","",DN[i]+(i==tdy?" (اليوم)":"")),b=el("span","",x.x?"مغلق":x.o+" – "+x.c);b.dir="ltr";if(x.x)b.style.color="#ff6b6b";r.appendChild(a);r.appendChild(b);w.appendChild(r)});
+      if(H.n){var n=el("div","pm",H.n);n.style.cssText="margin-top:10px;white-space:pre-wrap";w.appendChild(n)}}
+    if(ADMIN){var eb=el("button","qadd","✏️ تعديل أوقات العمل");eb.style.cssText="display:block;width:100%;margin-top:14px";eb.onclick=editV;w.appendChild(eb)}}
+  function editV(){edit=true;o.dataset.e="1";w.innerHTML="";var H=HO&&hrOk(HO)?HO:{h:DN.map(function(){return{o:"13:00",c:"22:30",x:false}}),n:""},rows=[];
+    [6,0,1,2,3,4,5].forEach(function(i){var x=H.h[i],r=el("div"),a=el("b","",DN[i]),ck=el("input"),lb=el("label","","مغلق"),o1=el("input","tin"),c1=el("input","tin");
+      r.style.cssText="display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin-bottom:10px";a.style.cssText="width:74px;flex:none";
+      ck.type="checkbox";ck.checked=!!x.x;ck.id="hx"+i;ck.setAttribute("aria-label","إغلاق يوم "+DN[i]);lb.setAttribute("for","hx"+i);
+      [o1,c1].forEach(function(t,k){t.type="time";t.dir="ltr";t.value=k?x.c:x.o;t.style.cssText="width:104px;flex:none";t.setAttribute("aria-label",(k?"إغلاق ":"فتح ")+DN[i])});
+      r.appendChild(a);r.appendChild(o1);r.appendChild(c1);r.appendChild(ck);r.appendChild(lb);w.appendChild(r);rows[i]={ck:ck,o:o1,c:c1}});
+    var nt=el("textarea","tin");nt.rows=3;nt.maxLength=200;nt.value=H.n||"";nt.placeholder="ملاحظة اختيارية، مثل: مغلق في الأعياد";nt.style.cssText="width:100%;margin-top:6px";nt.setAttribute("aria-label","ملاحظة أوقات العمل");w.appendChild(nt);
+    var sv=el("button","qadd","حفظ ونشر ✓"),cn=el("button","qadd","إلغاء"),ms=el("div","vn");sv.style.cssText="display:block;width:100%;margin-top:12px";cn.style.cssText="display:block;width:100%;margin-top:8px";ms.style.marginTop="8px";
+    cn.onclick=view;
+    sv.onclick=function(){var h=[];for(var i=0;i<7;i++){var q=rows[i];if(!q.o.value||!q.c.value){ms.style.color="#ff6b6b";ms.textContent="أكمل أوقات "+DN[i]+" أو اجعله مغلقاً.";return}h[i]={o:q.o.value,c:q.c.value,x:q.ck.checked}}
+      HO={h:h,n:nt.value.trim()};store.s("ghr",HO);hrPaint();ms.style.color="";ms.textContent="جارٍ النشر...";hrPush(ms).then(function(r){if(r&&r.ok)setTimeout(view,900)})};
+    w.appendChild(sv);w.appendChild(cn);w.appendChild(ms)}
+  view()}
 
 /* ===== إظهار/إخفاء رمز الدخول ===== */
 var EYE_OFF='<svg viewBox="0 0 24 24" width="28" height="28" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M2 12s3.6-7 10-7 10 7 10 7-3.6 7-10 7S2 12 2 12z"/><circle cx="12" cy="12" r="3"/><path d="M3 3l18 18"/></svg>',EYE_ON='<svg viewBox="0 0 24 24" width="28" height="28" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M2 12s3.6-7 10-7 10 7 10 7-3.6 7-10 7S2 12 2 12z"/><circle cx="12" cy="12" r="3"/></svg>';
@@ -1463,7 +1524,7 @@ function mdet0(m){CM=m;show("mdt");$("mdn").textContent=m.last_name+" "+m.first_
   function bt(r,t,fn){var x=el("button","qadd",t);x.style.flex="1";x.style.gridColumn="auto";x.onclick=fn;r.appendChild(x)}
   bt(r1,"حفظ التاريخ",function(){upd({sub_end:sd.value||null},ms)});bt(r1,"+30 يوم",function(){upd({sub_end:addD(m.sub_end,30)},ms)});bt(r1,"+90 يوم",function(){upd({sub_end:addD(m.sub_end,90)},ms)});
   bt(r2,m.active?"⏸ إيقاف":"▶ تفعيل",function(){upd({active:!m.active},ms)});bt(r2,"🔄 رمز جديد",function(){upd({code:code6(),fails:0},ms)});
-  b.appendChild(r1);b.appendChild(r2);
+  var r4=el("div","lgr");r4.style.marginTop="8px";bt(r4,"📲 تذكير بالتجديد عبر واتساب",function(){window.open(remHref(m),"_blank")});b.appendChild(r1);b.appendChild(r2);b.appendChild(r4);
   var bi=el("input","tin");bdTxt(bi);bi.max=td();bi.value=m.birth_date||"";b.appendChild(fld("تاريخ الميلاد",bi));
   var r3=el("div","lgr");bt(r3,"حفظ تاريخ الميلاد",function(){upd({birth_date:bi.value||null},ms)});b.appendChild(r3);b.appendChild(ms);
   var dl=el("button","qadd","🗑 حذف المتدرب");dl.style.cssText="display:block;width:100%;margin-top:28px;color:#ff5a5a;border-color:#e11d1d";
