@@ -298,6 +298,10 @@ button.qc{width:100%;justify-content:center;text-align:center;color:var(--ink);f
 .sgback:focus-visible{outline:none;box-shadow:0 0 0 3px rgba(225,29,29,.28)}
 .hsx:active{background:rgba(255,255,255,.16)!important}
 .soi.wa{background:#25d366}
+#mdb{padding-bottom:110px}
+#mnv{position:fixed;left:12px;right:12px;bottom:calc(env(safe-area-inset-bottom,0px) + 10px);z-index:50;display:flex;background:#171717;border-radius:26px;padding:8px 6px;box-shadow:0 8px 28px rgba(0,0,0,.6)}
+#mnv button{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px;min-height:60px;background:transparent;border:0;color:#a8a8a8;font:600 .85rem var(--b);cursor:pointer}
+#mnv button.on{color:#e11d1d}
 .fd input::placeholder{color:#9a9a9a;font-weight:600}
 #fm .ic{position:absolute;left:26px;top:50%;transform:translateY(-50%);display:flex;pointer-events:none}
 #fm .eye{position:absolute;right:12px;top:50%;transform:translateY(-50%);height:36px;width:54px;padding:0 0 0 4px;background:none;border:0;border-left:1.5px solid #3a3a3a;display:flex;align-items:center;justify-content:center;cursor:pointer}
@@ -421,7 +425,7 @@ body.kb .dbl{display:none}
   <button class="bk2 b3" onclick="memList()"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M9 6l6 6-6 6"/></svg>المتدربون</button>
   <div class="qt" id="mdn"></div>
   <div id="mdb"></div>
-</div></div>
+</div><div id="mnv" role="navigation" aria-label="أقسام ملف المتدرب"></div></div>
 <div id="bd" class="hid"><div class="qs" style="padding-top:40px">
   <div class="qt">تاريخ الميلاد</div>
   <p class="pm" id="bdp"></p>
@@ -887,7 +891,7 @@ function mlr(){var q=$("msq").value.trim().toLowerCase(),h=$("mls");h.innerHTML=
   var fr=el("div","vc");fr.style.marginBottom="10px";[["all","الكل"],["soon","ينتهي قريباً"],["exp","منتهي"]].forEach(function(f){var n=MEMS.filter(function(m){var o=MF;MF=f[0];var r=memF(m);MF=o;return r}).length,b=el("button","vchip"+(MF==f[0]?" on":""),f[1]+(f[0]=="all"?"":" ("+n+")"));b.onclick=function(){MF=f[0];mlr()};fr.appendChild(b)});h.appendChild(fr);
   var L=MEMS.filter(function(m){return(!q||(m.first_name+" "+m.last_name+" "+m.phone).toLowerCase().indexOf(q)>=0)&&memF(m)});
   if(!L.length){h.appendChild(el("div","pm",MEMS.length?"لا نتائج.":"لا يوجد متدربون بعد."));return}
-  L.forEach(function(m){var b=el("button","zb"),s=mst(m),sm=el("small","",s[0]);b.style.cssText="width:100%;margin-bottom:8px";sm.style.color=s[1];b.appendChild(el("span","",m.last_name+" "+m.first_name+(m.birth_date?" ("+age(m.birth_date)+" سنة)":"")));b.appendChild(sm);b.onclick=function(){mdet(m)};h.appendChild(b)})}
+  L.forEach(function(m){var b=el("button","zb"),s=mst(m),sm=el("small","",s[0]);b.style.cssText="width:100%;margin-bottom:8px";sm.style.color=s[1];b.appendChild(el("span","",m.last_name+" "+m.first_name+(m.birth_date?" ("+age(m.birth_date)+" سنة)":"")));b.appendChild(sm);b.onclick=function(){MTAB="d";mdet(m)};h.appendChild(b)})}
 
 
 
@@ -1046,7 +1050,7 @@ function openPush(){if($("pse"))return;
   o.appendChild(bar);o.appendChild(w);document.body.appendChild(o);document.addEventListener("keydown",psKey);load()}
 
 /* ===== رقم النسخة (يظهر في صفحة المدير) ===== */
-var APP_V=70;
+var APP_V=71;
 function verPaint(){var e=$("ver");if(!e)return;e.textContent="نسخة التطبيق: "+APP_V;
   if(window.caches&&caches.keys)caches.keys().then(function(ks){var v=ks.map(function(k){var m=/zg-v(\d+)/.exec(k);return m?+m[1]:0}).sort(function(a,b){return b-a})[0];
     if(v&&v!=APP_V){e.textContent+=" · نسخة الملفات المخزّنة: "+v+" ⚠️ أغلق التطبيق وافتحه مرتين لتكتمل";e.style.color="#f5a623"}else if(v){e.style.color=""}}).catch(function(){})}
@@ -1467,43 +1471,43 @@ function madd(){var f=$("mfm");if(f.innerHTML){f.innerHTML="";return}
     if(!bdv.value){ms.textContent="أدخل تاريخ الميلاد بالشكل 01/01/2000.";return}
     if(!/^\d{4,12}$/.test(c)){ms.textContent="الرمز أرقام فقط (من 4 إلى 12).";return}
     aapi("POST","members",{last_name:ln.value.trim(),first_name:fn.value.trim(),phone:p,code:c,sub_end:sd.value||null,birth_date:bdv.value||null},{Prefer:"return=representation"}).then(function(r){
-      if(r.ok&&r.data&&r.data[0]){f.innerHTML="";MEMS.unshift(r.data[0]);mlr();mdet(r.data[0])}else ms.textContent=r.status==409?"هذا الرقم مسجل مسبقاً.":"تعذر الحفظ ("+r.status+").";})};
+      if(r.ok&&r.data&&r.data[0]){f.innerHTML="";MEMS.unshift(r.data[0]);mlr();MTAB="d";mdet(r.data[0])}else ms.textContent=r.status==409?"هذا الرقم مسجل مسبقاً.":"تعذر الحفظ ("+r.status+").";})};
   f.appendChild(sb);f.appendChild(ms)}
 function upd(p,ms){aapi("PATCH","members?id=eq."+CM.id,p,{Prefer:"return=representation"}).then(function(r){
-  if(r.ok&&r.data&&r.data[0]){CM=r.data[0];MEMS=MEMS.map(function(q){return q.id==CM.id?CM:q});mdet(CM)}else ms.textContent=r.status==401?"انتهت جلسة المدير.":"تعذر الحفظ ("+r.status+")."})}
-function mdet(m){mdet0(m);var b=$("mdb"),g=el("div","zg"),btn=el("button","nx","📸 صور التقدم"),out=el("div");
-  btn.onclick=function(){out.textContent="جارٍ التحميل...";aapi("GET","progress_photos?member_id=eq."+encodeURIComponent(m.id)+"&select=id,taken,weight,img&order=created_at.desc&limit=30").then(function(r){out.innerHTML="";
-    if(!r.ok){out.textContent="تعذر التحميل ("+r.status+"). تأكد من تشغيل ملف supabase-photos.sql.";return}
-    if(!r.data.length){out.textContent="لم يرفع هذا المتدرب أي صورة بعد.";return}
-    r.data.forEach(function(p){var d=el("div"),im=el("img"),cp=el("div","pm",fd(p.taken)+(p.weight?" · "+p.weight+" كغ":"")),x=el("button","lk","حذف");
-      im.src=p.img;im.style.cssText="width:100%;border-radius:12px;display:block;margin-top:10px";
-      x.onclick=function(){if(x.dataset.c){aapi("DELETE","progress_photos?id=eq."+p.id).then(function(){d.remove()})}else{x.dataset.c="1";x.textContent="تأكيد الحذف؟";setTimeout(function(){x.dataset.c="";x.textContent="حذف"},3000)}};
-      d.appendChild(cp);d.appendChild(im);d.appendChild(x);out.appendChild(d)})})};
-  g.appendChild(btn);g.appendChild(out);b.appendChild(g);
-  var pnf=el("div","pm","🔔 الإشعارات: جارٍ التحميل...");pnf.style.margin="14px 0 0";b.insertBefore(pnf,g);
-  aapi("GET","push_subs?member_id=eq."+encodeURIComponent(m.id)+"&select=status,created_at,dead_at,off_at,last_ok_at&order=created_at.desc").then(function(r){
-    if(!r.ok){pnf.textContent=(r.status==400||r.status==404)?"🔔 الإشعارات: شغّل supabase-push-status.sql لعرض الحالة.":"🔔 الإشعارات: تعذر التحميل.";return}
-    var rows=r.data||[],on=rows.filter(function(x){return x.status=="active"}),dd=rows.filter(function(x){return x.status=="dead"}),of=rows.filter(function(x){return x.status=="off"}),ds=function(v){return fd(String(v).slice(0,10))};
-    if(on.length){var lo=on.map(function(x){return x.last_ok_at}).filter(Boolean).sort().pop();pnf.textContent="🔔 الإشعارات: مفعّلة"+(on.length>1?" ("+on.length+" أجهزة)":"")+(lo?" · آخر وصول "+ds(lo):"");pnf.style.color="#1e8e5a"}
-    else if(dd.length){pnf.textContent="⚠️ الإشعارات: عطّلها أو حذف التطبيق"+(dd[0].dead_at?" · اكتُشف "+ds(dd[0].dead_at):"");pnf.style.color="#f5a623"}
-    else if(of.length){pnf.textContent="🔕 الإشعارات: أوقفها المتدرب بنفسه"+(of[0].off_at?" · "+ds(of[0].off_at):"")}
-    else pnf.textContent="➖ الإشعارات: لم يفعّلها بعد"});
+  if(r.ok&&r.data&&r.data[0]){CM=r.data[0];MEMS=MEMS.map(function(q){return q.id==CM.id?CM:q});mdet(CM)}else{ms.style.color="#ff6b6b";ms.textContent=r.status==401?"انتهت جلسة المدير.":(r.status==400&&p.sub_start!==undefined)?"تعذر الحفظ (400). شغّل ملف supabase-levels.sql لإضافة عمود بداية الاشتراك.":"تعذر الحفظ ("+r.status+")."}})}
+var MTAB="d";
+function rawV(i){return Object.getOwnPropertyDescriptor(HTMLInputElement.prototype,"value").get.call(i)}
+function mnav(){var n=$("mnv");n.innerHTML="";
+  var P='<svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">',IC={
+    d:P+'<circle cx="12" cy="8" r="4"/><path d="M4 21c0-4.4 3.6-8 8-8s8 3.6 8 8"/></svg>',
+    s:P+'<rect x="3" y="5" width="18" height="16" rx="3"/><path d="M3 10h18M8 3v4M16 3v4"/></svg>',
+    a:P+'<path d="M3 20h18M6 20v-7M11 20V6M16 20v-10"/></svg>'};
+  [["d","بيانات المشترك"],["s","الاشتراك"],["a","النشاط"]].forEach(function(t){var b=el("button",MTAB==t[0]?"on":"");b.type="button";b.innerHTML=IC[t[0]]+"<span>"+t[1]+"</span>";b.setAttribute("aria-label",t[1]);if(MTAB==t[0])b.setAttribute("aria-current","page");b.onclick=function(){MTAB=t[0];mdet(CM)};n.appendChild(b)})}
+function mdet(m){CM=m;show("mdt");$("mdn").textContent=m.last_name+" "+m.first_name;var b=$("mdb"),ms=el("div","vn");b.innerHTML="";mnav();window.scrollTo(0,0);
+  if(MTAB=="s")mdSub(m,b,ms);else if(MTAB=="a")mdAct(m,b);else mdData(m,b,ms)}
+function btn2(r,t,fn){var x=el("button","qadd",t);x.style.flex="1";x.style.gridColumn="auto";x.onclick=fn;r.appendChild(x)}
+function mdSub(m,b,ms){var s=mst(m),box=el("div"),t=el("div","","🗓 حالة الاشتراك"),st=el("div","",s[0]);
+  box.style.cssText="padding:12px 14px;border-radius:14px;border:1.5px solid "+s[1]+";background:#161616;margin-top:6px";t.style.cssText="font:700 .85rem var(--b);color:#bdbdbd";st.style.cssText="margin-top:3px;font:800 1.1rem var(--b);color:"+s[1];box.appendChild(t);box.appendChild(st);b.appendChild(box);
+  var dl=m.sub_end?sbDays(m.sub_end):null,g=el("div","tcd tc3");g.style.marginTop="10px";
+  g.appendChild(card("بداية الاشتراك",m.sub_start?fd(m.sub_start):"—"));g.appendChild(card("نهاية الاشتراك",m.sub_end?fd(m.sub_end):"—"));g.appendChild(card("المتبقي",dl===null?"—":dl<0?"منتهي":dtxt(dl)));b.appendChild(g);
+  b.appendChild(el("div","msh","✏️ تعديل الاشتراك"));
+  var s1=el("input","tin"),e1=el("input","tin");bdTxt(s1);bdTxt(e1);s1.value=m.sub_start||"";e1.value=m.sub_end||"";s1.setAttribute("aria-label","بداية الاشتراك");e1.setAttribute("aria-label","نهاية الاشتراك");
+  b.appendChild(fld("بداية الاشتراك",s1));b.appendChild(fld("نهاية الاشتراك",e1));
+  var h=el("div","pm","اكتب التاريخ بالشكل 01/01/2026. يمكنك وضع أي تاريخ حتى لو كان منتهياً، واترك الخانة فارغة لحذف التاريخ.");h.style.cssText="font-size:.85rem;margin-top:8px";b.appendChild(h);
+  function rd2(i,n){var r=rawV(i).trim();if(!r)return null;if(!i.value){ms.style.color="#ff6b6b";ms.textContent="اكتب "+n+" بالشكل 01/01/2026.";return false}return i.value}
+  var r1=el("div","lgr"),r2=el("div","lgr"),r3=el("div","lgr");r1.style.marginTop="12px";r2.style.marginTop="8px";r3.style.marginTop="8px";
+  btn2(r1,"حفظ الاشتراك",function(){var a=rd2(s1,"بداية الاشتراك");if(a===false)return;var e=rd2(e1,"نهاية الاشتراك");if(e===false)return;var p={sub_end:e};if("sub_start" in m||a)p.sub_start=a;ms.style.color="";ms.textContent="جارٍ الحفظ...";upd(p,ms)});
+  function rp(n){var ok=m.sub_end&&m.sub_end>=td(),p={sub_end:addD(m.sub_end,n)};if("sub_start" in m)p.sub_start=ok?(m.sub_start||td()):td();ms.textContent="جارٍ الحفظ...";upd(p,ms)}
+  btn2(r2,"+30 يوم",function(){rp(30)});btn2(r2,"+90 يوم",function(){rp(90)});
+  btn2(r3,m.active?"⏸ إيقاف":"▶ تفعيل",function(){upd({active:!m.active},ms)});btn2(r3,"📲 تذكير بالتجديد",function(){window.open(remHref(m),"_blank")});
+  b.appendChild(r1);b.appendChild(r2);b.appendChild(r3);b.appendChild(ms)}
+function mdData(m,b,ms){
+  var g=el("div","tcd tc3");g.style.marginTop="6px";g.appendChild(card("الهاتف",m.phone));g.appendChild(card("رمز الدخول",m.code));g.appendChild(card("العمر",m.birth_date?age(m.birth_date)+" سنة":"—",m.birth_date?fd(m.birth_date):""));b.appendChild(g);
   aapi("GET","member_avatars?member_id=eq."+encodeURIComponent(m.id)+"&select=img").then(function(r){if(!r.ok||!r.data||!r.data[0])return;var d=el("div"),im=el("img"),x=el("button","lk","حذف الصورة الشخصية");
     im.src=r.data[0].img;im.style.cssText="width:96px;height:96px;border-radius:50%;object-fit:cover;display:block;margin:0 auto;border:3px solid var(--am)";d.style.cssText="text-align:center;margin-bottom:12px";
     x.onclick=function(){if(x.dataset.c){aapi("DELETE","member_avatars?member_id=eq."+encodeURIComponent(m.id)).then(function(){d.remove()})}else{x.dataset.c="1";x.textContent="تأكيد الحذف؟";setTimeout(function(){x.dataset.c="";x.textContent="حذف الصورة الشخصية"},3000)}};
-    d.appendChild(im);d.appendChild(x);b.insertBefore(d,b.firstChild)})}
-function mdet0(m){CM=m;show("mdt");$("mdn").textContent=m.last_name+" "+m.first_name;var b=$("mdb"),ms=el("div","vn");b.innerHTML="";
-  var g=el("div","tcd tc3");g.appendChild(card("الهاتف",m.phone));g.appendChild(card("رمز الدخول",m.code));g.appendChild(card("العمر",m.birth_date?age(m.birth_date)+" سنة":"—",m.birth_date?fd(m.birth_date):""));b.appendChild(g);
-  var sx=el("div","tcd tc3"),sc1=card("🔥 السلسلة","…"),sc2=card("📅 هذا الأسبوع","…"),sc3=card("🕒 آخر حصة","…"),sn=el("div","pm mm","جارٍ تحميل الإحصائيات...");sx.appendChild(sc1);sx.appendChild(sc2);sx.appendChild(sc3);sx.style.marginTop="8px";b.appendChild(sx);b.appendChild(sn);
-  aapi("GET","session_log?select=d&member_id=eq."+m.id+"&order=d").then(function(r){
-    if(!r.ok||!Array.isArray(r.data)){sn.textContent=r.status==404?"جدول الحصص غير مفعّل. نفّذ سكربت sessions.sql في Supabase.":r.status==0?"لا يوجد اتصال بالإنترنت.":"تعذر تحميل الإحصائيات.";return}
-    try{var days=r.data.map(function(x){return x.d}).sort(),t0=td(),n0=new Date(),i0,wk0,st0=0;n0.setDate(n0.getDate()-((n0.getDay()+1)%7));var ws0=ymd(n0);
-    wk0=days.filter(function(d){return d>=ws0}).length;
-    if(days.length&&dayGap(t0,days[days.length-1])<=2){st0=1;for(i0=days.length-1;i0>0;i0--){if(dayGap(days[i0],days[i0-1])<=2)st0++;else break}}
-    [[sc1,st0],[sc2,wk0]].forEach(function(p){var bb=p[0].querySelector(".b");bb.textContent=p[1]+"";bb.appendChild(el("span","u","حصص"))});
-    var lg=days.length?days[days.length-1]:null,gp=lg?dayGap(t0,lg):0,n3=card("🕒 آخر حصة",lg?(gp==0?"اليوم":gp==1?"أمس":"منذ "+dtxt(gp)):"—",lg?fd(lg):"لا توجد");if(lg&&gp>=7)n3.querySelector(".b").style.color="#f5a623";sx.replaceChild(n3,sc3);sn.textContent=days.length?"إجمالي الحصص المسجّلة: "+days.length:"لا توجد حصص مسجّلة بعد."}catch(e){sn.textContent="تعذر عرض الإحصائيات."}});
-  var s=mst(m),st=el("div","pm","الحالة: "+s[0]);st.style.color=s[1];b.appendChild(st);
-  var wb=el("a","tk","📲 إرسال الدعوة والرمز على واتساب");wb.style.cssText="display:block;text-align:center;text-decoration:none";wb.target="_blank";wb.rel="noopener";
+    d.appendChild(im);d.appendChild(x);b.insertBefore(d,b.firstChild)});
+  var wb=el("a","tk","📲 إرسال الدعوة والرمز على واتساب");wb.style.cssText="display:block;text-align:center;text-decoration:none;margin-top:12px";wb.target="_blank";wb.rel="noopener";
   wb.href=waTo(m.phone,"مرحباً "+m.first_name+"، أهلاً بك في تطبيق ZEDAM GYM.\nالرابط: "+location.origin+"\nرقم هاتفك: "+m.phone+"\nرمز الدخول: "+m.code);b.appendChild(wb);
   var eb=el("button","qadd","✏️ تعديل بيانات المتدرب"),ef=el("div","hid");eb.style.cssText="display:block;width:100%;margin-top:14px";
   var eln=el("input","tin"),efn=el("input","tin"),eph=el("input","tin"),ecd=el("input","tin"),ems=el("div","vn"),er=el("div","lgr");
@@ -1521,16 +1525,36 @@ function mdet0(m){CM=m;show("mdt");$("mdn").textContent=m.last_name+" "+m.first_
       if(r.ok&&r.data&&r.data[0]){CM=r.data[0];MEMS=MEMS.map(function(x){return x.id==CM.id?CM:x});mdet(CM)}
       else ems.textContent=r.status==409?"هذا الرقم مسجل لمتدرب آخر.":r.status==401?"انتهت جلسة المدير.":r.status==0?"لا يوجد اتصال بالإنترنت.":"تعذر الحفظ ("+r.status+")."})};
   b.appendChild(eb);b.appendChild(ef);
-  b.appendChild(el("div","msh","🗓 الاشتراك"));var sd=el("input","tin");sd.type="date";sd.dir="ltr";sd.value=m.sub_end||"";b.appendChild(fld("تاريخ انتهاء الاشتراك",sd));
-  var r1=el("div","lgr"),r2=el("div","lgr");r1.style.marginTop="10px";r2.style.marginTop="8px";
-  function bt(r,t,fn){var x=el("button","qadd",t);x.style.flex="1";x.style.gridColumn="auto";x.onclick=fn;r.appendChild(x)}
-  bt(r1,"حفظ التاريخ",function(){upd({sub_end:sd.value||null},ms)});bt(r1,"+30 يوم",function(){upd({sub_end:addD(m.sub_end,30)},ms)});bt(r1,"+90 يوم",function(){upd({sub_end:addD(m.sub_end,90)},ms)});
-  bt(r2,m.active?"⏸ إيقاف":"▶ تفعيل",function(){upd({active:!m.active},ms)});bt(r2,"🔄 رمز جديد",function(){upd({code:code6(),fails:0},ms)});
-  var r4=el("div","lgr");r4.style.marginTop="8px";bt(r4,"📲 تذكير بالتجديد عبر واتساب",function(){window.open(remHref(m),"_blank")});b.appendChild(r1);b.appendChild(r2);b.appendChild(r4);
   var bi=el("input","tin");bdTxt(bi);bi.max=td();bi.value=m.birth_date||"";b.appendChild(fld("تاريخ الميلاد",bi));
-  var r3=el("div","lgr");bt(r3,"حفظ تاريخ الميلاد",function(){upd({birth_date:bi.value||null},ms)});b.appendChild(r3);b.appendChild(ms);
+  var r3=el("div","lgr");r3.style.marginTop="10px";btn2(r3,"حفظ تاريخ الميلاد",function(){upd({birth_date:bi.value||null},ms)});btn2(r3,"🔄 رمز جديد",function(){upd({code:code6(),fails:0},ms)});b.appendChild(r3);b.appendChild(ms);
   var dl=el("button","qadd","🗑 حذف المتدرب");dl.style.cssText="display:block;width:100%;margin-top:28px;color:#ff5a5a;border-color:#e11d1d";
-  dl.onclick=function(){if(dl.dataset.c){aapi("DELETE","members?id=eq."+m.id).then(function(r){if(r.ok){MEMS=MEMS.filter(function(q){return q.id!=m.id});memList()}else ms.textContent="تعذر الحذف."})}else{dl.dataset.c="1";dl.textContent="اضغط مرة أخرى للتأكيد";setTimeout(function(){dl.dataset.c="";dl.textContent="🗑 حذف المتدرب"},3000)}};b.appendChild(dl);
+  dl.onclick=function(){if(dl.dataset.c){aapi("DELETE","members?id=eq."+m.id).then(function(r){if(r.ok){MEMS=MEMS.filter(function(q){return q.id!=m.id});memList()}else ms.textContent="تعذر الحذف."})}else{dl.dataset.c="1";dl.textContent="اضغط مرة أخرى للتأكيد";setTimeout(function(){dl.dataset.c="";dl.textContent="🗑 حذف المتدرب"},3000)}};b.appendChild(dl)}
+function mdAct(m,b){
+  var sx=el("div","tcd tc3"),sc1=card("🔥 السلسلة","…"),sc2=card("📅 هذا الأسبوع","…"),sc3=card("🕒 آخر حصة","…"),sn=el("div","pm mm","جارٍ تحميل الإحصائيات...");sx.appendChild(sc1);sx.appendChild(sc2);sx.appendChild(sc3);sx.style.marginTop="6px";b.appendChild(sx);b.appendChild(sn);
+  aapi("GET","session_log?select=d&member_id=eq."+m.id+"&order=d").then(function(r){
+    if(!r.ok||!Array.isArray(r.data)){sn.textContent=r.status==404?"جدول الحصص غير مفعّل. نفّذ سكربت sessions.sql في Supabase.":r.status==0?"لا يوجد اتصال بالإنترنت.":"تعذر تحميل الإحصائيات.";return}
+    try{var days=r.data.map(function(x){return x.d}).sort(),t0=td(),n0=new Date(),i0,wk0,st0=0;n0.setDate(n0.getDate()-((n0.getDay()+1)%7));var ws0=ymd(n0);
+    wk0=days.filter(function(d){return d>=ws0}).length;
+    if(days.length&&dayGap(t0,days[days.length-1])<=2){st0=1;for(i0=days.length-1;i0>0;i0--){if(dayGap(days[i0],days[i0-1])<=2)st0++;else break}}
+    [[sc1,st0],[sc2,wk0]].forEach(function(p){var bb=p[0].querySelector(".b");bb.textContent=p[1]+"";bb.appendChild(el("span","u","حصص"))});
+    var lg=days.length?days[days.length-1]:null,gp=lg?dayGap(t0,lg):0,n3=card("🕒 آخر حصة",lg?(gp==0?"اليوم":gp==1?"أمس":"منذ "+dtxt(gp)):"—",lg?fd(lg):"لا توجد");if(lg&&gp>=7)n3.querySelector(".b").style.color="#f5a623";sx.replaceChild(n3,sc3);sn.textContent=days.length?"إجمالي الحصص المسجّلة: "+days.length:"لا توجد حصص مسجّلة بعد."}catch(e){sn.textContent="تعذر عرض الإحصائيات."}});
+  var pnf=el("div","pm","🔔 الإشعارات: جارٍ التحميل...");pnf.style.margin="14px 0 0";b.appendChild(pnf);
+  aapi("GET","push_subs?member_id=eq."+encodeURIComponent(m.id)+"&select=status,created_at,dead_at,off_at,last_ok_at&order=created_at.desc").then(function(r){
+    if(!r.ok){pnf.textContent=(r.status==400||r.status==404)?"🔔 الإشعارات: شغّل supabase-push-status.sql لعرض الحالة.":"🔔 الإشعارات: تعذر التحميل.";return}
+    var rows=r.data||[],on=rows.filter(function(x){return x.status=="active"}),dd=rows.filter(function(x){return x.status=="dead"}),of=rows.filter(function(x){return x.status=="off"}),ds=function(v){return fd(String(v).slice(0,10))};
+    if(on.length){var lo=on.map(function(x){return x.last_ok_at}).filter(Boolean).sort().pop();pnf.textContent="🔔 الإشعارات: مفعّلة"+(on.length>1?" ("+on.length+" أجهزة)":"")+(lo?" · آخر وصول "+ds(lo):"");pnf.style.color="#1e8e5a"}
+    else if(dd.length){pnf.textContent="⚠️ الإشعارات: عطّلها أو حذف التطبيق"+(dd[0].dead_at?" · اكتُشف "+ds(dd[0].dead_at):"");pnf.style.color="#f5a623"}
+    else if(of.length){pnf.textContent="🔕 الإشعارات: أوقفها المتدرب بنفسه"+(of[0].off_at?" · "+ds(of[0].off_at):"")}
+    else pnf.textContent="➖ الإشعارات: لم يفعّلها بعد"});
+  var g=el("div","zg"),btn=el("button","nx","📸 صور التقدم"),out=el("div");
+  btn.onclick=function(){out.textContent="جارٍ التحميل...";aapi("GET","progress_photos?member_id=eq."+encodeURIComponent(m.id)+"&select=id,taken,weight,img&order=created_at.desc&limit=30").then(function(r){out.innerHTML="";
+    if(!r.ok){out.textContent="تعذر التحميل ("+r.status+"). تأكد من تشغيل ملف supabase-photos.sql.";return}
+    if(!r.data.length){out.textContent="لم يرفع هذا المتدرب أي صورة بعد.";return}
+    r.data.forEach(function(p){var d=el("div"),im=el("img"),cp=el("div","pm",fd(p.taken)+(p.weight?" · "+p.weight+" كغ":"")),x=el("button","lk","حذف");
+      im.src=p.img;im.style.cssText="width:100%;border-radius:12px;display:block;margin-top:10px";
+      x.onclick=function(){if(x.dataset.c){aapi("DELETE","progress_photos?id=eq."+p.id).then(function(){d.remove()})}else{x.dataset.c="1";x.textContent="تأكيد الحذف؟";setTimeout(function(){x.dataset.c="";x.textContent="حذف"},3000)}};
+      d.appendChild(cp);d.appendChild(im);d.appendChild(x);out.appendChild(d)})})};
+  g.appendChild(btn);g.appendChild(out);b.appendChild(g);
   var dd=el("div","zg"),dv=el("div","");dv.id="mdd";dd.appendChild(el("h3","","بيانات المتدرب"));dd.appendChild(dv);b.appendChild(dd);dv.textContent="جارٍ التحميل...";
   DB={w:[],x:[],l:{},k:""};
   Promise.all([aapi("GET","body_log?select=kind,d,v&member_id=eq."+m.id+"&order=d"),aapi("GET","lift_log?select=exercise,d,w,reps&member_id=eq."+m.id+"&order=d")]).then(function(R){
