@@ -1042,7 +1042,7 @@ function openPush(){if($("pse"))return;
   o.appendChild(bar);o.appendChild(w);document.body.appendChild(o);document.addEventListener("keydown",psKey);load()}
 
 /* ===== رقم النسخة (يظهر في صفحة المدير) ===== */
-var APP_V=63;
+var APP_V=67;
 function verPaint(){var e=$("ver");if(!e)return;e.textContent="نسخة التطبيق: "+APP_V;
   if(window.caches&&caches.keys)caches.keys().then(function(ks){var v=ks.map(function(k){var m=/zg-v(\d+)/.exec(k);return m?+m[1]:0}).sort(function(a,b){return b-a})[0];
     if(v&&v!=APP_V){e.textContent+=" · نسخة الملفات المخزّنة: "+v+" ⚠️ أغلق التطبيق وافتحه مرتين لتكتمل";e.style.color="#f5a623"}else if(v){e.style.color=""}}).catch(function(){})}
