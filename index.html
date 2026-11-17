@@ -906,11 +906,11 @@ function logout(){flush().then(function(){clearMember();stForm()})}
 function normPh(v){var p=String(v).replace(/[\u0660-\u0669]/g,function(c){return c.charCodeAt(0)-1632}).replace(/[\s.\-()]/g,"");return/^(0|\+?213)[567]\d{8}$/.test(p)?p.replace(/^\+?213/,"0"):""}
 function stForm(msg){SPL=false;$("sb").className="hid bk2";$("fm").className="fm";$("sgm").className="fm hid";$("sgd").className="fm hid";$("stp").textContent="";$("stp").className="";$("ph").value="";$("cd").value="";["ph","cd"].forEach(function(k){setE(k,"")});$("lms").textContent=msg||"";var sp0=store.g("sgp",null);if(sp0&&!msg){$("ph").value=sp0.ph;$("cd").value=sp0.code;$("lms").textContent="طلبك قيد المراجعة. عند موافقة القاعة اضغط «دخول»."}
   var p=gpn(),ex=!!msg&&msg.indexOf("انتهى اشتراكك")==0,lw=$("lwa");lw.textContent=ex?"🔄 طلب تجديد الاشتراك عبر واتساب":"ليس لديك رمز؟ تواصل مع القاعة";lw.className=ex?"lk sgback":"lk";lw.style.display=ex&&p?"flex":"none";lw.href=p?"https://wa.me/"+p+"?text="+encodeURIComponent(ex?"السلام عليكم، أرغب في تجديد اشتراكي في ZEDAM GYM."+(RNP?"\nرقم هاتفي: "+RNP:""):"السلام عليكم، أريد رمز الدخول إلى تطبيق ZEDAM GYM."):"#";show("st")}
-function login(){var ph=normPh($("ph").value);if(ph)RNP=ph;var cd=String($("cd").value).replace(/[\u0660-\u0669]/g,function(c){return c.charCodeAt(0)-1632}).trim(),ok=true,b=$("lgb");
-  if(!ph){setE("ph","أدخل رقماً صحيحاً من 10 أرقام يبدأ بـ 05 أو 06 أو 07");ok=false}else setE("ph","");
-  if(!cd){setE("cd","أدخل الرمز");ok=false}else setE("cd","");
-  if(!ok)return;$("lms").textContent="";b.disabled=true;b.textContent="جارٍ الدخول...";
-  var end=function(msg){b.disabled=false;b.textContent="دخول";if(msg)$("lms").textContent=msg};
+function login(ph0,cd0,ef){ph0=typeof ph0=="string"?ph0:"";var ph=ph0||normPh($("ph").value);if(ph)RNP=ph;var cd=cd0||String($("cd").value).replace(/[\u0660-\u0669]/g,function(c){return c.charCodeAt(0)-1632}).trim(),ok=true,b=$("lgb");
+  if(!ph0){if(!ph){setE("ph","أدخل رقماً صحيحاً من 10 أرقام يبدأ بـ 05 أو 06 أو 07");ok=false}else setE("ph","");
+    if(!cd){setE("cd","أدخل الرمز");ok=false}else setE("cd","");
+    if(!ok)return;$("lms").textContent="";b.disabled=true;b.textContent="جارٍ الدخول..."}
+  var end=ef||function(msg){b.disabled=false;b.textContent="دخول";if(msg)$("lms").textContent=msg};
   var claim=function(){return api("POST","rpc/claim_member",{p_phone:ph,p_code:cd})};
   (sg("sbs")?Promise.resolve(sg("sbs")):anon()).then(function(s){
     if(!s){end(/nonymous/i.test(AE)?"إعداد الخادم غير مكتمل: فعّل Anonymous sign-ins.":"تعذر الاتصال بالخادم. تأكد من الإنترنت وأعد المحاولة.");return}
@@ -1111,7 +1111,7 @@ function openPush(){if($("pse"))return;
   o.appendChild(bar);o.appendChild(w);document.body.appendChild(o);document.addEventListener("keydown",psKey);load()}
 
 /* ===== رقم النسخة (يظهر في صفحة المدير) ===== */
-var APP_V=83;
+var APP_V=84;
 function verPaint(){var e=$("ver");if(!e)return;e.textContent="نسخة التطبيق: "+APP_V;
   if(window.caches&&caches.keys)caches.keys().then(function(ks){var v=ks.map(function(k){var m=/zg-v(\d+)/.exec(k);return m?+m[1]:0}).sort(function(a,b){return b-a})[0];
     if(v&&v!=APP_V){e.textContent+=" · نسخة الملفات المخزّنة: "+v+" ⚠️ أغلق التطبيق وافتحه مرتين لتكتمل";e.style.color="#f5a623"}else if(v){e.style.color=""}}).catch(function(){})}
@@ -1275,12 +1275,15 @@ function tpOpen(){var v=ovl("💬 رسائل واتساب جاهزة"),w=v.w,ks=
   w.appendChild(bx("حفظ ✓",function(){var c={};ks.forEach(function(k){var x=tas[k].value.trim();if(x&&x!=TD[k])c[k]=x});stMsg(st,true,"جارٍ الحفظ...");giPush(5,c,st)}));w.appendChild(st);
   w.appendChild(note("تُستعمل هذه القوالب في زر «💬 رسالة واتساب جاهزة» داخل ملف المتدرب وفي لوحة اليوم وقائمة المنقطعين."))}
 /* ----- إعدادات المستويات الشهرية ----- */
-function stOpen(){var v=ovl("⚙️ إعدادات المستويات"),w=v.w,ck=el("input"),lb=el("label","","فتح مستويات البرنامج تدريجياً، مستوى جديد كل شهر"),st=el("div","vn"),r=cd2();
-  ck.type="checkbox";ck.id="lmck";ck.checked=giLmOn();lb.setAttribute("for","lmck");r.style.cssText+=";display:flex;gap:10px;align-items:center";lb.style.flex="1";r.appendChild(ck);r.appendChild(lb);w.appendChild(r);
-  w.appendChild(note("عند التفعيل: يرى المتدرب في الشهر الأول المستوى الأول فقط، ثم يُفتح له المستوى الثاني بعد شهر من انضمامه، والثالث بعد شهرين، والرابع بعد 3 أشهر (الحد الأقصى 4 مستويات). من يملك كود مستوى يفتحه فوراً كما كان. المدير يرى كل المستويات دائماً."));
-  w.appendChild(bx("حفظ ونشر ✓",function(){stMsg(st,true,"جارٍ النشر...");giPush(4,{lm:ck.checked?1:0},st).then(function(r2){if(r2&&r2.ok){var pg=$("prg");if(pg&&pg.className.indexOf("hid")<0)vch()}})}));w.appendChild(st)}
+function stOpen(){var v=ovl("⚙️ الإعدادات"),w=v.w,ck=el("input"),lb=el("label","","فتح مستويات البرنامج تدريجياً، مستوى جديد كل شهر"),st=el("div","vn"),r=cd2(),ca=el("input"),la=el("label","","التسجيل المباشر: يدخل المتدرب التطبيق فور تسجيله بدون موافقتك"),r2=cd2(),tr=el("input","tin");
+  ck.type="checkbox";ck.id="lmck";ck.checked=giLmOn();lb.setAttribute("for","lmck");r.style.cssText+=";display:flex;gap:10px;align-items:center";lb.style.flex="1";r.appendChild(ck);r.appendChild(lb);w.appendChild(h2("المستويات"));w.appendChild(r);
+  w.appendChild(note("عند التفعيل: يرى المتدرب في الشهر الأول المستوى الأول فقط، ثم يُفتح له المستوى الثاني بعد شهر من انضمامه، والثالث بعد شهرين، والرابع بعد 3 أشهر (الحد الأقصى 4 مستويات). من يملك كود مستوى يفتحه فوراً. المدير يرى كل المستويات دائماً."));
+  ca.type="checkbox";ca.id="atck";ca.checked=giAuto();la.setAttribute("for","atck");r2.style.cssText+=";display:flex;gap:10px;align-items:center";la.style.flex="1";r2.appendChild(ca);r2.appendChild(la);w.appendChild(h2("التسجيل"));w.appendChild(r2);
+  tr.type="number";tr.min="0";tr.max="365";tr.inputMode="numeric";tr.value=(GI[4]&&GI[4].trial!==undefined)?GI[4].trial:7;tr.setAttribute("aria-label","أيام الفترة التجريبية");w.appendChild(fld("أيام الاشتراك المجاني بعد التسجيل المباشر",tr));
+  w.appendChild(note("عند التسجيل المباشر يُنشأ حساب المتدرب فوراً باشتراك تجريبي بهذه الأيام، ثم تضبط اشتراكه الحقيقي من ملفه. إن أوقفته يعود نظام الطلبات التي تقبلها من «المتدربون». يظهر المسجلون الجدد في «لوحة اليوم»."));
+  w.appendChild(bx("حفظ ونشر ✓",function(){var t=parseInt(tr.value);if(!(t>=0&&t<=365)){stMsg(st,false,"أيام الفترة من 0 إلى 365.");return}stMsg(st,true,"جارٍ النشر...");giPush(4,{lm:ck.checked?1:0,auto:ca.checked?1:0,trial:t},st).then(function(r2){if(r2&&r2.ok){var pg=$("prg");if(pg&&pg.className.indexOf("hid")<0)vch()}})}));w.appendChild(st)}
 function hubOpen(){var v=ovl("🏢 إدارة القاعة"),g=el("div");g.style.cssText="display:grid;grid-template-columns:1fr 1fr;gap:10px";
-  [["📊","لوحة اليوم",dashOpen],["💰","الدفعات والتقرير الشهري",payOpen],["💬","رسائل واتساب جاهزة",tpOpen],["😴","المنقطعون",inactOpen],["💳","الأسعار والعروض",prOpen],["📍","المواقع والروابط",lkOpen],["🚑","أرقام الاستعجالات",emOpen],["⚙️","إعدادات المستويات",stOpen]].forEach(function(t){
+  [["📊","لوحة اليوم",dashOpen],["💰","الدفعات والتقرير الشهري",payOpen],["💬","رسائل واتساب جاهزة",tpOpen],["😴","المنقطعون",inactOpen],["💳","الأسعار والعروض",prOpen],["📍","المواقع والروابط",lkOpen],["🚑","أرقام الاستعجالات",emOpen],["⚙️","الإعدادات",stOpen]].forEach(function(t){
     var b=el("button"),i=el("span","",t[0]),l=el("span","",t[1]);b.type="button";i.style.fontSize="1.7rem";b.appendChild(i);b.appendChild(l);
     b.style.cssText="min-height:96px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:6px;border-radius:16px;background:#161616;border:1.5px solid var(--ln);color:#fff;font:700 .95rem var(--b);cursor:pointer;padding:8px;text-align:center";b.onclick=function(){t[2]()};g.appendChild(b)});v.w.appendChild(g)}
 
@@ -1294,6 +1297,8 @@ function dashOpen(){var v=ovl("📊 لوحة اليوم"),w=v.w;w.textContent="�
     act=ms.filter(function(m){return m.active&&m.sub_end}),t0=td(),td0=act.filter(function(m){return m.sub_end==t0}),wk=act.filter(function(m){var d=sbDays(m.sub_end);return d>=1&&d<=7}),req=R[2].ok&&Array.isArray(R[2].data)?R[2].data.length:0;
     var r=srow();r.appendChild(sc("حاضرون اليوم",att?att.length:"—","#1e8e5a"));r.appendChild(sc("ينتهي اليوم",td0.length,td0.length?"#ff5a5a":null));r.appendChild(sc("ينتهي هذا الأسبوع",wk.length,wk.length?"#f5a623":null));w.appendChild(r);
     if(req)w.appendChild(bx("👥 "+req+(req==1?" طلب تسجيل بانتظار موافقتك":" طلبات تسجيل بانتظار موافقتك")+" · مراجعة",function(){v.x();memList()},"border-color:#e11d1d"));
+    var nw=ms.filter(function(m){return(m.created_at||"")&&dd(t0,(m.created_at||"").slice(0,10))<=2});
+    w.appendChild(h2("🆕 سجّلوا حديثاً (آخر 3 أيام)"));if(!nw.length)w.appendChild(note("لا أحد."));nw.forEach(function(m){w.appendChild(mrow(m,m.phone+" · "+fd((m.created_at||"").slice(0,10)),"💬 ترحيب",function(){waSheet(m,"welcome")}))});
     w.appendChild(h2("✅ حاضرون اليوم"));
     if(att===null)w.appendChild(note("تعذر تحميل الحضور."));else if(!att.length)w.appendChild(note("لم يُسجَّل حضور بعد اليوم."));else att.forEach(function(m){w.appendChild(mrow(m,m.phone))});
     w.appendChild(h2("⚠️ ينتهي اشتراكهم اليوم"));if(!td0.length)w.appendChild(note("لا أحد."));td0.forEach(function(m){w.appendChild(mrow(m,"ينتهي اليوم · "+m.phone,"💬 تذكير",function(){waSheet(m,"renew")}))});
@@ -1351,6 +1356,7 @@ function itkOpen(){if($("itk"))return;var o=el("div"),w=el("div"),sel={h:[],g:[]
   o.id="itk";o.setAttribute("role","dialog");o.setAttribute("aria-modal","true");o.setAttribute("aria-label","استمارة المتدرب");o.style.cssText="position:fixed;inset:0;z-index:99990;background:var(--bg);overflow:auto";
   w.style.cssText="max-width:520px;margin:0 auto;padding:calc(env(safe-area-inset-top,0px) + 18px) 18px calc(env(safe-area-inset-bottom,0px) + 28px)";
   var t=el("div","","👋 مرحباً "+(M.fn||"")),p=el("div","pm","لنتعرّف عليك لنخدمك بأفضل شكل. تُملأ هذه الاستمارة مرة واحدة فقط، ولا يراها إلا مدرب القاعة.");t.style.cssText="font:800 1.4rem var(--d)";w.appendChild(t);w.appendChild(p);
+  var nc=store.g("newcode",null);if(nc){var cb=el("div"),l1=el("div","pm","رمز دخولك (احفظه لتدخل به من أي هاتف)"),g1=el("div","",nc);cb.style.cssText="margin-top:14px;padding:12px;border:2px dashed var(--am);border-radius:14px;text-align:center";g1.style.cssText="font:800 2.2rem var(--d);letter-spacing:.18em;direction:ltr";cb.appendChild(l1);cb.appendChild(g1);w.appendChild(cb)}
   function grp(title,list,k,excl){w.appendChild(h2(title));list.forEach(function(x,i){var b=el("button"),g=el("span","","⬜"),l=el("span","",x);b.type="button";b.setAttribute("role","checkbox");b.setAttribute("aria-checked","false");
     b.style.cssText="display:flex;align-items:center;gap:10px;width:100%;margin-top:8px;padding:12px 14px;border-radius:14px;background:#161616;border:1.5px solid var(--ln);color:#fff;font:700 1rem var(--b);text-align:start;cursor:pointer";g.style.fontSize="1.3rem";b.appendChild(g);b.appendChild(l);
     function paint(){var on=sel[k].indexOf(x)>=0;g.textContent=on?"❎":"⬜";b.setAttribute("aria-checked",on?"true":"false");b.style.borderColor=on?"#e11d1d":"var(--ln)";b.style.background=on?"rgba(225,29,29,.15)":"#161616"}
@@ -1362,7 +1368,7 @@ function itkOpen(){if($("itk"))return;var o=el("div"),w=el("div"),sel={h:[],g:[]
   sv.onclick=function(){if(!sel.h.length||!sel.g.length){stMsg(err,false,"اختر خياراً واحداً على الأقل في كل قسم.");return}
     sv.disabled=true;sv.textContent="جارٍ الحفظ...";var m=curM();
     api("POST","member_intake",{member_id:m.id,data:{h:sel.h,g:sel.g,n:nt.value.trim(),v:1}},{Prefer:"return=minimal"}).then(function(r){sv.disabled=false;sv.textContent="حفظ ومتابعة ✓";
-      if(r.ok||r.status==409){m.itk=1;store.s("sbm",m);o.remove();toast("شكراً، تم حفظ بياناتك ✅");showHm();return}
+      if(r.ok||r.status==409){m.itk=1;store.s("sbm",m);store.r("newcode");o.remove();toast("شكراً، تم حفظ بياناتك ✅");showHm();return}
       stMsg(err,false,r.status==0?"لا يوجد اتصال بالإنترنت.":"تعذر الحفظ ("+r.status+"). حاول مرة أخرى.");
       if(r.status!=0&&!skip){skip=el("button","lk","الدخول الآن والمحاولة لاحقاً");skip.style.cssText="display:block;margin:12px auto 0";skip.onclick=function(){m.itk=1;o.remove()};w.appendChild(skip)}})};
   o.appendChild(w);document.body.appendChild(o)}
@@ -1691,20 +1697,26 @@ function photosUI(){var sl=$("tsl");sl.innerHTML="";PU.forEach(function(u){URL.r
       c.appendChild(im);c.appendChild(cap);if(!p.up&&curM()){var up=el("button","lk","رفع");up.style.fontSize=".8rem";up.onclick=function(){up.textContent="...";pUp(p).then(function(r){PMSG=r=="ok"?"☁️ تم رفع الصورة.":"تعذر الرفع الآن.";photosUI()})};c.appendChild(up)}c.appendChild(x);gr.appendChild(c)});
     box.appendChild(gr);box.appendChild(note)})}
 /* ===== تسجيل المتدرب بنفسه ===== */
-function sgForm(){$("fm").className="hid";$("sgd").className="fm hid";$("sgm").className="fm";$("stp").textContent="سجّل بياناتك وسيظهر لك رمز دخولك";$("sgs").textContent=""}
+function sgForm(){$("fm").className="hid";$("sgd").className="fm hid";$("sgm").className="fm";$("stp").textContent=giAuto()?"سجّل بياناتك وادخل التطبيق مباشرة":"سجّل بياناتك وسيظهر لك رمز دخولك";$("sgx").textContent=sgBtn();$("sgs").textContent=""}
+function giAuto(){return GI[4]&&GI[4].auto!==undefined?!!(+GI[4].auto):true}
+function sgBtn(){return giAuto()?"تسجيل ودخول":"إرسال طلب التسجيل"}
 function sgSend(){var ln=$("sgl").value.trim(),fn=$("sgn").value.trim(),ph=normPh($("sgp").value),bd=$("sgb").value,b=$("sgx"),m=$("sgs");
   if(ln.length<2||fn.length<2){m.style.color="#ff6b6b";m.textContent="أدخل اللقب والاسم.";return}
   if(!ph){m.style.color="#ff6b6b";m.textContent="أدخل رقماً صحيحاً من 10 أرقام يبدأ بـ 05 أو 06 أو 07";return}
   if(!bd||bd>td()||bd<"1920-01-01"){m.style.color="#ff6b6b";m.textContent="أدخل تاريخ ميلادك كاملاً: اليوم والشهر والسنة (إجباري).";return}
-  m.textContent="";b.disabled=true;b.textContent="جارٍ الإرسال...";
-  var end=function(t,ok){b.disabled=false;b.textContent="إرسال طلب التسجيل";m.style.color=ok?"#1e8e5a":"#ff6b6b";m.textContent=t};
-  var cd=code6(),call=function(){return api("POST","rpc/request_signup",{p_last:ln,p_first:fn,p_phone:ph,p_birth:bd||null,p_code:cd})};
+  var inst=giAuto();m.textContent="";b.disabled=true;b.textContent=inst?"جارٍ التسجيل...":"جارٍ الإرسال...";
+  var end=function(t,ok){b.disabled=false;b.textContent=sgBtn();m.style.color=ok?"#1e8e5a":"#ff6b6b";m.textContent=t};
+  var off=function(){GI[4]=Object.assign({},GI[4]||{},{auto:0});store.s("ggi",GI);b.disabled=false;sgSend()};
+  var cd=code6(),call=function(){return api("POST","rpc/"+(inst?"signup_instant":"request_signup"),{p_last:ln,p_first:fn,p_phone:ph,p_birth:bd||null,p_code:cd})};
   (sg("sbs")?Promise.resolve(sg("sbs")):anon()).then(function(s){
     if(!s){end("تعذر الاتصال بالخادم. أعد المحاولة.");return}
     return call().then(function(r){if(r.status==401){store.r("sbs");return anon().then(function(s2){return s2?call():r})}return r}).then(function(r){
-      if(!r.ok){end("تعذر الإرسال الآن. أعد المحاولة بعد قليل.");return}
+      if(!r.ok){if(inst&&r.status==404){off();return}end("تعذر الإرسال الآن. أعد المحاولة بعد قليل.");return}
       var t=r.data;
-      if(t=="ok"){end("",true);sgDone(ln,fn,ph,bd,cd)}
+      if(t=="ok"){
+        if(inst){store.s("newcode",cd);b.textContent="جارٍ فتح حسابك...";login(ph,cd,function(msg){b.disabled=false;b.textContent=sgBtn();if(msg){m.style.color="#ff6b6b";m.textContent=msg}else m.textContent=""})}
+        else{end("",true);sgDone(ln,fn,ph,bd,cd)}}
+      else if(t=="closed"&&inst)off();
       else if(t=="exists")end("هذا الرقم مسجّل مسبقاً. ادخل برقمك والرمز، أو تواصل مع القاعة.");
       else end(t=="busy"?"ضغط كبير الآن. حاول لاحقاً.":"تحقق من البيانات المدخلة.")})})}
 
