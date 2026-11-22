@@ -1112,7 +1112,7 @@ function openPush(){if($("pse"))return;
   o.appendChild(bar);o.appendChild(w);document.body.appendChild(o);document.addEventListener("keydown",psKey);load()}
 
 /* ===== رقم النسخة (يظهر في صفحة المدير) ===== */
-var APP_V=87;
+var APP_V=88;
 function verPaint(){var e=$("ver");if(!e)return;e.textContent="نسخة التطبيق: "+APP_V;
   if(window.caches&&caches.keys)caches.keys().then(function(ks){var v=ks.map(function(k){var m=/zg-v(\d+)/.exec(k);return m?+m[1]:0}).sort(function(a,b){return b-a})[0];
     if(v&&v!=APP_V){e.textContent+=" · نسخة الملفات المخزّنة: "+v+" ⚠️ أغلق التطبيق وافتحه مرتين لتكتمل";e.style.color="#f5a623"}else if(v){e.style.color=""}}).catch(function(){})}
@@ -1276,14 +1276,13 @@ function tpOpen(){var v=ovl("💬 رسائل واتساب جاهزة"),w=v.w,ks=
   w.appendChild(bx("حفظ ✓",function(){var c={};ks.forEach(function(k){var x=tas[k].value.trim();if(x&&x!=TD[k])c[k]=x});stMsg(st,true,"جارٍ الحفظ...");giPush(5,c,st)}));w.appendChild(st);
   w.appendChild(note("تُستعمل هذه القوالب في زر «💬 رسالة واتساب جاهزة» داخل ملف المتدرب وفي لوحة اليوم وقائمة المنقطعين."))}
 /* ----- إعدادات المستويات الشهرية ----- */
-function stOpen(){var v=ovl("⚙️ الإعدادات"),w=v.w,ck=el("input"),lb=el("label","","فتح مستويات البرنامج تدريجياً، مستوى جديد كل شهر"),st=el("div","vn"),r=cd2(),ca=el("input"),la=el("label","","التسجيل المباشر: يدخل المتدرب التطبيق فور تسجيله بدون موافقتك"),r2=cd2(),r3=cd2(),fz=el("input"),lf=el("label","","تجميد حساب المتدرب الجديد حتى تؤكده أنت (يظهر في لوحة اليوم وفي المتدربون)"),tr=el("input","tin");
+function stOpen(){var v=ovl("⚙️ الإعدادات"),w=v.w,ck=el("input"),lb=el("label","","فتح مستويات البرنامج تدريجياً، مستوى جديد كل شهر"),st=el("div","vn"),r=cd2(),ca=el("input"),la=el("label","","التسجيل المباشر: يدخل المتدرب التطبيق فور تسجيله بدون موافقتك"),r2=cd2(),r3=cd2(),fz=el("input"),lf=el("label","","تجميد حساب المتدرب الجديد حتى تؤكده أنت (يظهر في لوحة اليوم وفي المتدربون)");
   ck.type="checkbox";ck.id="lmck";ck.checked=giLmOn();lb.setAttribute("for","lmck");r.style.cssText+=";display:flex;gap:10px;align-items:center";lb.style.flex="1";r.appendChild(ck);r.appendChild(lb);w.appendChild(h2("المستويات"));w.appendChild(r);
   w.appendChild(note("عند التفعيل: يرى المتدرب في الشهر الأول المستوى الأول فقط، ثم يُفتح له المستوى الثاني بعد شهر من انضمامه، والثالث بعد شهرين، والرابع بعد 3 أشهر (الحد الأقصى 4 مستويات). من يملك كود مستوى يفتحه فوراً. المدير يرى كل المستويات دائماً."));
   ca.type="checkbox";ca.id="atck";ca.checked=giAuto();la.setAttribute("for","atck");r2.style.cssText+=";display:flex;gap:10px;align-items:center";la.style.flex="1";r2.appendChild(ca);r2.appendChild(la);w.appendChild(h2("التسجيل"));w.appendChild(r2);
   fz.type="checkbox";fz.id="fzck";fz.checked=giFreeze();lf.setAttribute("for","fzck");r3.style.cssText+=";display:flex;gap:10px;align-items:center";lf.style.flex="1";r3.appendChild(fz);r3.appendChild(lf);w.appendChild(r3);
-  tr.type="number";tr.min="0";tr.max="365";tr.inputMode="numeric";tr.value=(GI[4]&&GI[4].trial!==undefined)?GI[4].trial:7;tr.setAttribute("aria-label","أيام الفترة التجريبية");w.appendChild(fld("أيام الاشتراك المجاني بعد التسجيل المباشر",tr));
-  w.appendChild(note("عند التسجيل المباشر يُنشأ حساب المتدرب فوراً باشتراك تجريبي بهذه الأيام، ثم تضبط اشتراكه الحقيقي من ملفه. عند «التجميد» يدخل المتدرب ويملأ استمارته ثم يرى شاشة «حسابك قيد التأكيد» حتى تؤكده أنت. وإن أوقفت التسجيل المباشر يعود نظام الطلبات التي تقبلها من «المتدربون»."));
-  w.appendChild(bx("حفظ ونشر ✓",function(){var t=parseInt(tr.value);if(!(t>=0&&t<=365)){stMsg(st,false,"أيام الفترة من 0 إلى 365.");return}stMsg(st,true,"جارٍ النشر...");giPush(4,{lm:ck.checked?1:0,auto:ca.checked?1:0,freeze:fz.checked?1:0,trial:t},st).then(function(r2){if(r2&&r2.ok){var pg=$("prg");if(pg&&pg.className.indexOf("hid")<0)vch()}})}));w.appendChild(st)}
+  w.appendChild(note("عند التسجيل المباشر يُنشأ حساب المتدرب فوراً. مع «التجميد» يبقى حسابه بانتظار تأكيدك، وتحدد اشتراكه عند التأكيد (30 أو 90 يوماً) أو من تبويب «الاشتراك» في ملفه. وبدون «التجميد» يُفتح حسابه مباشرة باشتراك عادي 30 يوماً. وإن أوقفت التسجيل المباشر يعود نظام الطلبات التي تقبلها من «المتدربون»."));
+  w.appendChild(bx("حفظ ونشر ✓",function(){stMsg(st,true,"جارٍ النشر...");giPush(4,{lm:ck.checked?1:0,auto:ca.checked?1:0,freeze:fz.checked?1:0},st).then(function(r2){if(r2&&r2.ok){var pg=$("prg");if(pg&&pg.className.indexOf("hid")<0)vch()}})}));w.appendChild(st)}
 function hubOpen(){var v=ovl("🏢 إدارة القاعة"),g=el("div");g.style.cssText="display:grid;grid-template-columns:1fr 1fr;gap:10px";
   [["📊","لوحة اليوم",dashOpen],["💰","الدفعات والتقرير الشهري",payOpen],["💬","رسائل واتساب جاهزة",tpOpen],["😴","المنقطعون",inactOpen],["💳","الأسعار والعروض",prOpen],["📍","المواقع والروابط",lkOpen],["🚑","أرقام الاستعجالات",emOpen],["⚙️","الإعدادات",stOpen]].forEach(function(t){
     var b=el("button"),i=el("span","",t[0]),l=el("span","",t[1]);b.type="button";i.style.fontSize="1.7rem";b.appendChild(i);b.appendChild(l);
@@ -1444,9 +1443,9 @@ function confirmSheet(m,done){var o=el("div"),sh=el("div"),st=el("div","vn"),box
   o.appendChild(sh);o.onclick=function(ev){if(ev.target==o)o.remove()};
   var tt=el("div","","✅ تأكيد تسجيل "+nmOf(m));tt.style.cssText="font:800 1.1rem var(--d)";sh.appendChild(tt);sh.appendChild(note("الهاتف: "+m.phone+(m.created_at?" · سجّل في "+fd(m.created_at.slice(0,10)):"")));sh.appendChild(box);if(m.id)mdIntake(m,box);
   function go(p){stMsg(st,true,"جارٍ التأكيد...");aapi("PATCH","members?id=eq."+m.id,p).then(function(r){if(r.ok){o.remove();toast("تم تأكيد تسجيل "+(m.first_name||""));if(done)done(p)}else stMsg(st,false,r.status==400?"شغّل ملف supabase-instant-signup.sql لإضافة عمود التأكيد.":r.status==401?"انتهت جلسة المدير.":"تعذر التأكيد ("+r.status+").")})}
-  sh.appendChild(bx("✅ تأكيد (الاشتراك التجريبي كما هو)",function(){go({confirmed:true})},"background:#e11d1d;color:#fff"));
-  sh.appendChild(bx("✅ تأكيد + اشتراك 30 يوماً",function(){go({confirmed:true,sub_end:addD("",30)})}));
+  sh.appendChild(bx("✅ تأكيد + اشتراك 30 يوماً",function(){go({confirmed:true,sub_end:addD("",30)})},"background:#e11d1d;color:#fff"));
   sh.appendChild(bx("✅ تأكيد + اشتراك 90 يوماً",function(){go({confirmed:true,sub_end:addD("",90)})}));
+  sh.appendChild(bx("✅ تأكيد وأحدد الاشتراك من ملفه",function(){go({confirmed:true})}));
   var rj=bx("🗑 رفض وحذف الحساب",function(){if(rj.dataset.c){aapi("DELETE","members?id=eq."+m.id).then(function(r){if(r.ok){o.remove();toast("تم حذف الحساب");if(done)done({deleted:true})}else stMsg(st,false,"تعذر الحذف ("+r.status+").")})}else{rj.dataset.c="1";rj.textContent="اضغط مرة أخرى للتأكيد";setTimeout(function(){rj.dataset.c="";rj.textContent="🗑 رفض وحذف الحساب"},3000)}},"color:#ff5a5a;border-color:#e11d1d;margin-top:18px");sh.appendChild(rj);
   var c=el("button","lk","إغلاق");c.style.cssText="display:block;margin:12px auto 0";c.onclick=function(){o.remove()};sh.appendChild(c);sh.appendChild(st);document.body.appendChild(o)}
 
