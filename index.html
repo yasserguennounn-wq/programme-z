@@ -678,84 +678,99 @@ function cardioCell(q,i,L){var d=cdD(q);
   var sp=el("div","",d.ex.length?d.ex.length+" تمرين · "+cdMin(cdTot(d)):"⚠️ بلا تمارين (مخفية للمتدربين)");sp.style.cssText="font-size:.8rem;margin-top:4px;font-weight:600;white-space:normal;opacity:.85";w.appendChild(sp);
   b.appendChild(w);b.style.gridColumn="1/-1";b.onclick=function(){cdOpen(q)};cellColor(b,q);return b}
 
-/* ---------- شاشة المتدرب ---------- */
+/* ---------- شاشة المتدرب (تصميم نيون) ---------- */
+var CDY="#facc15",CDC="#22d3ee";
+var CDCARD="border:2px solid #38a3ff;border-radius:22px;background:linear-gradient(135deg,#08213f,#02060d);box-shadow:0 0 16px rgba(56,163,255,.35)";
+function cdRing(col,ic){var w=el("div");w.style.cssText="position:relative;width:104px;height:104px;flex:none";
+  w.innerHTML='<svg viewBox="0 0 100 100" style="width:100%;height:100%;transform:rotate(-90deg);filter:drop-shadow(0 0 6px '+col+')"><circle class="rb" cx="50" cy="50" r="42" fill="none" stroke="'+col+'" stroke-opacity=".22" stroke-width="9"/><circle class="rf" cx="50" cy="50" r="42" fill="none" stroke="'+col+'" stroke-width="9" stroke-linecap="round" stroke-dasharray="263.9" stroke-dashoffset="0"/></svg><div style="position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-size:2.3rem">'+ic+'</div>';return w}
+function cdRingSet(w,frac,col){var f=w.querySelector(".rf"),b=w.querySelector(".rb");if(f){f.style.strokeDashoffset=263.9*(1-Math.max(0,Math.min(1,frac)));if(col){f.setAttribute("stroke",col);b.setAttribute("stroke",col)}}}
+function cdChips(col,fn){var w=el("div"),r=el("div"),cu=el("div"),ci=el("input","tin"),go=el("button","","ابدأ");w.style.marginTop="12px";r.style.cssText="display:grid;grid-template-columns:repeat(5,1fr);gap:7px";
+  function chip(ic,t,f){var b=el("button");b.type="button";b.innerHTML='<div style="font-size:1.15rem;line-height:1.3">'+ic+'</div><div>'+t+'</div>';b.style.cssText="padding:8px 2px;border-radius:16px;border:2px solid "+col+";background:rgba(0,0,0,.35);color:#fff;font:800 .8rem/1.3 var(--b);box-shadow:0 0 10px "+col+"55;cursor:pointer";b.onclick=f;r.appendChild(b)}
+  [30,45,60,90].forEach(function(n){chip("⏱",n+" ثانية",function(){fn(n)})});
+  cu.style.cssText="display:none;gap:8px;margin-top:8px";ci.type="number";ci.inputMode="numeric";ci.min=1;ci.max=3600;ci.placeholder="الثواني";ci.style.cssText+=";flex:1;text-align:center";
+  go.type="button";go.style.cssText="padding:0 22px;border-radius:14px;border:2px solid "+col+";background:"+col+";color:#000;font:800 1rem var(--b)";go.onclick=function(){var n=parseInt(ci.value);if(n>0){fn(Math.min(3600,n));cu.style.display="none"}};
+  cu.appendChild(ci);cu.appendChild(go);chip("⌨","وقت مخصص",function(){cu.style.display=cu.style.display=="flex"?"none":"flex";ci.focus()});
+  w.appendChild(r);w.appendChild(cu);return w}
 function cdOpen(q){if($("cdo"))return;var d=cdD(q),o=el("div");o.id="cdo";
-  o.style.cssText="position:fixed;inset:0;z-index:99990;background:var(--bg);color:var(--ink);overflow:auto;padding:0 14px 48px";
-  var S={seq:cdSeq(d),i:-1,mode:0,run:false,end:0,rem:0,lb:-1,snd:true,ac:null,wl:null,done:false,tot:0},R={run:false,end:0,tot:0,lb:-1,t:0};
+  o.style.cssText="position:fixed;inset:0;z-index:99990;color:#fff;overflow:auto;padding:0 14px 48px;background:radial-gradient(circle at 100% 0,#0d3a73 0,transparent 42%),radial-gradient(circle at 0 100%,#0a2d5c 0,transparent 40%),#02060d;--ink:#fff;--sf:#0a1626;--ln:#1e4d8a;--mut:#8fb4de;--bg:#02060d";
+  var S={seq:cdSeq(d),i:-1,mode:0,run:false,end:0,rem:0,lb:-1,snd:true,ac:null,wl:null,done:false,tot:0,fd:0},R={run:false,end:0,tot:0,lb:-1};
   S.seq.forEach(function(x){S.tot+=x.dur});
   function bp(f,n,len){if(!S.snd)return;try{var A=window.AudioContext||window.webkitAudioContext;S.ac=S.ac||new A();S.ac.resume&&S.ac.resume();for(var k=0;k<n;k++){var os=S.ac.createOscillator(),g=S.ac.createGain();os.connect(g);g.connect(S.ac.destination);os.frequency.value=f;g.gain.value=.2;var t0=S.ac.currentTime+k*(len+.1);os.start(t0);os.stop(t0+len)}}catch(e){}}
   function vb(p){try{if(S.snd&&navigator.vibrate)navigator.vibrate(p)}catch(e){}}
   function wl(on){try{if(on&&navigator.wakeLock){navigator.wakeLock.request("screen").then(function(l){S.wl=l}).catch(function(){})}else if(!on&&S.wl){S.wl.release();S.wl=null}}catch(e){}}
-  var bar=el("div"),ttl=el("div","",q.t||"كارديو"),cl=cdBtn("✕ إغلاق","",close),sn=cdBtn("🔊","min-width:52px",function(){S.snd=!S.snd;sn.textContent=S.snd?"🔊":"🔇"});
-  bar.style.cssText="position:sticky;top:0;z-index:3;background:var(--bg);display:flex;align-items:center;gap:10px;padding:calc(env(safe-area-inset-top,0px) + 10px) 0 10px";ttl.style.cssText="flex:1;text-align:center;font:800 1.15rem var(--d)";
-  bar.appendChild(cl);bar.appendChild(ttl);bar.appendChild(sn);o.appendChild(bar);
-  /* المؤقت الأصفر */
-  var yc=el("div"),lab=el("div"),tm=el("div"),pg=el("div"),pgi=el("div"),sub=el("div"),nx=el("div"),ctl=el("div"),fr=el("div");
-  yc.style.cssText="border-radius:22px;padding:18px 14px;text-align:center;border:3px solid #facc15;background:#facc15;color:#111;transition:background .2s";
-  lab.style.cssText="font:800 1.25rem/1.4 var(--b)";tm.style.cssText="font:900 5.2rem/1.1 var(--b);letter-spacing:2px;direction:ltr;margin:6px 0";
-  pg.style.cssText="height:10px;border-radius:6px;background:rgba(0,0,0,.18);overflow:hidden";pgi.style.cssText="height:100%;width:0;background:#111;transition:width .25s linear";pg.appendChild(pgi);
-  sub.style.cssText="font:700 1rem var(--b);margin-top:10px";nx.style.cssText="font:600 .9rem var(--b);margin-top:4px;opacity:.85";
-  ctl.style.cssText="display:flex;gap:8px;margin-top:14px;justify-content:center;flex-wrap:wrap";fr.style.cssText="display:flex;gap:6px;margin-top:12px;justify-content:center;flex-wrap:wrap;align-items:center";
-  var pb=cdBtn("▶ ابدأ الجلسة","flex:2;background:#111;color:#facc15;border-color:#111;font-size:1.15rem",function(){if(S.mode==0||S.done)startSeq();else toggle()});
-  var bk=cdBtn("⏮","min-width:52px;background:#fff;color:#111",function(){if(S.mode==1)go(Math.max(0,S.i-1))}),sk=cdBtn("⏭","min-width:52px;background:#fff;color:#111",function(){if(S.mode==1)go(S.i+1);else if(S.mode==2)resetY()}),rs=cdBtn("↺","min-width:52px;background:#fff;color:#111",resetY);
-  [bk,pb,sk,rs].forEach(function(b){ctl.appendChild(b)});
-  var fl=el("span","","مؤقت حر:");fl.style.cssText="font:700 .85rem var(--b)";fr.appendChild(fl);[20,30,45,60,90].forEach(function(n){fr.appendChild(cdBtn(n+"ث","min-height:40px;padding:0 12px;background:#fff;color:#111",function(){freeT(n)}))});
-  [lab,tm,pg,sub,nx,ctl,fr].forEach(function(n){yc.appendChild(n)});o.appendChild(yc);
-  /* مؤقت الراحة */
-  var rc=el("div"),rl=el("div"),rt=el("div"),rg=el("div"),rgi=el("div"),rr=el("div");
-  rc.style.cssText="margin-top:14px;border-radius:20px;padding:14px;text-align:center;border:2px solid #14b8a6;background:rgba(20,184,166,.12)";
-  rl.style.cssText="font:800 1.05rem var(--b);color:#14b8a6";rt.style.cssText="font:900 3rem/1.2 var(--b);direction:ltr;color:var(--ink)";
-  rg.style.cssText="height:8px;border-radius:6px;background:rgba(20,184,166,.25);overflow:hidden;margin:4px 0 10px";rgi.style.cssText="height:100%;width:0;background:#14b8a6;transition:width .25s linear";rg.appendChild(rgi);
-  rr.style.cssText="display:flex;gap:6px;justify-content:center;flex-wrap:wrap";
-  [15,30,45,60,90,120].forEach(function(n){rr.appendChild(cdBtn(n+"ث","min-height:42px;padding:0 12px",function(){rStart(n)}))});
-  rr.appendChild(cdBtn("+15","min-height:42px;padding:0 12px",function(){if(R.run){R.end+=15000;R.tot+=15;rPaint()}else rStart(15)}));
-  rr.appendChild(cdBtn("↺","min-height:42px;padding:0 12px",function(){R.run=false;rPaint()}));
-  rl.textContent="⏱ مؤقت الراحة";[rl,rt,rg,rr].forEach(function(n){rc.appendChild(n)});o.appendChild(rc);
-  function hd(t){var h=el("div","",t);h.style.cssText="font:800 1.1rem var(--d);margin:22px 0 10px";o.appendChild(h)}
-  /* ملخص */
-  var sm=el("div","",d.ex.length+" تمرين · المدة التقديرية "+cdMin(cdTot(d))+(d.wu?" · إحماء "+cdMin(d.wu):"")+(d.cl?" · تهدئة "+cdMin(d.cl):""));sm.style.cssText="margin-top:12px;text-align:center;color:var(--mut);font:700 .9rem var(--b)";o.appendChild(sm);
-  /* التمارين */
-  if(d.ex.length){hd("💪 التمارين");d.ex.forEach(function(e,i){var c=el("div"),t=el("div"),m=el("div"),mm=cdThumb(cdMed(q,"e"+e.id));
-    c.style.cssText="border:1.5px solid var(--ln);background:var(--sf);border-radius:16px;padding:12px;margin-bottom:10px";
-    t.textContent=(i+1)+". "+(e.n||"تمرين");t.style.cssText="font:800 1.1rem var(--b)";
-    m.textContent="⏱ "+(e.s||0)+" ث × "+(e.r||1)+" جولة"+(e.rs?" · راحة "+e.rs+" ث":"");m.style.cssText="color:var(--mut);font:700 .9rem var(--b);margin-top:4px";
-    c.appendChild(t);c.appendChild(m);if(e.tp){var tp=el("div","","💡 "+e.tp);tp.style.cssText="margin-top:6px;font:600 .9rem/1.6 var(--b)";c.appendChild(tp)}
-    if(mm)c.appendChild(mm);
-    c.appendChild(cdBtn("▶ ابدأ من هذا التمرين","width:100%;margin-top:10px;min-height:42px",function(){var k=-1;S.seq.forEach(function(x,j){if(k<0&&x.t=="w"&&x.i==i)k=j});if(k>=0){S.mode=1;S.done=false;wl(true);go(k);o.scrollTop=0}}));
-    o.appendChild(c)})}
+  /* الشعار */
+  var bar=el("div"),cl=cdBtn("✕","min-width:48px;padding:0;background:rgba(0,0,0,.5);border-color:#38a3ff",close),sn=cdBtn("🔊","min-width:48px;padding:0;background:rgba(0,0,0,.5);border-color:#38a3ff",function(){S.snd=!S.snd;sn.textContent=S.snd?"🔊":"🔇"}),lg0=el("div"),lim=el("img"),ltx=el("div");
+  bar.style.cssText="display:flex;align-items:center;gap:10px;padding:calc(env(safe-area-inset-top,0px) + 12px) 0 10px";lg0.style.cssText="flex:1;display:flex;align-items:center;justify-content:center;gap:10px;direction:ltr";
+  lim.src="icon-192.png";lim.alt="";lim.style.cssText="width:44px;height:44px;border-radius:12px;box-shadow:0 0 12px #38a3ff88";
+  ltx.innerHTML='<div style="font:900 1.45rem/1.1 var(--b);font-style:italic;letter-spacing:1px">ZEDAM <span style="color:#38a3ff">GYM</span></div><div style="font:700 .6rem var(--b);letter-spacing:3px;color:#38a3ff;text-align:center">TRAIN SMART</div>';
+  lg0.appendChild(lim);lg0.appendChild(ltx);bar.appendChild(cl);bar.appendChild(lg0);bar.appendChild(sn);o.appendChild(bar);
+  /* بطاقة وقت التمرين */
+  var yc=el("div"),lab=el("div"),row1=el("div"),yr=cdRing(CDY,"🏃"),tb=el("div"),tm=el("div"),sub=el("div"),nx=el("div"),pb=el("button"),sc=el("div");
+  yc.style.cssText=CDCARD+";padding:14px 14px 16px;text-align:center";lab.style.cssText="font:900 1.7rem/1.4 var(--b)";
+  row1.style.cssText="display:flex;align-items:center;gap:12px;margin-top:6px";
+  tb.style.cssText="flex:1;border:2px solid "+CDY+";border-radius:20px;background:rgba(250,204,21,.07);box-shadow:0 0 14px rgba(250,204,21,.35),inset 0 0 12px rgba(250,204,21,.12);padding:6px 4px";
+  tm.style.cssText="font:900 4.3rem/1.15 var(--b);direction:ltr;color:"+CDY+";text-shadow:0 0 14px rgba(250,204,21,.6)";tb.appendChild(tm);row1.appendChild(yr);row1.appendChild(tb);
+  sub.style.cssText="font:800 1rem var(--b);margin-top:10px;color:#cfe6ff";nx.style.cssText="font:600 .9rem var(--b);margin-top:2px;color:#8fb4de";
+  pb.type="button";pb.style.cssText="width:100%;margin-top:12px;min-height:54px;border-radius:999px;border:2px solid "+CDY+";background:rgba(0,0,0,.45);color:#fff;font:800 1.2rem var(--b);box-shadow:0 0 14px rgba(250,204,21,.4);cursor:pointer";
+  pb.onclick=function(){if(S.mode==0||S.done)startSeq();else toggle()};
+  sc.style.cssText="display:flex;gap:8px;margin-top:10px";
+  var bk=cdBtn("⏮ السابق","flex:1;min-height:42px;font-size:.85rem;background:rgba(0,0,0,.4);border-color:#38a3ff",function(){if(S.mode==1)go(Math.max(0,S.i-1))}),sk=cdBtn("التالي ⏭","flex:1;min-height:42px;font-size:.85rem;background:rgba(0,0,0,.4);border-color:#38a3ff",function(){if(S.mode==1)go(S.i+1);else if(S.mode==2)resetY()}),rs=cdBtn("↺ إعادة","flex:1;min-height:42px;font-size:.85rem;background:rgba(0,0,0,.4);border-color:#38a3ff",resetY);
+  [bk,sk,rs].forEach(function(b){sc.appendChild(b)});
+  [lab,row1,sub,nx,pb,sc].forEach(function(n){yc.appendChild(n)});o.appendChild(yc);
+  var yf=cdChips(CDY,function(n){freeT(n)});yf.style.marginTop="12px";o.appendChild(yf);
+  /* بطاقة وقت الراحة */
+  var rc=el("div"),rl=el("div"),rrow=el("div"),rr=cdRing(CDC,"⏸"),rbx=el("div"),rt=el("div"),ra=el("div");
+  rc.style.cssText="margin-top:14px;padding:14px;text-align:center;border:2px solid #1ea7ff;border-radius:22px;background:linear-gradient(135deg,#06294d,#02060d);box-shadow:0 0 16px rgba(30,167,255,.4)";
+  rl.style.cssText="font:900 1.6rem var(--b)";rrow.style.cssText="display:flex;align-items:center;gap:12px;margin-top:4px";rbx.style.cssText="flex:1";
+  rt.style.cssText="font:900 4rem/1.15 var(--b);direction:ltr;color:"+CDC+";text-shadow:0 0 14px rgba(34,211,238,.6)";rbx.appendChild(rt);rrow.appendChild(rr);rrow.appendChild(rbx);
+  ra.style.cssText="display:flex;gap:8px;margin-top:8px";rl.textContent="وقت الراحة";
+  ra.appendChild(cdBtn("+15 ثانية","flex:1;min-height:40px;font-size:.85rem;background:rgba(0,0,0,.4);border-color:"+CDC,function(){if(R.run){R.end+=15000;R.tot+=15;rPaint()}else rStart(15)}));
+  ra.appendChild(cdBtn("↺ إعادة","flex:1;min-height:40px;font-size:.85rem;background:rgba(0,0,0,.4);border-color:"+CDC,function(){R.run=false;R.tot=0;rl.textContent="وقت الراحة";rPaint()}));
+  rc.appendChild(rl);rc.appendChild(rrow);rc.appendChild(ra);o.appendChild(rc);
+  var rf=cdChips(CDC,function(n){rStart(n)});o.appendChild(rf);
+  function hd(t,ic){var h=el("div");h.style.cssText="display:flex;align-items:center;gap:8px;font:900 1.15rem var(--b);margin:24px 0 10px;color:#fff";h.innerHTML='<span style="font-size:1.3rem">'+(ic||"")+'</span>';h.appendChild(document.createTextNode(t));o.appendChild(h)}
+  var sm=el("div","",d.ex.length+" تمرين · المدة التقديرية "+cdMin(cdTot(d))+(d.wu?" · إحماء "+cdMin(d.wu):"")+(d.cl?" · تهدئة "+cdMin(d.cl):""));sm.style.cssText="margin-top:14px;text-align:center;color:#8fb4de;font:700 .9rem var(--b)";o.appendChild(sm);
+  /* التمارين: صور وGIF */
+  if(d.ex.length){hd("صور البرنامج / GIF","💪");d.ex.forEach(function(e,i){var c=el("div"),tx=el("div"),t=el("div"),m=el("div"),mm=cdThumb(cdMed(q,"e"+e.id));
+    c.style.cssText=CDCARD+";padding:10px;margin-bottom:12px;display:flex;gap:10px;align-items:center";tx.style.cssText="flex:1;min-width:0";
+    t.textContent=(i+1)+". "+(e.n||"تمرين");t.style.cssText="font:800 1.1rem/1.4 var(--b)";
+    m.textContent="⏱ "+(e.s||0)+" ث × "+(e.r||1)+" جولة"+(e.rs?" · راحة "+e.rs+" ث":"");m.style.cssText="color:#8fb4de;font:700 .88rem var(--b);margin-top:4px";tx.appendChild(t);tx.appendChild(m);
+    if(e.tp){var tp=el("div","","💡 "+e.tp);tp.style.cssText="margin-top:6px;font:600 .88rem/1.6 var(--b)";tx.appendChild(tp)}
+    tx.appendChild(cdBtn("▶ ابدأ من هنا","margin-top:8px;min-height:40px;font-size:.85rem;background:rgba(0,0,0,.4);border-color:"+CDY+";color:"+CDY,function(){var k=-1;S.seq.forEach(function(x,j){if(k<0&&x.t=="w"&&x.i==i)k=j});if(k>=0){S.mode=1;S.done=false;wl(true);go(k);o.scrollTop=0}}));
+    c.appendChild(tx);if(mm){mm.style.cssText+=";margin:0;width:46%;flex:none;max-height:170px;border-radius:14px;border:1.5px solid #1ea7ff";c.appendChild(mm)}o.appendChild(c)})}
   /* الجداول */
   var tbs=d.tb.filter(function(x){return cdMed(q,"t"+x.id)});
-  if(tbs.length){hd("📋 الجداول");tbs.forEach(function(x){var c=el("div"),m=cdMed(q,"t"+x.id),im=cdThumb(m);c.style.cssText="margin-bottom:12px";if(x.c){var cp=el("div","",x.c);cp.style.cssText="font:800 1rem var(--b);margin-bottom:4px";c.appendChild(cp)}if(im){im.style.maxHeight="none";c.appendChild(im)}o.appendChild(c)})}
-  if(d.nt&&d.nt.trim()){var nb=el("div","qnote",d.nt);nb.style.cssText="white-space:pre-wrap;margin-top:16px";o.appendChild(nb)}
+  if(tbs.length){hd("الجداول","📋");tbs.forEach(function(x){var c=el("div"),m=cdMed(q,"t"+x.id),im=cdThumb(m);c.style.cssText=CDCARD+";padding:10px;margin-bottom:12px";if(x.c){var cp=el("div","",x.c);cp.style.cssText="font:800 1rem var(--b);margin-bottom:6px";c.appendChild(cp)}if(im){im.style.maxHeight="none";im.style.marginTop="0";c.appendChild(im)}o.appendChild(c)})}
+  if(d.nt&&d.nt.trim()){var nb=el("div","",d.nt);nb.style.cssText=CDCARD+";white-space:pre-wrap;margin-top:16px;padding:14px;font:600 1rem/1.7 var(--b)";o.appendChild(nb)}
   /* نبضات القلب */
-  hd("❤️ مناطق نبض القلب");var hb=el("div"),ag=el("input","tin"),hr=el("div");ag.type="number";ag.inputMode="numeric";ag.placeholder="اكتب عمرك";ag.min=10;ag.max=90;ag.value=store.g("cdage","")||"";ag.style.marginBottom="8px";
-  function hrP(){var a=parseInt(ag.value);hr.innerHTML="";if(!(a>=10&&a<=90))return;store.s("cdage",a);var mx=220-a;[["50-60","إحماء وتعافٍ"],["60-70","حرق الدهون"],["70-80","لياقة هوائية"],["80-90","شدة عالية"],["90-100","أقصى جهد"]].forEach(function(z){var p=z[0].split("-"),r=el("div","",Math.round(mx*p[0]/100)+" – "+Math.round(mx*p[1]/100)+" نبضة/د · "+z[1]);r.style.cssText="padding:9px 12px;border:1.5px solid var(--ln);border-radius:12px;margin-bottom:6px;background:var(--sf);font:700 .92rem var(--b)";hr.appendChild(r)})}
+  hd("مناطق نبض القلب","❤️");var hb=el("div"),ag=el("input","tin"),hr=el("div");ag.type="number";ag.inputMode="numeric";ag.placeholder="اكتب عمرك";ag.min=10;ag.max=90;ag.value=store.g("cdage","")||"";ag.style.marginBottom="8px";
+  function hrP(){var a=parseInt(ag.value);hr.innerHTML="";if(!(a>=10&&a<=90))return;store.s("cdage",a);var mx=220-a;[["50-60","إحماء وتعافٍ"],["60-70","حرق الدهون"],["70-80","لياقة هوائية"],["80-90","شدة عالية"],["90-100","أقصى جهد"]].forEach(function(z){var p=z[0].split("-"),r=el("div","",Math.round(mx*p[0]/100)+" – "+Math.round(mx*p[1]/100)+" نبضة/د · "+z[1]);r.style.cssText="padding:9px 12px;border:1.5px solid #1e4d8a;border-radius:12px;margin-bottom:6px;background:rgba(0,0,0,.35);font:700 .92rem var(--b)";hr.appendChild(r)})}
   ag.oninput=hrP;hb.appendChild(ag);hb.appendChild(hr);o.appendChild(hb);hrP();
-  /* سجل الجلسات */
-  var lg=el("div");lg.style.cssText="margin-top:20px;text-align:center;color:var(--mut);font:700 .9rem var(--b)";
+  var lg=el("div");lg.style.cssText="margin-top:20px;text-align:center;color:#8fb4de;font:700 .9rem var(--b)";
   function lgP(){var a=store.g("cdlog:"+q.k,[]);lg.textContent=a.length?"✅ جلسات منجزة: "+a.length+" · آخر جلسة "+a[a.length-1]:"لم تُسجَّل جلسات بعد"}lgP();o.appendChild(lg);
-  o.appendChild(cdBtn("✅ سجّل أنني أنهيت الجلسة","width:100%;margin-top:10px",function(){logS();toast("تم تسجيل الجلسة")}));
+  o.appendChild(cdBtn("✅ سجّل أنني أنهيت الجلسة","width:100%;margin-top:10px;background:rgba(0,0,0,.4);border-color:#38a3ff",function(){logS();toast("تم تسجيل الجلسة")}));
   function logS(){var a=store.g("cdlog:"+q.k,[]);a.push(new Date().toISOString().slice(0,10));store.s("cdlog:"+q.k,a.slice(-200));lgP()}
   /* المنطق */
   function go(n){if(n>=S.seq.length){finish();return}var s=S.seq[n];S.i=n;S.mode=1;S.done=false;S.rem=s.dur;S.end=Date.now()+s.dur*1000;S.run=true;S.lb=-1;if(s.t=="w"){bp(880,2,.16);vb([200,80,200])}else{bp(520,1,.2);vb(150)}paint()}
   function startSeq(){if(!S.seq.length)return toast("لا توجد تمارين");wl(true);go(0)}
   function toggle(){if(S.run){S.rem=Math.max(0,(S.end-Date.now())/1000);S.run=false}else{S.end=Date.now()+S.rem*1000;S.run=true}paint()}
   function freeT(n){S.mode=2;S.done=false;S.i=-1;S.rem=n;S.end=Date.now()+n*1000;S.run=true;S.lb=-1;S.fd=n;wl(true);bp(880,1,.15);paint()}
-  function resetY(){S.mode=0;S.i=-1;S.run=false;S.done=false;wl(false);paint()}
+  function resetY(){S.mode=0;S.i=-1;S.run=false;S.done=false;S.fd=0;wl(false);paint()}
   function finish(){S.mode=0;S.i=-1;S.run=false;S.done=true;bp(880,4,.2);vb([300,100,300,100,500]);wl(false);logS();paint()}
-  function rStart(n){R.tot=n;R.end=Date.now()+n*1000;R.run=true;R.lb=-1;try{var A=window.AudioContext||window.webkitAudioContext;S.ac=S.ac||new A();S.ac.resume&&S.ac.resume()}catch(e){}rPaint()}
-  function rPaint(){var rem=R.run?Math.max(0,(R.end-Date.now())/1000):0;rt.textContent=R.run?cdFmt(rem):"0:00";rgi.style.width=R.run&&R.tot?(100-rem*100/R.tot)+"%":"0";if(!R.run&&R.tot&&rl.dataset.e)rl.textContent="✅ انتهت الراحة";else rl.textContent="⏱ مؤقت الراحة"}
-  function paint(){var s=S.mode==1?S.seq[S.i]:null,rem=S.mode?(S.run?Math.max(0,(S.end-Date.now())/1000):S.rem):0,dur=s?s.dur:S.fd||0,rst=s&&(s.t=="r"||s.t=="b");
-    yc.style.background=rst?"#0f172a":"#facc15";yc.style.color=rst?"#e2e8f0":"#111";yc.style.borderColor=rst?"#14b8a6":"#facc15";pgi.style.background=rst?"#14b8a6":"#111";pg.style.background=rst?"rgba(20,184,166,.25)":"rgba(0,0,0,.18)";
-    if(S.done){lab.textContent="🎉 أحسنت! أنهيت الجلسة";tm.textContent="✓";sub.textContent="";nx.textContent="";pgi.style.width="100%";pb.textContent="▶ ابدأ من جديد";return}
-    if(!S.mode){lab.textContent="جاهز؟";tm.textContent=cdFmt(S.seq.length?S.tot:0);sub.textContent=S.seq.length?"المدة الكاملة للجلسة":"";nx.textContent="";pgi.style.width="0";pb.textContent="▶ ابدأ الجلسة";return}
-    if(S.mode==2){lab.textContent="⏱ مؤقت حر";sub.textContent="";nx.textContent=""}
-    else{lab.textContent=s.t=="wu"?"🔥 إحماء":s.t=="cl"?"🧊 تهدئة":s.t=="w"?"🔥 "+(s.e.n||"تمرين"):s.t=="r"?"😮‍💨 استرح":"😮‍💨 راحة قبل التمرين التالي";
+  function rStart(n){R.tot=n;R.end=Date.now()+n*1000;R.run=true;R.lb=-1;rl.textContent="وقت الراحة";try{var A=window.AudioContext||window.webkitAudioContext;S.ac=S.ac||new A();S.ac.resume&&S.ac.resume()}catch(e){}rPaint()}
+  function rPaint(){var rem=R.run?Math.max(0,(R.end-Date.now())/1000):0;rt.textContent=R.run?cdFmt(rem):"0:00";cdRingSet(rr,R.run&&R.tot?rem/R.tot:0)}
+  function col(c){tb.style.borderColor=c;tm.style.color=c;tb.style.boxShadow="0 0 14px "+c+"66";pb.style.borderColor=c;cdRingSet(yr,S.fr==null?1:S.fr,c)}
+  function paint(){var s=S.mode==1?S.seq[S.i]:null,rem=S.mode?(S.run?Math.max(0,(S.end-Date.now())/1000):S.rem):0,dur=s?s.dur:S.fd||0,rst=s&&(s.t=="r"||s.t=="b"),c=rst?CDC:CDY;
+    S.fr=dur?rem/dur:1;
+    if(S.done){lab.textContent="🎉 أحسنت! أنهيت الجلسة";tm.textContent="✓";sub.textContent="";nx.textContent="";pb.textContent="▶ انطلق من جديد";S.fr=1;col(CDY);return}
+    if(!S.mode){lab.textContent="وقت تمرين";tm.textContent=cdFmt(S.seq.length?S.tot:0);sub.textContent=S.seq.length?"المدة الكاملة للجلسة":"";nx.textContent="";pb.textContent="▶ انطلق";S.fr=1;col(CDY);return}
+    if(S.mode==2){lab.textContent="مؤقت حر";sub.textContent="";nx.textContent=""}
+    else{lab.textContent=s.t=="wu"?"🔥 إحماء":s.t=="cl"?"🧊 تهدئة":s.t=="w"?(s.e.n||"تمرين"):s.t=="r"?"😮‍💨 استرح":"😮‍💨 راحة قبل التمرين التالي";
       sub.textContent=s.e&&s.t!="b"?"تمرين "+(s.i+1)+"/"+d.ex.length+" · جولة "+s.j+"/"+s.r:"";nx.textContent=s.t=="b"&&s.nx?"التالي: "+(s.nx.n||"تمرين"):s.t=="r"?"التالي: جولة "+(s.j+1)+"/"+s.r:s.t=="w"&&S.seq[S.i+1]&&S.seq[S.i+1].t=="r"?"بعدها راحة "+S.seq[S.i+1].dur+" ث":""}
-    tm.textContent=cdFmt(rem);pgi.style.width=dur?(100-rem*100/dur)+"%":"0";pb.textContent=S.run?"⏸ إيقاف مؤقت":"▶ متابعة"}
-  function tick(){if(S.run){var rem=(S.end-Date.now())/1000,sc=Math.ceil(rem);if(rem>0&&rem<=3&&sc!=S.lb){S.lb=sc;bp(700,1,.09)}
+    tm.textContent=cdFmt(rem);pb.textContent=S.run?"⏸ توقف":"▶ انطلق";col(c)}
+  function tick(){if(S.run){var rem=(S.end-Date.now())/1000,sc2=Math.ceil(rem);if(rem>0&&rem<=3&&sc2!=S.lb){S.lb=sc2;bp(700,1,.09)}
       if(rem<=0){if(S.mode==2){S.run=false;S.mode=0;S.fd=0;bp(880,3,.18);vb([300,100,300]);wl(false)}else go(S.i+1)}}
-    paint();if(R.run){var rr2=(R.end-Date.now())/1000,sr=Math.ceil(rr2);if(rr2>0&&rr2<=3&&sr!=R.lb){R.lb=sr;bp(700,1,.09)}if(rr2<=0){R.run=false;rl.dataset.e="1";bp(880,3,.18);vb([300,100,300])}}else if(R.tot&&!R.run){}
+    paint();if(R.run){var r2=(R.end-Date.now())/1000,sr=Math.ceil(r2);if(r2>0&&r2<=3&&sr!=R.lb){R.lb=sr;bp(700,1,.09)}if(r2<=0){R.run=false;rl.textContent="✅ انتهت الراحة";bp(880,3,.18);vb([300,100,300])}}
     rPaint()}
   var ti=setInterval(tick,200);paint();rPaint();
   function close(){clearInterval(ti);wl(false);o.remove()}
