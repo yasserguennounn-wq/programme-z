@@ -650,118 +650,6 @@ function cellTyped(q,i,L){if(q.ty=="cardio")return cardioCell(q,i,L);var ky="cel
   if(!has){var sp=el("div","","⚠️ بلا صورة (مخفية للمتدربين)");sp.style.cssText="font-size:.75rem;margin-top:4px;color:#f5a623;white-space:normal";w.appendChild(sp)}
   b.appendChild(w);b.onclick=function(){if(has)openFS(DS()+"public/designs/"+ky+"?v="+encodeURIComponent(dm[ky].v||""),/^video\//.test(dm[ky].t),q.hs)};cellColor(b,q);szApply(b,q,false);return b}
 
-/* ===== خانة الكارديو: مؤقت تمرين + راحة تلقائية + صورة البرنامج ===== */
-var CDY="#facc15",CDC="#22d3ee";
-var CDBTN="min-height:48px;padding:0 16px;border-radius:14px;border:1.5px solid var(--ln);background:var(--sf);color:var(--ink);font:700 1rem var(--b);cursor:pointer";
-var CDCARD="border:2px solid #38a3ff;border-radius:22px;background:linear-gradient(135deg,#08213f,#02060d);box-shadow:0 0 16px rgba(56,163,255,.35)";
-function cdD(q){var d=q.cd;if(!d||typeof d!="object")d=q.cd={};if(typeof d.br!="number")d.br=30;return d}
-function cdKey(q,s){return "cell-"+q.k+"-"+s}
-function cdMed(q,s){var m=(DM0||{})[cdKey(q,s)];return m?{u:DS()+"public/designs/"+cdKey(q,s)+"?v="+encodeURIComponent(m.v||""),t:m.t||""}:null}
-function cdFmt(t){t=Math.max(0,Math.ceil(t));var m=Math.floor(t/60),s=t%60;return m+":"+(s<10?"0":"")+s}
-function cdToday(){var t=new Date(),m=t.getMonth()+1,d=t.getDate();return t.getFullYear()+"-"+(m<10?"0":"")+m+"-"+(d<10?"0":"")+d}
-function cdBtn(t,css,fn){var b=el("button","",t);b.type="button";b.style.cssText=CDBTN+";"+(css||"");b.onclick=fn;return b}
-function cdThumb(m){if(!m)return null;var v=/^video\//.test(m.t),x=mkM(m.t);x.src=m.u;x.style.maxHeight="none";x.style.marginTop="0";x.style.borderRadius="14px";x.onclick=function(){openFS(m.u,v)};return x}
-function cdRing(col,ic){var w=el("div");w.style.cssText="position:relative;width:104px;height:104px;flex:none";
-  w.innerHTML='<svg viewBox="0 0 100 100" style="width:100%;height:100%;transform:rotate(-90deg);filter:drop-shadow(0 0 6px '+col+')"><circle class="rb" cx="50" cy="50" r="42" fill="none" stroke="'+col+'" stroke-opacity=".22" stroke-width="9"/><circle class="rf" cx="50" cy="50" r="42" fill="none" stroke="'+col+'" stroke-width="9" stroke-linecap="round" stroke-dasharray="263.9" stroke-dashoffset="0"/></svg><div style="position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-size:2.3rem">'+ic+'</div>';return w}
-function cdRingSet(w,frac){var f=w.querySelector(".rf");if(f)f.style.strokeDashoffset=263.9*(1-Math.max(0,Math.min(1,frac)))}
-function cdChips(col,fn){var w=el("div"),r=el("div"),cu=el("div"),ci=el("input","tin"),go=el("button","","تأكيد");w.style.marginTop="12px";r.style.cssText="display:grid;grid-template-columns:repeat(5,1fr);gap:7px";
-  function chip(ic,t,f){var b=el("button");b.type="button";b.innerHTML='<div style="font-size:1.15rem;line-height:1.3">'+ic+'</div><div>'+t+'</div>';b.style.cssText="padding:8px 2px;border-radius:16px;border:2px solid "+col+";background:rgba(0,0,0,.35);color:#fff;font:800 .8rem/1.3 var(--b);box-shadow:0 0 10px "+col+"55;cursor:pointer";b.onclick=f;r.appendChild(b)}
-  [30,45,60,90].forEach(function(n){chip("⏱",n+" ثانية",function(){fn(n)})});
-  cu.style.cssText="display:none;gap:8px;margin-top:8px";ci.type="number";ci.inputMode="numeric";ci.min=1;ci.max=3600;ci.placeholder="اكتب الثواني";ci.style.cssText+=";flex:1;text-align:center";
-  go.type="button";go.style.cssText="padding:0 22px;border-radius:14px;border:2px solid "+col+";background:"+col+";color:#000;font:800 1rem var(--b)";go.onclick=function(){var n=parseInt(ci.value);if(n>0){fn(Math.min(3600,n));ci.value="";cu.style.display="none"}};
-  cu.appendChild(ci);cu.appendChild(go);chip("⌨","وقت مخصص",function(){cu.style.display=cu.style.display=="flex"?"none":"flex";ci.focus()});
-  w.appendChild(r);w.appendChild(cu);return w}
-
-function cardioCell(q,i,L){var d=cdD(q),has=!!cdMed(q,"prog");
-  if(EDIT){var c=el("div","qc ed"),a=el("textarea","qi"),x=el("button","qx2","✕"),inf=el("div","vn",(has?"✅ صورة البرنامج موجودة":"⚠️ لم تُرفع صورة البرنامج")+" · راحة تلقائية "+d.br+" ث");
-    c.style.cssText="flex-direction:column;align-items:stretch;gap:8px;grid-column:1/-1";a.rows=1;a.maxLength=80;a.value=q.t||"";a.placeholder="عنوان الكارديو";a.setAttribute("aria-label","عنوان الكارديو");a.oninput=function(){q.t=a.value;store.s("cells",L);fit(a)};
-    x.setAttribute("aria-label","حذف الخانة");x.onclick=function(ev){ev.stopPropagation();if(x.dataset.c){if(has)delCellImg(cdKey(q,"prog"));(Array.isArray(d.ex)?d.ex:[]).forEach(function(e){if(cdMed(q,"e"+e.id))delCellImg(cdKey(q,"e"+e.id))});(Array.isArray(d.tb)?d.tb:[]).forEach(function(e){if(cdMed(q,"t"+e.id))delCellImg(cdKey(q,"t"+e.id))});L.splice(i,1);store.s("cells",L);home()}else{x.dataset.c="1";x.textContent="حذف؟";x.className="qx2 on";setTimeout(function(){x.dataset.c="";x.textContent="✕";x.className="qx2"},3000)}};
-    var eb=el("button","qadd","✏️ تصميم الكارديو: صورة البرنامج والراحة");eb.onclick=function(ev){ev.stopPropagation();cdEdit(q,L)};
-    c.appendChild(a);c.appendChild(inf);c.appendChild(eb);c.appendChild(x);mvBtns(c,L,i);colBtn(c,q,L);cellColor(c,q);return c}
-  var b=el("button","qc"),w=el("div");w.style.cssText="width:100%;text-align:center";w.appendChild(document.createTextNode("🔥 "+(q.t||"كارديو")));
-  var sp=el("div","",has||!ADMIN?"مؤقت التمرين والراحة":"⚠️ بلا صورة برنامج");sp.style.cssText="font-size:.8rem;margin-top:4px;font-weight:600;white-space:normal;opacity:.85";w.appendChild(sp);
-  b.appendChild(w);b.style.gridColumn="1/-1";b.onclick=function(){cdOpen(q)};cellColor(b,q);return b}
-
-/* ---------- شاشة المتدرب ---------- */
-function cdOpen(q){if($("cdo"))return;var d=cdD(q),o=el("div");o.id="cdo";
-  o.style.cssText="position:fixed;inset:0;z-index:99990;color:#fff;overflow:auto;padding:0 14px 48px;background:radial-gradient(circle at 100% 0,#0d3a73 0,transparent 42%),radial-gradient(circle at 0 100%,#0a2d5c 0,transparent 40%),#02060d;--ink:#fff;--sf:#0a1626;--ln:#1e4d8a;--mut:#8fb4de;--bg:#02060d";
-  var W={dur:0,rem:0,run:false,end:0,lb:-1},R={run:false,end:0,tot:0,lb:-1,plan:store.g("cdplan:"+q.k,null)},S={snd:true,ac:null,wl:null};
-  if(typeof R.plan!="number")R.plan=d.br;
-  function bp(f,n,len){if(!S.snd)return;try{var A=window.AudioContext||window.webkitAudioContext;S.ac=S.ac||new A();S.ac.resume&&S.ac.resume();for(var k=0;k<n;k++){var os=S.ac.createOscillator(),g=S.ac.createGain();os.connect(g);g.connect(S.ac.destination);os.frequency.value=f;g.gain.value=.2;var t0=S.ac.currentTime+k*(len+.1);os.start(t0);os.stop(t0+len)}}catch(e){}}
-  function vb(p){try{if(S.snd&&navigator.vibrate)navigator.vibrate(p)}catch(e){}}
-  function wl(on){try{if(on&&navigator.wakeLock){navigator.wakeLock.request("screen").then(function(l){S.wl=l}).catch(function(){})}else if(!on&&S.wl){S.wl.release();S.wl=null}}catch(e){}}
-  /* الشعار */
-  var bar=el("div"),cl=cdBtn("✕","min-width:48px;padding:0;background:rgba(0,0,0,.5);border-color:#38a3ff",close),sn=cdBtn("🔊","min-width:48px;padding:0;background:rgba(0,0,0,.5);border-color:#38a3ff",function(){S.snd=!S.snd;sn.textContent=S.snd?"🔊":"🔇"}),lg0=el("div"),lim=el("img"),ltx=el("div");
-  bar.style.cssText="display:flex;align-items:center;gap:10px;padding:calc(env(safe-area-inset-top,0px) + 12px) 0 10px";lg0.style.cssText="flex:1;display:flex;align-items:center;justify-content:center;gap:10px;direction:ltr";
-  lim.src="icon-192.png";lim.alt="";lim.style.cssText="width:44px;height:44px;border-radius:12px;box-shadow:0 0 12px #38a3ff88";
-  ltx.innerHTML='<div style="font:900 1.45rem/1.1 var(--b);font-style:italic;letter-spacing:1px">ZEDAM <span style="color:#38a3ff">GYM</span></div><div style="font:700 .6rem var(--b);letter-spacing:3px;color:#38a3ff;text-align:center">TRAIN SMART</div>';
-  lg0.appendChild(lim);lg0.appendChild(ltx);bar.appendChild(cl);bar.appendChild(lg0);bar.appendChild(sn);o.appendChild(bar);
-  /* وقت التمرين */
-  var yc=el("div"),lab=el("div","","وقت تمرين"),row1=el("div"),yr=cdRing(CDY,"🏃"),tb=el("div"),tm=el("div"),sub=el("div"),pb=el("button"),sc=el("div"),ss=el("div");
-  yc.style.cssText=CDCARD+";padding:14px 14px 16px;text-align:center";lab.style.cssText="font:900 1.7rem/1.4 var(--b)";
-  row1.style.cssText="display:flex;align-items:center;gap:12px;margin-top:6px";
-  tb.style.cssText="flex:1;border:2px solid "+CDY+";border-radius:20px;background:rgba(250,204,21,.07);box-shadow:0 0 14px rgba(250,204,21,.35),inset 0 0 12px rgba(250,204,21,.12);padding:6px 4px";
-  tm.style.cssText="font:900 4.3rem/1.15 var(--b);direction:ltr;color:"+CDY+";text-shadow:0 0 14px rgba(250,204,21,.6)";tb.appendChild(tm);row1.appendChild(yr);row1.appendChild(tb);
-  sub.style.cssText="font:700 .9rem var(--b);margin-top:10px;color:#8fb4de;min-height:1.3em";
-  pb.type="button";pb.style.cssText="width:100%;margin-top:8px;min-height:54px;border-radius:999px;border:2px solid "+CDY+";background:rgba(0,0,0,.45);color:#fff;font:800 1.2rem var(--b);box-shadow:0 0 14px rgba(250,204,21,.4);cursor:pointer";
-  pb.onclick=function(){if(W.run){W.rem=Math.max(0,(W.end-Date.now())/1000);W.run=false;wl(false)}else if(W.rem>0){W.end=Date.now()+W.rem*1000;W.run=true;W.lb=-1;wl(true);bp(880,1,.12)}else toast("اختر وقتاً من الأسفل أو خصّص وقتك");paint()};
-  sc.style.cssText="display:flex;gap:8px;margin-top:10px";var SB="flex:1;min-height:42px;font-size:.85rem;background:rgba(0,0,0,.4);border-color:#38a3ff";
-  [cdBtn("− 10 ث",SB,function(){adj(-10)}),cdBtn("+ 10 ث",SB,function(){adj(10)}),cdBtn("↺ إعادة",SB,function(){W.run=false;W.rem=W.dur;wl(false);paint()})].forEach(function(b){sc.appendChild(b)});
-  ss.style.cssText="margin-top:12px;font:800 .9rem var(--b);color:#cfe6ff";
-  [lab,row1,sub,pb,sc,ss].forEach(function(n){yc.appendChild(n)});o.appendChild(yc);
-  o.appendChild(cdChips(CDY,setW));
-  /* وقت الراحة */
-  var rc=el("div"),rl=el("div","","وقت الراحة"),rrow=el("div"),rr=cdRing(CDC,"⏸"),rbx=el("div"),rt=el("div"),rh=el("div"),ra=el("div");
-  rc.style.cssText="margin-top:14px;padding:14px;text-align:center;border:2px solid #1ea7ff;border-radius:22px;background:linear-gradient(135deg,#06294d,#02060d);box-shadow:0 0 16px rgba(30,167,255,.4)";
-  rl.style.cssText="font:900 1.6rem var(--b)";rrow.style.cssText="display:flex;align-items:center;gap:12px;margin-top:4px";rbx.style.cssText="flex:1";
-  rt.style.cssText="font:900 4rem/1.15 var(--b);direction:ltr;color:"+CDC+";text-shadow:0 0 14px rgba(34,211,238,.6)";rbx.appendChild(rt);rrow.appendChild(rr);rrow.appendChild(rbx);
-  rh.style.cssText="font:700 .85rem var(--b);margin-top:8px;color:#8fb4de";ra.style.cssText="display:flex;gap:8px;margin-top:8px";
-  ra.appendChild(cdBtn("+15 ثانية","flex:1;min-height:40px;font-size:.85rem;background:rgba(0,0,0,.4);border-color:"+CDC,function(){if(R.run){R.end+=15000;R.tot+=15;rPaint()}else rStart(15)}));
-  ra.appendChild(cdBtn("↺ إعادة","flex:1;min-height:40px;font-size:.85rem;background:rgba(0,0,0,.4);border-color:"+CDC,function(){R.run=false;R.tot=0;rl.textContent="وقت الراحة";rPaint()}));
-  rc.appendChild(rl);rc.appendChild(rrow);rc.appendChild(rh);rc.appendChild(ra);o.appendChild(rc);
-  o.appendChild(cdChips(CDC,function(n){R.plan=n;store.s("cdplan:"+q.k,n);if(W.run)toast("ستبدأ الراحة تلقائياً بعد الجلسة: "+n+" ث");else rStart(n);planP()}));
-  /* صورة البرنامج */
-  var pm=cdMed(q,"prog"),im=cdThumb(pm);
-  if(im){var ic=el("div");ic.style.cssText=CDCARD+";padding:10px;margin-top:16px;border-color:#1ea7ff";ic.appendChild(im);o.appendChild(ic)}
-  /* المنطق */
-  function setW(n){W.run=false;W.dur=n;W.rem=n;W.lb=-1;wl(false);paint()}
-  function adj(n){if(W.run){W.end+=n*1000;if(W.end<Date.now()+1000)W.end=Date.now()+1000;W.dur=Math.max(1,W.dur+n)}else{W.rem=Math.max(0,W.rem+n);W.dur=W.rem}paint()}
-  function sessP(){var a=store.g("cdlog:"+q.k,[]),t=cdToday();ss.textContent="✅ جلسات اليوم: "+a.filter(function(x){return x==t}).length+" · الإجمالي: "+a.length}
-  function logS(){var a=store.g("cdlog:"+q.k,[]);a.push(cdToday());store.s("cdlog:"+q.k,a.slice(-500));sessP()}
-  function planP(){rh.textContent=R.plan>0?"⏭ تبدأ الراحة تلقائياً بعد انتهاء الجلسة: "+R.plan+" ثانية":"الراحة التلقائية متوقفة، اختر مدة من الأسفل"}
-  function endW(){W.run=false;W.rem=W.dur;wl(false);bp(880,3,.18);vb([300,100,300]);logS();toast("✅ تم احتساب الجلسة");if(R.plan>0)rStart(R.plan)}
-  function rStart(n){R.tot=n;R.end=Date.now()+n*1000;R.run=true;R.lb=-1;rl.textContent="وقت الراحة";try{var A=window.AudioContext||window.webkitAudioContext;S.ac=S.ac||new A();S.ac.resume&&S.ac.resume()}catch(e){}rPaint()}
-  function rPaint(){var rem=R.run?Math.max(0,(R.end-Date.now())/1000):0;rt.textContent=R.run?cdFmt(rem):"0:00";cdRingSet(rr,R.run&&R.tot?rem/R.tot:0)}
-  function paint(){var rem=W.run?Math.max(0,(W.end-Date.now())/1000):W.rem;tm.textContent=cdFmt(rem);pb.textContent=W.run?"⏸ توقف":"▶ انطلق";cdRingSet(yr,W.dur?rem/W.dur:0);
-    sub.textContent=W.run?"استمر، أنت تقوم بعمل رائع 💪":W.dur?"اضغط انطلق لبدء العد":"اختر وقتاً من الأسفل أو خصّص وقتك"}
-  function tick(){if(W.run){var rem=(W.end-Date.now())/1000,s2=Math.ceil(rem);if(rem>0&&rem<=3&&s2!=W.lb){W.lb=s2;bp(700,1,.09)}if(rem<=0)endW()}paint();
-    if(R.run){var r2=(R.end-Date.now())/1000,sr=Math.ceil(r2);if(r2>0&&r2<=3&&sr!=R.lb){R.lb=sr;bp(700,1,.09)}if(r2<=0){R.run=false;rl.textContent="✅ انتهت الراحة، انطلق للجولة التالية 💪";bp(880,3,.18);vb([300,100,300])}}
-    rPaint()}
-  var ti=setInterval(tick,200);paint();rPaint();sessP();planP();
-  function close(){clearInterval(ti);wl(false);o.remove()}
-  document.body.appendChild(o)}
-
-/* ---------- شاشة تصميم الكارديو (للمدير) ---------- */
-function cdEdit(q,L){var d=cdD(q),o=el("div");
-  o.style.cssText="position:fixed;inset:0;z-index:99990;background:var(--bg);color:var(--ink);overflow:auto;padding:0 14px 48px";
-  function sv(){store.s("cells",L)}
-  function hd(t){var h=el("div","",t);h.style.cssText="font:800 1.1rem var(--d);margin:22px 0 8px";return h}
-  function rd(){var y=o.scrollTop;o.innerHTML="";
-    var bar=el("div"),dn=cdBtn("تم ✓","background:var(--am);color:#fff;border-color:var(--am);width:100%",function(){sv();o.remove();home()});
-    bar.style.cssText="position:sticky;top:0;z-index:3;background:var(--bg);padding:calc(env(safe-area-inset-top,0px) + 10px) 0 8px";bar.appendChild(dn);o.appendChild(bar);
-    var t=el("input","tin");t.placeholder="عنوان الكارديو";t.maxLength=80;t.value=q.t||"";t.oninput=function(){q.t=t.value;sv()};o.appendChild(t);
-    o.appendChild(hd("🖼 صورة البرنامج (جدول أو صورة أو GIF أو فيديو)"));
-    var key=cdKey(q,"prog"),m=cdMed(q,"prog"),th=cdThumb(m),st=el("div","vn",m?"✅ الصورة موجودة":"⚠️ لم تُرفع بعد (لن تظهر للمتدربين)"),fi=el("input");fi.type="file";fi.accept="image/*,video/mp4";fi.style.display="none";
-    fi.onchange=function(){var f=fi.files[0];fi.value="";if(f)upCell(key,f,st,function(){rd()})};
-    if(th)o.appendChild(th);o.appendChild(st);var r=el("div");r.style.cssText="display:flex;gap:8px;margin-top:8px";
-    r.appendChild(cdBtn(m?"📷 استبدال الصورة":"📷 رفع الصورة","flex:1",function(){fi.click()}));
-    if(m)r.appendChild(cdBtn("🗑 حذف","min-width:80px",function(){delCellImg(key);delete DM0[key];rd()}));r.appendChild(fi);o.appendChild(r);
-    o.appendChild(hd("⏭ الراحة التلقائية بعد انتهاء الجلسة (بالثواني)"));
-    var n=el("input","tin");n.type="number";n.inputMode="numeric";n.min=0;n.max=600;n.value=d.br;n.onchange=function(){var v=parseInt(n.value);v=isFinite(v)?Math.max(0,Math.min(600,v)):0;n.value=v;d.br=v;sv()};o.appendChild(n);
-    var h=el("div","vn","تبدأ الراحة تلقائياً بهذه المدة عند انتهاء عد التمرين. يستطيع المتدرب تغييرها من أزرار الراحة. اكتب 0 لإيقافها.");h.style.marginTop="8px";o.appendChild(h);
-    o.scrollTop=y}
-  rd();document.body.appendChild(o)}
-
 /* ===== تلوين الخانات ===== */
 var CPAL=["#e11d1d","#f59e0b","#eab308","#22c55e","#14b8a6","#3b82f6","#a855f7","#ec4899","#9ca3af"];
 function hexA(h,a){var n=parseInt(h.slice(1),16);return"rgba("+(n>>16)+","+((n>>8)&255)+","+(n&255)+","+a+")"}
@@ -783,6 +671,130 @@ function szBtns(c,q,L){var ix=SZO.indexOf(sizeOf(q));
   mk("➖ تصغير","تصغير الخانة",6,-1);mk("➕ تكبير","تكبير الخانة",80,1)}
 function colBtn(c,q,L){var b=el("button","qmv","🎨");b.setAttribute("aria-label","لون الخانة");b.style.insetInlineEnd="6px";if(q.c&&/^#[0-9a-fA-F]{6}$/.test(q.c)){b.style.background=q.c}
   b.onclick=function(ev){ev.stopPropagation();colorPick(q.c,function(v){if(v)q.c=v;else delete q.c;store.s("cells",L);home()})};c.appendChild(b)}
+
+/* ===== خانة الكارديو: مؤقت فواصل أصفر + مؤقت راحة + تمارين بفيديو + جداول مصممة ===== */
+var CDA=null,CDL=null;
+function cdDef(q){var d=q.cd=q.cd||{};if(d.w===undefined)d.w=10;if(d.rs===undefined)d.rs=15;if(d.rr===undefined)d.rr=30;if(d.m===undefined)d.m=0;if(d.cr===undefined)d.cr=3;if(!Array.isArray(d.ex))d.ex=[];if(!Array.isArray(d.tb))d.tb=[];return d}
+function cdSeq(d){var S=[],ex=d.ex.filter(function(e){return e.n&&e.s>0});if(d.w>0)S.push({t:"warm",d:d.w});
+  if(d.m==1){var R=Math.max(1,d.cr|0);for(var r=1;r<=R;r++)ex.forEach(function(e,i){S.push({t:"work",e:e,k:r,K:R,d:e.s});var last=r==R&&i==ex.length-1,rs=i==ex.length-1?d.rr:d.rs;if(!last&&rs>0)S.push({t:"rest",d:rs})})}
+  else ex.forEach(function(e,i){var K=Math.max(1,e.r|0);for(var k=1;k<=K;k++){S.push({t:"work",e:e,k:k,K:K,d:e.s});if(!(i==ex.length-1&&k==K)&&d.rs>0)S.push({t:"rest",d:d.rs})}});
+  S.forEach(function(x,j){if(x.t!="work"){for(var n=j+1;n<S.length;n++)if(S[n].t=="work"){x.nx=S[n].e.n;break}}});return S}
+function cdMin(d){var s=cdSeq(d).reduce(function(a,x){return a+x.d},0);return s<60?s+" ثانية":Math.max(1,Math.round(s/60))+" دقيقة"}
+function cdKeys(q){var d=cdDef(q),k="cell-"+q.k+"-";return d.ex.map(function(e){return k+"e"+e.id}).concat(d.tb.map(function(t){return k+"t"+t}))}
+function cdUrl(key,m){return DS()+"public/designs/"+key+"?v="+encodeURIComponent((m&&m.v)||"")}
+function cardioCell(q,i,L){var d=cdDef(q),n=d.ex.filter(function(e){return e.n&&e.s>0}).length,sub=n?n+" تمرين · "+cdMin(d):"";
+  if(EDIT){var c=el("div","qc ed"),a=el("textarea","qi"),x=el("button","qx2","✕"),sm=el("div","vn",n?"🏃 "+sub:"⚠️ لا تمارين بعد (الخانة مخفية للمتدربين)"),eb=el("button","qadd","⚙️ تحرير التمارين والإعدادات");
+    c.style.cssText="flex-direction:column;align-items:stretch;gap:8px";a.rows=1;a.maxLength=60;a.value=q.t||"";a.placeholder="عنوان الكارديو";a.setAttribute("aria-label","كارديو "+(i+1));a.oninput=function(){q.t=a.value;store.s("cells",L);fit(a)};
+    eb.onclick=function(ev){ev.stopPropagation();cardioEdit(q,L)};
+    x.setAttribute("aria-label","حذف الخانة");x.onclick=function(ev){ev.stopPropagation();if(x.dataset.c){cdKeys(q).forEach(delCellImg);L.splice(i,1);store.s("cells",L);home()}else{x.dataset.c="1";x.textContent="حذف؟";x.className="qx2 on";setTimeout(function(){x.dataset.c="";x.textContent="✕";x.className="qx2"},3000)}};
+    c.appendChild(a);c.appendChild(sm);c.appendChild(eb);c.appendChild(x);mvBtns(c,L,i);colBtn(c,q,L);szBtns(c,q,L);cellColor(c,q);szApply(c,q,true);return c}
+  if(!n&&!ADMIN)return null;
+  var b=el("button","qc"),w=el("div");w.appendChild(document.createTextNode("🏃 "+(q.t||"كارديو")));
+  var sp=el("div","",n?sub:"⚠️ لا تمارين بعد (مخفية للمتدربين)");sp.style.cssText="font-size:.8rem;margin-top:4px;white-space:normal;"+(n?"opacity:.85":"color:#f5a623");w.appendChild(sp);b.appendChild(w);
+  b.onclick=function(){cardioOpen(q)};cellColor(b,q);szApply(b,q,false);return b}
+function closeCd(){var o=$("crd");if(o){if(o._stop)o._stop();o.remove()}}
+function closeCe(){var o=$("cre");if(o)o.remove();home()}
+function cdShell(id,title,onclose){var o=el("div"),bar=el("div"),w=el("div"),cl=el("button","","✕ إغلاق"),t=el("b","",title);o.id=id;
+  o.style.cssText="position:fixed;inset:0;z-index:9998;background:var(--bg);display:flex;flex-direction:column;overflow:hidden";
+  bar.style.cssText="display:flex;align-items:center;justify-content:space-between;gap:10px;padding:calc(env(safe-area-inset-top,0px) + 10px) 16px 10px;border-bottom:1.5px solid var(--ln)";
+  t.style.cssText="font:800 1.15rem var(--d);overflow:hidden;text-overflow:ellipsis;white-space:nowrap";
+  cl.style.cssText="min-height:48px;padding:0 16px;border-radius:14px;border:1.5px solid var(--ln);background:var(--sf);color:var(--ink);font:700 1rem var(--b);flex:none";cl.onclick=onclose;
+  w.style.cssText="flex:1;overflow:auto;padding:14px 16px calc(env(safe-area-inset-bottom,0px) + 28px);-webkit-overflow-scrolling:touch";
+  bar.appendChild(t);bar.appendChild(cl);o.appendChild(bar);o.appendChild(w);document.body.appendChild(o);return{o:o,w:w}}
+function cardioOpen(q){if($("crd"))return;var d=cdDef(q),S=cdSeq(d),dm=store.g("dm",{}),pre="cell-"+q.k+"-",sh=cdShell("crd","🏃 "+(q.t||"كارديو"),closeCd),o=sh.o,w=sh.w;
+  var tot=S.reduce(function(a,x){return a+x.d},0),ix=-1,end=0,left=0,run=false,tick=null,mute=false,lastC=null,mTick=null,mEnd=0;
+  function f2(t){t=Math.max(0,Math.ceil(t));return Math.floor(t/60)+":"+("0"+t%60).slice(-2)}
+  function bp(fr,l){if(mute)return;try{var A=window.AudioContext||window.webkitAudioContext;CDA=CDA||new A();if(CDA.resume)CDA.resume();var c=CDA,os=c.createOscillator(),g=c.createGain();os.connect(g);g.connect(c.destination);os.frequency.value=fr;g.gain.value=.25;os.start();os.stop(c.currentTime+l)}catch(e){}}
+  function vb(p){try{navigator.vibrate&&navigator.vibrate(p)}catch(e){}}
+  function wk(){try{if(navigator.wakeLock)navigator.wakeLock.request("screen").then(function(l){CDL=l}).catch(function(){})}catch(e){}}
+  function wr(){try{if(CDL){CDL.release();CDL=null}}catch(e){}}
+  function wkCount(){try{var a=JSON.parse(localStorage.getItem("zg:cardio")||"[]"),c=new Date();c.setDate(c.getDate()-6);var m=ymd(c);return a.filter(function(x){return x.d>=m}).length}catch(e){return 0}}
+  var chip=el("div","pm","⏱ ~"+cdMin(d)+" · "+d.ex.filter(function(e){return e.n&&e.s>0}).length+" تمرين · 🔥 حصص كارديو آخر 7 أيام: "+wkCount());chip.style.cssText="text-align:center;font-weight:700";w.appendChild(chip);
+  /* المؤقت الأصفر الرئيسي */
+  var tc=el("div"),ph=el("div"),num=el("div"),nm=el("div"),sb=el("div","pm"),pg=el("div","rtb"),pgi=el("i"),ct=el("div"),mb=el("button"),sk=el("button","","⏭ تخطي"),pv=el("button","","⏮ السابق"),rs=el("button","","⟲ إعادة"),sn=el("button","","🔊");
+  tc.style.cssText="margin:12px 0;padding:16px;border-radius:20px;border:3px solid #facc15;background:rgba(250,204,21,.08);text-align:center";
+  ph.style.cssText="font:800 1.3rem var(--d)";num.style.cssText="font:900 5.4rem/1.05 var(--d);direction:ltr;margin:4px 0";nm.style.cssText="font:800 1.5rem var(--d);min-height:1.9rem";sb.style.minHeight="1.6rem";pgi.style.background="#facc15";pg.appendChild(pgi);
+  ct.style.cssText="display:flex;gap:8px;margin-top:12px;flex-wrap:wrap";
+  mb.style.cssText="flex:2 1 100%;min-height:60px;border-radius:16px;border:0;background:#facc15;color:#111;font:900 1.3rem var(--d)";
+  [pv,sk,rs,sn].forEach(function(b){b.style.cssText="flex:1;min-height:48px;border-radius:14px;border:1.5px solid var(--ln);background:var(--sf);color:var(--ink);font:700 .95rem var(--b)"});
+  ct.appendChild(mb);ct.appendChild(pv);ct.appendChild(sk);ct.appendChild(rs);ct.appendChild(sn);[ph,num,nm,sb,pg,ct].forEach(function(x){tc.appendChild(x)});w.appendChild(tc);
+  var ec={};
+  function elapsed(){var a=0,j,r=run?(end-Date.now())/1000:left;for(j=0;j<ix;j++)a+=S[j].d;return a+(S[ix]?S[ix].d-r:0)}
+  function paint(){var s=S[ix],col="#facc15",r;
+    if(!S.length){ph.textContent="لا توجد تمارين بعد";num.textContent="0:00";nm.textContent="";sb.textContent="";mb.disabled=true;mb.style.opacity=".4"}
+    else if(ix<0){ph.textContent="جاهز؟";num.textContent=f2(S[0].d);nm.textContent="";sb.textContent="اضغط ابدأ عندما تكون جاهزاً";mb.textContent="▶ ابدأ"}
+    else if(ix>=S.length){ph.textContent="🎉 أحسنت! أنهيت التمرين";num.textContent="0:00";nm.textContent="";sb.textContent="المدة الكلية: "+f2(tot);col="#4ade80";mb.textContent="▶ ابدأ من جديد"}
+    else{r=run?(end-Date.now())/1000:left;num.textContent=f2(r);mb.textContent=run?"⏸ إيقاف مؤقت":"▶ متابعة";
+      if(s.t=="warm"){ph.textContent="استعد";nm.textContent="";sb.textContent="يبدأ التمرين الأول بعد قليل"}
+      else if(s.t=="rest"){ph.textContent="😮‍💨 راحة";nm.textContent="";sb.textContent=s.nx?"التالي: "+s.nx:"";col="#4ade80"}
+      else{ph.textContent="🔥 تمرين";nm.textContent=s.e.n;sb.textContent="الجولة "+s.k+" من "+s.K}}
+    ph.style.color=num.style.color=col;tc.style.borderColor=col;tc.style.background=col=="#facc15"?"rgba(250,204,21,.08)":"rgba(74,222,128,.08)";pgi.style.background=col;
+    pgi.style.width=(ix<0||!tot?0:ix>=S.length?100:Math.min(100,elapsed()/tot*100))+"%";
+    Object.keys(ec).forEach(function(k){ec[k].style.borderColor=(s&&s.t=="work"&&s.e.id==k)?"#facc15":""})}
+  function stop(){run=false;if(tick){clearInterval(tick);tick=null}if(mTick){clearInterval(mTick);mTick=null}wr()}
+  function go(i){if(i>=S.length){stop();ix=S.length;bp(880,.7);vb([300,100,300,100,500]);try{var a=JSON.parse(localStorage.getItem("zg:cardio")||"[]");a.push({d:td(),s:tot,k:q.k});localStorage.setItem("zg:cardio",JSON.stringify(a.slice(-60)))}catch(e){}paint();return}
+    ix=Math.max(0,i);left=S[ix].d;end=Date.now()+left*1000;run=true;lastC=null;bp(S[ix].t=="work"?880:520,.35);vb(150);if(!tick)tick=setInterval(loop,200);paint()}
+  function loop(){if(!run)return;var r=(end-Date.now())/1000,c=Math.ceil(r);if(c!=lastC){if(c<=3&&c>0)bp(660,.12);lastC=c}if(r<=0){go(ix+1);return}paint()}
+  mb.onclick=function(){if(ix<0||ix>=S.length){wk();go(0)}else if(run){left=(end-Date.now())/1000;run=false;paint()}else{end=Date.now()+left*1000;run=true;wk();paint()}};
+  sk.onclick=function(){if(ix>=0&&ix<S.length)go(ix+1)};pv.onclick=function(){if(ix>=0&&ix<S.length)go(ix-1)};
+  rs.onclick=function(){stop();ix=-1;paint()};sn.onclick=function(){mute=!mute;sn.textContent=mute?"🔇":"🔊"};
+  /* مؤقت الراحة اليدوي */
+  var rc=el("div","zg"),rh=el("h3","","⏱ مؤقت الراحة"),rn=el("div","","0:00"),rrw=el("div");rc.style.marginTop="12px";rn.style.cssText="font:800 2.4rem var(--d);text-align:center;direction:ltr;margin:6px 0";rrw.style.cssText="display:flex;gap:8px";
+  [30,45,60,90].forEach(function(n){var b=el("button","",n+" ث");b.style.cssText="flex:1;min-height:48px;border-radius:14px;border:1.5px solid var(--ln);background:var(--sf);color:var(--ink);font:700 1rem var(--b)";
+    b.onclick=function(){mEnd=Date.now()+n*1000;if(mTick)clearInterval(mTick);rn.textContent=f2(n);bp(520,.15);mTick=setInterval(function(){var r=(mEnd-Date.now())/1000;rn.textContent=f2(r);if(r<=0){clearInterval(mTick);mTick=null;rn.textContent="انتهت الراحة 💪";bp(880,.5);vb([200,100,200])}},250)};rrw.appendChild(b)});
+  rc.appendChild(rh);rc.appendChild(rn);rc.appendChild(rrw);w.appendChild(rc);
+  /* التمارين */
+  var lh=el("h3","","🏃 التمارين");lh.style.margin="18px 0 0";w.appendChild(lh);
+  d.ex.forEach(function(e,j){if(!e.n||!(e.s>0))return;var c=el("div","zg"),h=el("div"),m=el("div","pm"),vk=pre+"e"+e.id,vm=dm[vk];c.style.marginTop="10px";c.style.borderWidth="2px";
+    h.textContent=(j+1)+". "+e.n;h.style.cssText="font:800 1.1rem var(--d)";m.textContent="⏱ "+e.s+" ثانية"+(d.m==1?"":" × "+(e.r||1)+" جولة");c.appendChild(h);c.appendChild(m);
+    if(vm){var vb2=el("button","","▶ شاهد التمرين");vb2.style.cssText="width:100%;min-height:48px;margin-top:8px;border-radius:14px;border:1.5px solid #facc15;background:transparent;color:var(--ink);font:700 1rem var(--b)";vb2.onclick=function(){openFS(cdUrl(vk,vm),/^video\//.test(vm.t))};c.appendChild(vb2)}
+    ec[e.id]=c;w.appendChild(c)});
+  if(d.m==1){var cn=el("div","pm","نمط دائري: تُعاد كل التمارين "+Math.max(1,d.cr|0)+" جولات، وراحة "+d.rr+" ثانية بين الجولات.");cn.style.cssText="font-size:.9rem;margin-top:8px";w.appendChild(cn)}
+  /* الجداول المصممة */
+  var tbs=d.tb.filter(function(t){return dm[pre+"t"+t]});
+  if(tbs.length){var th=el("h3","","📋 الجداول");th.style.margin="18px 0 0";w.appendChild(th);
+    tbs.forEach(function(t){var k=pre+"t"+t,m=dm[k],im=el("img");im.src=cdUrl(k,m);im.alt="جدول";im.loading="lazy";im.style.cssText="width:100%;border-radius:14px;margin-top:10px;display:block;border:1.5px solid var(--ln)";im.onclick=function(){openFS(im.src,/^video\//.test(m.t))};w.appendChild(im)})}
+  /* مناطق النبض */
+  var hz=el("div","zg"),hh=el("h3","","❤️ مناطق النبض"),ag=el("input","tin"),ou=el("div","pm"),bd=(curM()||{}).bd,a0=bd?Math.floor((Date.now()-new Date(bd))/31557600000):"";
+  hz.style.marginTop="18px";ag.type="number";ag.inputMode="numeric";ag.placeholder="عمرك بالسنوات";ag.value=a0>=10&&a0<=90?a0:"";ag.style.cssText="width:100%;margin-top:6px";ag.setAttribute("aria-label","عمرك");ou.style.cssText="line-height:1.9;margin-top:8px";
+  function hzp(){var a=+ag.value;if(!(a>=10&&a<=90)){ou.textContent="أدخل عمرك لتظهر مناطق نبضك.";return}var mx=220-a;ou.innerHTML="أقصى نبض تقديري: <b>"+mx+"</b><br>"+[["خفيف",50,60],["حرق الدهون",60,70],["كارديو",70,80],["شدة عالية",80,90]].map(function(z){return z[0]+": <b>"+Math.round(mx*z[1]/100)+" – "+Math.round(mx*z[2]/100)+"</b>"}).join("<br>")+"<br><small>تقدير تقريبي، استشر طبيباً عند الحاجة.</small>"}
+  ag.oninput=hzp;hzp();hz.appendChild(hh);hz.appendChild(ag);hz.appendChild(ou);w.appendChild(hz);
+  var tp=el("div","zg"),th2=el("h3","","💡 نصائح الكارديو");tp.style.marginTop="12px";
+  ["سخّن 5 دقائق قبل البدء، واسترخِ 3 دقائق بعده.","اشرب الماء قبل التمرين وبعده وفي الراحات.","ارفع الشدة تدريجياً، وإن شعرت بدوار أو ألم في الصدر فتوقف فوراً.","حافظ على تنفس منتظم ولا تحبس نفسك."].forEach(function(x){var p=el("div","pm","• "+x);p.style.margin="6px 0 0";tp.appendChild(p)});tp.insertBefore(th2,tp.firstChild);w.appendChild(tp);
+  o._stop=stop;paint()}
+function cardioEdit(q,L){if($("cre"))return;var d=cdDef(q),pre="cell-"+q.k+"-",sh=cdShell("cre","⚙️ "+(q.t||"كارديو"),closeCe),w=sh.w;
+  function sv(){store.s("cells",L)}
+  function nf(lab,get,set,mn,mx){var r=el("div","tfd"),l=el("label","",lab),i=el("input","tin");i.type="number";i.inputMode="numeric";i.value=get();i.dir="ltr";i.style.width="100%";i.oninput=function(){var v=parseInt(i.value);if(isNaN(v))return;set(Math.max(mn,Math.min(mx,v)));sv()};i.onchange=function(){i.value=get()};r.appendChild(l);r.appendChild(i);return r}
+  function nid(){return Date.now().toString(36)+Math.floor(Math.random()*1296).toString(36)}
+  function render(){w.innerHTML="";var dm=store.g("dm",{});
+    var hint=el("div","pm","كل تعديل يُحفظ فوراً على هذا الجهاز، ولا يظهر للمتدربين إلا بعد ضغط «تم ✓» في الصفحة الرئيسية. الملفات حتى 20 ميغابايت.");hint.style.fontSize=".9rem";w.appendChild(hint);
+    var sc=el("div","zg");sc.style.marginTop="12px";sc.appendChild(el("h3","","الإعدادات"));
+    sc.appendChild(nf("ثواني الاستعداد قبل البدء",function(){return d.w},function(v){d.w=v},0,120));
+    sc.appendChild(nf("ثواني الراحة بين التمارين والجولات",function(){return d.rs},function(v){d.rs=v},0,300));
+    var ml=el("div","tfd"),ms=el("select","tin");ml.appendChild(el("label","","نمط الجولات"));[["0","لكل تمرين جولاته الخاصة"],["1","دائري: تُعاد كل التمارين"]].forEach(function(x){var op=el("option","",x[1]);op.value=x[0];ms.appendChild(op)});ms.value=String(d.m);ms.style.width="100%";ms.onchange=function(){d.m=+ms.value;sv();render()};ml.appendChild(ms);sc.appendChild(ml);
+    if(d.m==1){sc.appendChild(nf("عدد الجولات الدائرية",function(){return d.cr},function(v){d.cr=v},1,20));sc.appendChild(nf("ثواني الراحة بين الجولات",function(){return d.rr},function(v){d.rr=v},0,600))}
+    w.appendChild(sc);
+    var lh=el("h3","","التمارين ("+d.ex.length+")");lh.style.margin="18px 0 0";w.appendChild(lh);
+    d.ex.forEach(function(e,j){var c=el("div","zg"),nI=el("input","tin"),row=el("div"),vk=pre+"e"+e.id,vm=dm[vk],st=el("div","vn",vm?"✅ يوجد فيديو أو صورة":"لا يوجد فيديو بعد"),up=el("button","qadd",vm?"🎬 استبدال الفيديو":"🎬 رفع فيديو التمرين"),fi=el("input"),ctl=el("div"),u=el("button","qmv","↑"),dn=el("button","qmv","↓"),x=el("button","lk","حذف التمرين");
+      c.style.marginTop="10px";nI.value=e.n||"";nI.placeholder="اسم التمرين";nI.maxLength=50;nI.style.cssText="width:100%;font-weight:800";nI.oninput=function(){e.n=nI.value;sv()};
+      row.style.cssText="display:flex;gap:8px;margin-top:8px";var f1=nf("ثواني الأداء",function(){return e.s||0},function(v){e.s=v},0,600);f1.style.flex="1";row.appendChild(f1);
+      if(d.m!=1){var f2=nf("عدد الجولات",function(){return e.r||1},function(v){e.r=v},1,20);f2.style.flex="1";row.appendChild(f2)}
+      fi.type="file";fi.accept="video/mp4,image/gif,image/*";fi.style.display="none";up.onclick=function(){fi.click()};fi.onchange=function(){var f=fi.files[0];fi.value="";if(f)upCell(vk,f,st,function(){render()})};
+      ctl.style.cssText="display:flex;gap:8px;margin-top:8px;align-items:center";[u,dn].forEach(function(b){b.style.cssText="position:static;width:44px;height:40px"});u.disabled=j==0;dn.disabled=j==d.ex.length-1;
+      u.onclick=function(){var t=d.ex[j];d.ex[j]=d.ex[j-1];d.ex[j-1]=t;sv();render()};dn.onclick=function(){var t=d.ex[j];d.ex[j]=d.ex[j+1];d.ex[j+1]=t;sv();render()};
+      x.onclick=function(){if(x.dataset.c){delCellImg(vk);d.ex.splice(j,1);sv();render()}else{x.dataset.c="1";x.textContent="تأكيد الحذف؟";setTimeout(function(){x.dataset.c="";x.textContent="حذف التمرين"},3000)}};
+      ctl.appendChild(u);ctl.appendChild(dn);ctl.appendChild(x);
+      [nI,row,st,up,fi,ctl].forEach(function(n){c.appendChild(n)});w.appendChild(c)});
+    var ad=el("button","qadd","+ إضافة تمرين");ad.style.cssText="width:100%;margin-top:12px";ad.onclick=function(){d.ex.push({id:nid(),n:"",s:30,r:3});sv();render()};w.appendChild(ad);
+    var th=el("h3","","جداول مصممة ("+d.tb.length+")");th.style.margin="18px 0 0";w.appendChild(th);
+    var tn=el("div","pm","ارفع صورة جدول صممتها (مثل جدول الأسبوع)، فتظهر للمتدرب في الخانة.");tn.style.fontSize=".9rem";w.appendChild(tn);
+    d.tb.forEach(function(t,j){var k=pre+"t"+t,m=dm[k],c=el("div","zg");c.style.marginTop="10px";
+      if(m){var im=el("img");im.src=cdUrl(k,m);im.style.cssText="width:100%;border-radius:12px;display:block";c.appendChild(im)}else c.appendChild(el("div","vn","الملف غير موجود"));
+      var x=el("button","lk","حذف الجدول");x.onclick=function(){if(x.dataset.c){delCellImg(k);d.tb.splice(j,1);sv();render()}else{x.dataset.c="1";x.textContent="تأكيد الحذف؟";setTimeout(function(){x.dataset.c="";x.textContent="حذف الجدول"},3000)}};c.appendChild(x);w.appendChild(c)});
+    var ts=el("div","vn"),tf=el("input"),tb=el("button","qadd","🖼 إضافة جدول مصمم");tf.type="file";tf.accept="image/*";tf.style.display="none";tb.style.cssText="width:100%;margin-top:10px";tb.onclick=function(){tf.click()};
+    tf.onchange=function(){var f=tf.files[0];tf.value="";if(!f)return;var id=nid();upCell(pre+"t"+id,f,ts,function(){d.tb.push(id);sv();render()})};
+    w.appendChild(tb);w.appendChild(tf);w.appendChild(ts)}
+  render()}
 var NOD={},CHS=null;
 function hsOk(h){return Array.isArray(h)?h.filter(function(x){return x&&isFinite(x.a)&&isFinite(x.b)&&x.a>=0&&x.b<=100&&x.a<x.b&&x.k}):[]}
 function toast(t){var d=el("div","",t);d.style.cssText="position:fixed;left:50%;bottom:90px;transform:translateX(-50%);z-index:100000;padding:10px 18px;border-radius:14px;background:rgba(0,0,0,.88);border:1.5px solid #e11d1d;color:#fff;font:700 1rem var(--b);text-align:center";document.body.appendChild(d);setTimeout(function(){d.remove()},2300)}
@@ -845,8 +857,8 @@ function home0(){var g=$("qg"),L=cells();g.innerHTML="";DM0=store.g("dm",{});var
     var nr=el("div","qrow"),ni=el("button","qadd","🖼 إضافة خانة صورة"),nn=el("button","qadd","📝 إضافة ملاحظة");
     ni.onclick=function(){L.unshift({k:"img"+Date.now(),p:"",t:"",ty:"img"});store.s("cells",L);home();var t=g.querySelector(".qi");if(t)t.focus()};
     nn.onclick=function(){L.unshift({k:"note"+Date.now(),p:"",t:"",ty:"note"});store.s("cells",L);home();var t=g.querySelector(".qi");if(t)t.focus()};
-    var nc=el("button","qadd","🔥 إضافة خانة كارديو");nc.style.cssText="flex:1 1 100%";nc.onclick=function(){L.unshift({k:"cardio"+Date.now(),p:"",t:"كارديو",ty:"cardio",c:"#eab308",z:3,cd:{br:30}});store.s("cells",L);home();toast("تمت إضافة خانة الكارديو. اضغط تصميم الكارديو لرفع صورة البرنامج")};
-    nr.style.flexWrap="wrap";nr.appendChild(ni);nr.appendChild(nn);nr.appendChild(nc);g.insertBefore(nr,at.nextSibling);
+    nr.appendChild(ni);nr.appendChild(nn);g.insertBefore(nr,at.nextSibling);
+    var nc=el("button","qadd","🏃 إضافة خانة كارديو");nc.style.gridColumn="1/-1";nc.onclick=function(){L.unshift({k:"cardio"+Date.now(),p:"",t:"كارديو",ty:"cardio",c:"#eab308",cd:{w:10,rs:15,rr:30,m:0,cr:3,ex:[],tb:[]}});store.s("cells",L);home()};g.insertBefore(nc,nr.nextSibling);
     var ad=el("button","qadd","+ إضافة خانة");ad.onclick=function(){L.push({k:"n"+Date.now(),p:"",t:""});store.s("cells",L);home();var t=g.querySelectorAll(".qi");if(t.length)t[t.length-1].focus()};g.appendChild(ad);
     var ex=el("button","qadd","📋 تصدير الخانات");ex.onclick=function(){var t=JSON.stringify(L.map(function(q){return{k:q.k,p:q.p,t:q.t,ty:q.ty,imp:q.imp,c:q.c,hs:q.hs,w:q.w,z:q.z,cd:q.cd}})),ta=g.querySelector(".vt")||g.appendChild(el("textarea","vt"));ta.style.gridColumn="1/-1";ta.readOnly=true;ta.value=t;ta.select();try{navigator.clipboard.writeText(t)}catch(e){}};g.appendChild(ex)}
   show("home");if(EDIT)[].forEach.call(g.querySelectorAll(".qi"),fit);
@@ -1225,7 +1237,7 @@ function openPush(){if($("pse"))return;
   o.appendChild(bar);o.appendChild(w);document.body.appendChild(o);document.addEventListener("keydown",psKey);load()}
 
 /* ===== رقم النسخة (يظهر في صفحة المدير) ===== */
-var APP_V=89;
+var APP_V=90;
 function verPaint(){var e=$("ver");if(!e)return;e.textContent="نسخة التطبيق: "+APP_V;
   if(window.caches&&caches.keys)caches.keys().then(function(ks){var v=ks.map(function(k){var m=/zg-v(\d+)/.exec(k);return m?+m[1]:0}).sort(function(a,b){return b-a})[0];
     if(v&&v!=APP_V){e.textContent+=" · نسخة الملفات المخزّنة: "+v+" ⚠️ أغلق التطبيق وافتحه مرتين لتكتمل";e.style.color="#f5a623"}else if(v){e.style.color=""}}).catch(function(){})}
@@ -2134,6 +2146,8 @@ function hsync(id){var d=dp(id);try{
 function hGo(id){HOP=true;if(id=="hm")showHm();else if(id=="home")home();else if(id=="mem")memList();else showProg()}
 try{history.replaceState({d:0},"");window.addEventListener("popstate",function(){
   if(PGO){PGO=false;return}
+  if($("cre")){closeCe();try{history.pushState({d:HD},"")}catch(x){}return}
+  if($("crd")){closeCd();try{history.pushState({d:HD},"")}catch(x){}return}
   if($("pse")){closePush();try{history.pushState({d:HD},"")}catch(x){}return}
   if($("mei")){closeMe();try{history.pushState({d:HD},"")}catch(x){}return}
   if($("rls")){closeRls();try{history.pushState({d:HD},"")}catch(x){}return}

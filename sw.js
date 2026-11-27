@@ -1,5 +1,5 @@
 /* ZEDAM GYM service worker. عند أي تحديث للتطبيق غيّر رقم النسخة V ليتجدد التخزين */
-const V="zg-v92";
+const V="zg-v90";
 const MD="zg-media"; /* كاش دائم للتصاميم والخطوط والصور: لا يُمسح عند تحديث التطبيق حتى تبقى البرامج تظهر بدون إنترنت */
 const SHELL=["./","index.html","manifest.webmanifest","icon-192.png","icon-512.png","maskable-512.png","apple-touch-icon.png"];
 /* ملف مخزَّن بالكامل يُقدَّم أيضاً لطلبات المقاطع (Range) حتى يعمل الفيديو بلا إنترنت */
